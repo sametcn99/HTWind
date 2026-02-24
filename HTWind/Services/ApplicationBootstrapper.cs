@@ -105,17 +105,6 @@ public sealed class ApplicationBootstrapper : IApplicationBootstrapper
                 widget.FilePath = templatePath;
                 continue;
             }
-
-
-            try
-            {
-                var latestHtml = File.ReadAllText(templatePath);
-                File.WriteAllText(widget.FilePath, latestHtml);
-            }
-            catch
-            {
-                // Built-in sync should not block startup flow.
-            }
         }
     }
 }

@@ -69,6 +69,11 @@ public class WidgetTemplateService : IWidgetTemplateService
         };
 
         var path = Path.Combine(_templateDirectory, fileName);
+        if (File.Exists(path))
+        {
+            return path;
+        }
+
         File.WriteAllText(path, LoadEmbeddedTemplate(widgetType), Encoding.UTF8);
         return path;
     }
