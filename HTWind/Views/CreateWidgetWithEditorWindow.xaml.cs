@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 
 using HTWind.Localization;
@@ -14,7 +15,8 @@ public partial class CreateWidgetWithEditorWindow : FluentWindow
     public CreateWidgetWithEditorWindow()
     {
         InitializeComponent();
-        FileNameTextBox.Text = LocalizationService.Get("CreateWithEditorWindow_DefaultFileName");
+        var defaultFileName = LocalizationService.Get("CreateWithEditorWindow_DefaultFileName");
+        FileNameTextBox.Text = Path.GetFileNameWithoutExtension(defaultFileName);
         FileNameTextBox.SelectAll();
     }
 

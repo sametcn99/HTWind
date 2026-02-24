@@ -4,6 +4,8 @@ using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 
+using Microsoft.Win32;
+
 using HTWind.Localization;
 
 namespace HTWind.Services;
@@ -81,6 +83,8 @@ public class WidgetManager : IWidgetManager
             _saveDebounceTimer.Stop();
             SaveStateToDisk();
         };
+
+        SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
     }
 
     public ObservableCollection<WidgetModel> Widgets { get; } = new();
@@ -269,6 +273,12 @@ public class WidgetManager : IWidgetManager
             return;
         }
 
+        if (model.IsVisible && _geometryService.EnsureVisibleOnAvailableDisplay(window, model))
+        {
+            _geometryService.CaptureGeometry(window, model);
+            ScheduleSave();
+        }
+
         window.SetRuntimeVisibility(model.IsVisible);
     }
 
@@ -309,6 +319,8 @@ public class WidgetManager : IWidgetManager
 
     public void CloseAll()
     {
+        SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
+
         foreach (var editor in _editorWindowsById.Values.ToList())
         {
             editor.Close();
@@ -473,5 +485,41 @@ public class WidgetManager : IWidgetManager
                 MonitorDeviceName = model.MonitorDeviceName
             })
         );
+    }
+
+    private void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
+    {
+        var dispatcher = Application.Current?.Dispatcher;
+        if (dispatcher is null)
+        {
+            return;
+        }
+
+        _ = dispatcher.BeginInvoke(
+            DispatcherPriority.Background,
+            new Action(RecoverWidgetsAfterDisplayConfigurationChanged)
+        );
+    }
+
+    private void RecoverWidgetsAfterDisplayConfigurationChanged()
+    {
+        var hasRelocatedWidget = false;
+
+        foreach (var window in _windowsById.Values)
+        {
+            var model = window.Model;
+            if (!_geometryService.EnsureVisibleOnAvailableDisplay(window, model))
+            {
+                continue;
+            }
+
+            _geometryService.CaptureGeometry(window, model);
+            hasRelocatedWidget = true;
+        }
+
+        if (hasRelocatedWidget)
+        {
+            ScheduleSave();
+        }
     }
 }

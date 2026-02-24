@@ -228,16 +228,10 @@
 
                                     <StackPanel Grid.Column="0" Margin="0,0,12,0" VerticalAlignment="Center">
                                         <TextBlock
-                                            Text="{Binding Name}"
+                                            Text="{Binding DisplayName}"
                                             FontSize="14"
                                             FontWeight="SemiBold"
                                             TextTrimming="CharacterEllipsis" />
-                                        <TextBlock
-                                            Text="{Binding FilePath}"
-                                            FontSize="12"
-                                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                            TextTrimming="CharacterEllipsis"
-                                            ToolTip="{Binding FilePath}" />
                                     </StackPanel>
 
                                     <ui:ToggleSwitch

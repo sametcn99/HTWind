@@ -12,4 +12,6 @@ public interface IWidgetGeometryService
     );
 
     void ApplyDefaultGeometry(WidgetWindow window, double defaultWidth, double defaultHeight);
+
+    bool EnsureVisibleOnAvailableDisplay(WidgetWindow window, WidgetModel model);
 }

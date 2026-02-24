@@ -1,3 +1,4 @@
+using System.IO;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -14,8 +15,12 @@ public class WidgetModel : INotifyPropertyChanged
         {
             field = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(DisplayName));
         }
     }
+
+    public string? DisplayName =>
+        string.IsNullOrWhiteSpace(Name) ? Name : Path.GetFileNameWithoutExtension(Name);
 
     public string? FilePath
     {

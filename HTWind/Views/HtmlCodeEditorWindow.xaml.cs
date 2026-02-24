@@ -48,7 +48,6 @@ public partial class HtmlCodeEditorWindow : FluentWindow
         {
             UserDataFolder = GetWebViewUserDataFolder()
         };
-        FilePathText.Text = _model.FilePath;
         Loaded += HtmlCodeEditorWindow_Loaded;
     }
 

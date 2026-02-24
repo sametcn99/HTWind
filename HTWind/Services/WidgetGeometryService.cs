@@ -75,6 +75,26 @@ public sealed class WidgetGeometryService : IWidgetGeometryService
         CenterWindowOnWorkArea(window, null);
     }
 
+    public bool EnsureVisibleOnAvailableDisplay(WidgetWindow window, WidgetModel model)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+        ArgumentNullException.ThrowIfNull(model);
+
+        var hasStoredMonitor = !string.IsNullOrWhiteSpace(model.MonitorDeviceName);
+        var targetWorkArea = ResolveTargetMonitorWorkArea(model.MonitorDeviceName);
+        var isStoredMonitorConnected = !hasStoredMonitor || targetWorkArea.HasValue;
+        var isWindowOnAnyScreen = IsOnAnyScreen(window.Left, window.Top, window.Width, window.Height);
+
+        if (isStoredMonitorConnected && isWindowOnAnyScreen)
+        {
+            return false;
+        }
+
+        CenterWindowOnWorkArea(window, null);
+        ClampWindowToWorkArea(window, null);
+        return true;
+    }
+
     private static void CenterWindowOnWorkArea(WidgetWindow window, Rect? workArea)
     {
         if (!workArea.HasValue)

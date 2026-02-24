@@ -30,23 +30,13 @@
             <ui:Card Grid.Row="0" Padding="12" Margin="0,0,0,10">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="{loc:Loc EditorWindow_FileLabel}" FontWeight="SemiBold" />
-                        <TextBlock
-                            x:Name="FilePathText"
-                            Margin="0,4,0,0"
-                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                            TextTrimming="CharacterEllipsis" />
-                    </StackPanel>
-
                     <ui:Button
-                        Grid.Column="2"
+                        Grid.Column="1"
                         Margin="12,0,0,0"
                         Content="{loc:Loc EditorWindow_Save}"
                         Appearance="Primary"
@@ -54,7 +44,7 @@
 
                     <ui:ToggleSwitch
                         x:Name="HotReloadToggle"
-                        Grid.Column="1"
+                        Grid.Column="0"
                         Margin="12,0,0,0"
                         VerticalAlignment="Center"
                         Content="{loc:Loc EditorWindow_HotReload}"
@@ -62,7 +52,7 @@
                         Unchecked="HotReload_Changed" />
 
                     <ui:Button
-                        Grid.Column="3"
+                        Grid.Column="2"
                         Margin="8,0,0,0"
                         Content="{loc:Loc EditorWindow_Close}"
                         Click="Close_Click" />
