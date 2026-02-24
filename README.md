@@ -1,15 +1,16 @@
 # HTWind
 
-HTWind is a desktop app that lets you place helpful widgets directly on your Windows desktop.
+HTWind is a highly customizable, HTML-based widget manager that brings your favorite web tools and system helpers directly to your Windows desktop.
 It also supports running PowerShell commands when you need quick system actions.
 
 ![HTWind Screenshot](assets/screenshot.png)
 
 ## Highlights
 
+- **Native PowerShell script execution support for system automation and quick tasks**
 - Desktop HTML widgets with lock/unlock interaction modes
 - Built-in widget library (clock, weather, system tools, file helpers, and more)
-- Widget code editor with live preview (hot reload)
+- **Widget code editor with live preview (hot reload)**
 - Tray integration (show/hide app, background workflow)
 - Pin-on-top, visibility toggle, and persisted widget geometry/state
 - Startup toggle (`HKCU\Software\Microsoft\Windows\CurrentVersion\Run`)
