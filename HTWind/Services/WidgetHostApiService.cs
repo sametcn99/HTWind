@@ -39,8 +39,10 @@ public sealed class WidgetHostApiService : IWidgetHostApiService
         var timeoutMs = ReadIntArg(args, "timeoutMs") ?? 5000;
         timeoutMs = Math.Clamp(timeoutMs, 500, 120000);
 
-        var maxOutputChars = ReadIntArg(args, "maxOutputChars") ?? 12000;
-        maxOutputChars = Math.Clamp(maxOutputChars, 256, 200000);
+        var maxOutputCharsArg = ReadIntArg(args, "maxOutputChars");
+        int? maxOutputChars = maxOutputCharsArg.HasValue
+            ? Math.Max(1, maxOutputCharsArg.Value)
+            : null;
 
         var shell = (ReadStringArg(args, "shell") ?? "powershell").Trim().ToLowerInvariant();
         var shellExecutable = shell == "pwsh" ? "pwsh.exe" : "powershell.exe";
@@ -91,11 +93,11 @@ public sealed class WidgetHostApiService : IWidgetHostApiService
         var output = await outputTask;
         var error = await errorTask;
 
-        var clippedOutput = output.Length > maxOutputChars
-            ? output[..maxOutputChars]
+        var clippedOutput = maxOutputChars.HasValue && output.Length > maxOutputChars.Value
+            ? output[..maxOutputChars.Value]
             : output;
-        var clippedError = error.Length > maxOutputChars
-            ? error[..maxOutputChars]
+        var clippedError = maxOutputChars.HasValue && error.Length > maxOutputChars.Value
+            ? error[..maxOutputChars.Value]
             : error;
 
         return new
@@ -104,8 +106,8 @@ public sealed class WidgetHostApiService : IWidgetHostApiService
             ExitCode = timedOut ? (int?)null : process.ExitCode,
             Output = clippedOutput,
             Error = clippedError,
-            OutputTruncated = output.Length > maxOutputChars,
-            ErrorTruncated = error.Length > maxOutputChars,
+            OutputTruncated = maxOutputChars.HasValue && output.Length > maxOutputChars.Value,
+            ErrorTruncated = maxOutputChars.HasValue && error.Length > maxOutputChars.Value,
             Shell = shellExecutable,
             WorkingDirectory = workingDirectory
         };
