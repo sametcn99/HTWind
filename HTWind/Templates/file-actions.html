@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>File Actions</title>
+  <style>
+    :root { --text:#edf4ff; --muted:#a9bad4; --line:rgba(182,213,255,.24); --bg:radial-gradient(circle at 84% 84%, rgba(106,172,255,.34), transparent 45%), linear-gradient(160deg, rgba(15,24,42,.95), rgba(6,11,23,.98)); }
+    html, body { width:100%; height:100%; margin:0; font-family:"Bahnschrift","Segoe UI",sans-serif; color:var(--text); background:transparent; }
+    .card { width:100%; height:100%; box-sizing:border-box; padding:12px; border-radius:16px; border:1px solid var(--line); background:var(--bg); display:grid; grid-template-rows:auto auto auto auto auto 1fr auto; gap:8px; }
+    .label { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    input { min-width:0; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.06); color:var(--text); padding:9px; font:inherit; outline:none; }
+    .actions { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+    button { border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.08); color:var(--text); padding:8px; font:inherit; cursor:pointer; }
+    .meta { font-size:.8rem; color:var(--muted); min-height:1.1em; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">File Actions</div>
+    <div class="row">
+      <input id="source" placeholder="Source path" />
+      <input id="destination" placeholder="Destination path" />
+    </div>
+    <div class="actions">
+      <button onclick="copyFile()">Copy</button>
+      <button onclick="moveFile()">Move</button>
+      <button onclick="deleteFile()">Delete</button>
+      <button onclick="deleteDir()">Delete Dir</button>
+    </div>
+    <div class="row">
+      <input id="checkPath" placeholder="Path to check" />
+      <input id="mkdirPath" placeholder="Directory to create" />
+    </div>
+    <div class="actions">
+      <button onclick="checkExists()">Exists</button>
+      <button onclick="makeDir()">MkDir</button>
+      <button onclick="openPath()">Open</button>
+      <button onclick="copySource()">Copy Source</button>
+    </div>
+    <div id="status" class="meta">Ready.</div>
+  </div>
+  <script>
+    function pick(obj, camel, pascal) { return obj?.[camel] ?? obj?.[pascal]; }
+    function esc(value) { return String(value ?? "").replace(/'/g, "''"); }
+    async function runPs(script, parseJson = false) {
+      const executableScript = parseJson
+        ? `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`
+        : script;
+
+      const result = await window.HTWind.invoke("powershell.exec", { script: executableScript });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+      if (timedOut) throw new Error("PowerShell command timed out.");
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      if (!parseJson) return result;
+      if (!stdout.trim()) return {};
+      return JSON.parse(stdout);
+    }
+    const statusEl = document.getElementById("status");
+    function setStatus(text) { statusEl.textContent = text; }
+
+    async function copyFile() {
+      try {
+        const src = document.getElementById("source").value;
+        const dst = document.getElementById("destination").value;
+        await runPs(`$src = [Environment]::ExpandEnvironmentVariables('${esc(src)}'); $dst = [Environment]::ExpandEnvironmentVariables('${esc(dst)}'); Copy-Item -LiteralPath $src -Destination $dst -Force`);
+        setStatus("File copied.");
+      } catch (error) { setStatus(`Error: ${error.message}`); }
+    }
+
+    async function moveFile() {
+      try {
+        const src = document.getElementById("source").value;
+        const dst = document.getElementById("destination").value;
+        await runPs(`$src = [Environment]::ExpandEnvironmentVariables('${esc(src)}'); $dst = [Environment]::ExpandEnvironmentVariables('${esc(dst)}'); Move-Item -LiteralPath $src -Destination $dst -Force`);
+        setStatus("File moved.");
+      } catch (error) { setStatus(`Error: ${error.message}`); }
+    }
+
+    async function deleteFile() {
+      try {
+        const src = document.getElementById("source").value;
+        await runPs(`$src = [Environment]::ExpandEnvironmentVariables('${esc(src)}'); Remove-Item -LiteralPath $src -Force`);
+        setStatus("File deleted.");
+      } catch (error) { setStatus(`Error: ${error.message}`); }
+    }
+
+    async function deleteDir() {
+      try {
+        const src = document.getElementById("source").value;
+        await runPs(`$src = [Environment]::ExpandEnvironmentVariables('${esc(src)}'); Remove-Item -LiteralPath $src -Recurse -Force`);
+        setStatus("Directory deleted.");
+      } catch (error) { setStatus(`Error: ${error.message}`); }
+    }
+
+    async function checkExists() {
+      try {
+        const path = document.getElementById("checkPath").value;
+        const result = await runPs(`$p = [Environment]::ExpandEnvironmentVariables('${esc(path)}'); $exists = Test-Path -LiteralPath $p; $isDir = $false; if ($exists) { $isDir = (Get-Item -LiteralPath $p).PSIsContainer }; [pscustomobject]@{ Exists = $exists; IsDirectory = $isDir }`, true);
+        const exists = pick(result, "exists", "Exists");
+        const isDirectory = pick(result, "isDirectory", "IsDirectory");
+        setStatus(exists ? (isDirectory ? "Directory exists." : "File exists.") : "Path not found.");
+      } catch (error) { setStatus(`Error: ${error.message}`); }
+    }
+
+    async function makeDir() {
+      try {
+        const path = document.getElementById("mkdirPath").value;
+        await runPs(`$p = [Environment]::ExpandEnvironmentVariables('${esc(path)}'); New-Item -ItemType Directory -Path $p -Force | Out-Null`);
+        setStatus("Directory created.");
+      } catch (error) { setStatus(`Error: ${error.message}`); }
+    }
+
+    async function openPath() {
+      try {
+        const path = document.getElementById("checkPath").value;
+        await runPs(`$p = [Environment]::ExpandEnvironmentVariables('${esc(path)}'); Start-Process -FilePath $p`);
+        setStatus("Path opened.");
+      } catch (error) { setStatus(`Error: ${error.message}`); }
+    }
+
+    async function copySource() {
+      try {
+        const value = document.getElementById("source").value || "";
+        await runPs(`Set-Clipboard -Value '${esc(value)}'`);
+        setStatus("Source path copied.");
+      } catch (error) { setStatus(`Error: ${error.message}`); }
+    }
+  </script>
+</body>
+</html>

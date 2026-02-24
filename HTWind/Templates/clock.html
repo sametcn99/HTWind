@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clock Widget</title>
+  <style>
+    :root {
+      --text: #ecf4ff;
+      --muted: #a8b6ce;
+      --line: rgba(167, 199, 255, 0.28);
+      --bg: radial-gradient(circle at 18% 14%, rgba(80, 140, 255, 0.34), transparent 52%),
+            linear-gradient(160deg, rgba(18, 26, 40, 0.92), rgba(8, 12, 24, 0.94));
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: "Bahnschrift", "Segoe UI", sans-serif;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      align-content: center;
+      text-align: center;
+    }
+
+    .badge {
+      justify-self: center;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(124, 186, 255, 0.18);
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .time {
+      font-size: clamp(2rem, 8.2vw, 3.3rem);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .date {
+      opacity: 0.9;
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 0.84rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">Local Time</div>
+    <div id="time" class="time">--:--:--</div>
+    <div id="date" class="date">Loading...</div>
+  </div>
+  <script>
+    const timeEl = document.getElementById("time");
+    const dateEl = document.getElementById("date");
+    function tick() {
+      const now = new Date();
+      timeEl.textContent = now.toLocaleTimeString([], { hour12: false });
+      dateEl.textContent = now.toLocaleDateString([], {
+        weekday: "long", year: "numeric", month: "long", day: "numeric"
+      });
+    }
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>

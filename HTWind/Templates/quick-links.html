@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quick Links</title>
+  <style>
+    :root {
+      --text: #eff6ff;
+      --muted: #a5b9d7;
+      --line: rgba(181, 213, 255, 0.24);
+      --bg: radial-gradient(circle at 8% 10%, rgba(94, 163, 255, 0.33), transparent 42%),
+            linear-gradient(160deg, rgba(16, 24, 45, 0.95), rgba(6, 11, 22, 0.98));
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: "Bahnschrift", "Segoe UI", sans-serif;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 10px;
+    }
+
+    .label {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .link {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text);
+      font: inherit;
+      font-size: 0.85rem;
+      padding: 10px;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+      text-align: left;
+    }
+
+    .link:hover {
+      transform: translateY(-1px);
+      background: rgba(124, 191, 255, 0.15);
+    }
+
+    .custom {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    input {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      padding: 10px;
+      font: inherit;
+      font-size: 0.84rem;
+      outline: none;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #74beff, #4ca6ff);
+      color: #041423;
+      font: inherit;
+      font-weight: 700;
+      padding: 10px 13px;
+      cursor: pointer;
+    }
+
+    .status {
+      min-height: 1.2em;
+      color: var(--muted);
+      font-size: 0.8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">Quick Links</div>
+    <div class="grid">
+      <button class="link" onclick="openLink('https://github.com')">GitHub</button>
+      <button class="link" onclick="openLink('https://www.youtube.com')">YouTube</button>
+      <button class="link" onclick="openLink('https://www.reddit.com')">Reddit</button>
+      <button class="link" onclick="openLink('https://x.com')">X</button>
+    </div>
+    <div class="custom">
+      <input id="url" placeholder="Open URL (example.com)" />
+      <button onclick="openCustom()">Open</button>
+    </div>
+    <div id="status" class="status">Ready.</div>
+  </div>
+
+  <script>
+    const statusEl = document.getElementById("status");
+    const urlEl = document.getElementById("url");
+
+    function esc(value) {
+      return String(value ?? "").replace(/'/g, "''");
+    }
+
+    function setStatus(text) {
+      statusEl.textContent = text;
+    }
+
+    async function execPs(script) {
+      const result = await window.HTWind.invoke("powershell.exec", { script });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+      if (timedOut) throw new Error("PowerShell command timed out.");
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      return stdout;
+    }
+
+    async function execPsJson(script) {
+      const wrapped = `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`;
+      const output = await execPs(wrapped);
+      return output.trim() ? JSON.parse(output) : {};
+    }
+
+    async function openLink(url) {
+      try {
+        const normalized = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+        const result = await execPsJson(`$url = '${esc(normalized)}'; Start-Process -FilePath $url; [pscustomobject]@{ Url = $url }`);
+        const openedUrl = result?.url ?? result?.Url;
+        setStatus(`Opened ${openedUrl || normalized}`);
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+    function openCustom() {
+      const value = urlEl.value.trim();
+      if (!value) {
+        setStatus("Enter a URL first.");
+        return;
+      }
+
+      openLink(value);
+    }
+
+    urlEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        openCustom();
+      }
+    });
+  </script>
+</body>
+</html>

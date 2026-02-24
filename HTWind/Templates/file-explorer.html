@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>File Explorer</title>
+  <style>
+    :root { --text:#edf4ff; --muted:#a7bad6; --line:rgba(181,212,255,.24); --bg:radial-gradient(circle at 88% 10%, rgba(102,174,255,.33), transparent 44%), linear-gradient(160deg, rgba(15,24,43,.96), rgba(6,11,22,.98)); }
+    html, body { width:100%; height:100%; margin:0; font-family:"Bahnschrift","Segoe UI",sans-serif; color:var(--text); background:transparent; }
+    .card { width:100%; height:100%; box-sizing:border-box; padding:12px; border-radius:16px; border:1px solid var(--line); background:var(--bg); display:grid; grid-template-rows:auto auto auto 1fr auto; gap:8px; }
+    .label { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+    .row { display:grid; grid-template-columns:1fr auto auto auto; gap:6px; }
+    input { min-width:0; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.06); color:var(--text); padding:9px; font:inherit; outline:none; }
+    button { border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.08); color:var(--text); padding:9px 10px; font:inherit; cursor:pointer; }
+    .list { overflow:auto; border:1px solid rgba(181,212,255,.2); border-radius:10px; background:rgba(255,255,255,.03); padding:8px; }
+    .item { font-size:.8rem; margin-bottom:5px; display:flex; justify-content:space-between; gap:8px; }
+    .meta { font-size:.79rem; color:var(--muted); min-height:1.1em; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">File Explorer</div>
+    <div class="row">
+      <input id="path" placeholder="Path (example: %USERPROFILE%\\Documents)" />
+      <button onclick="listDir()">List</button>
+      <button onclick="openPath()">Open</button>
+      <button onclick="createDir()">MkDir</button>
+    </div>
+    <div class="row" style="grid-template-columns:1fr auto auto auto;">
+      <input id="pattern" placeholder="Pattern (*, *.txt)" value="*" />
+      <button onclick="checkExists()">Exists</button>
+      <button onclick="listDir(true)">Recursive</button>
+      <button onclick="copySelected()">Copy</button>
+    </div>
+    <div id="list" class="list"></div>
+    <div id="status" class="meta">Ready.</div>
+  </div>
+  <script>
+    const listEl = document.getElementById("list");
+    const statusEl = document.getElementById("status");
+    let lastSelectedPath = "";
+    function pick(obj, camel, pascal) { return obj?.[camel] ?? obj?.[pascal]; }
+    function esc(value) { return String(value ?? "").replace(/'/g, "''"); }
+    async function runPs(script, parseJson = false) {
+      const executableScript = parseJson
+        ? `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`
+        : script;
+
+      const result = await window.HTWind.invoke("powershell.exec", { script: executableScript });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+      if (timedOut) throw new Error("PowerShell command timed out.");
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      if (!parseJson) return result;
+      if (!stdout.trim()) return {};
+      return JSON.parse(stdout);
+    }
+    function setStatus(text) { statusEl.textContent = text; }
+    function getPath() { return document.getElementById("path").value.trim(); }
+
+    async function listDir(recursive = false) {
+      const path = getPath();
+      if (!path) return;
+      try {
+        const pattern = document.getElementById("pattern").value.trim() || "*";
+        const recurseFlag = recursive ? "-Recurse" : "";
+        const result = await runPs(`$path = [Environment]::ExpandEnvironmentVariables('${esc(path)}'); $pattern = '${esc(pattern)}'; $items = Get-ChildItem -LiteralPath $path -Filter $pattern -Force ${recurseFlag} -ErrorAction Stop | Select-Object -First 300 | ForEach-Object { [pscustomobject]@{ Path = $_.FullName; Name = $_.Name; IsDirectory = $_.PSIsContainer } }; [pscustomobject]@{ Items = @($items) }`, true);
+        const items = pick(result, "items", "Items") || [];
+        listEl.innerHTML = "";
+        items.forEach((it) => {
+          const p = pick(it, "path", "Path") || "";
+          const n = pick(it, "name", "Name") || p;
+          const d = pick(it, "isDirectory", "IsDirectory") ? "[DIR]" : "[FILE]";
+          const row = document.createElement("div");
+          row.className = "item";
+          row.innerHTML = `<span>${d} ${n}</span><span>${p}</span>`;
+          row.onclick = () => { lastSelectedPath = p; setStatus(`Selected: ${p}`); };
+          listEl.appendChild(row);
+        });
+        setStatus(`Listed ${items.length} items.`);
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+    async function openPath() {
+      const path = lastSelectedPath || getPath();
+      if (!path) return;
+      try {
+        await runPs(`$path = [Environment]::ExpandEnvironmentVariables('${esc(path)}'); Start-Process -FilePath $path`);
+        setStatus(`Opened: ${path}`);
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+    async function createDir() {
+      const path = getPath();
+      if (!path) return;
+      try {
+        await runPs(`$path = [Environment]::ExpandEnvironmentVariables('${esc(path)}'); New-Item -ItemType Directory -Path $path -Force | Out-Null`);
+        setStatus(`Created: ${path}`);
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+    async function checkExists() {
+      const path = getPath();
+      if (!path) return;
+      try {
+        const r = await runPs(`$path = [Environment]::ExpandEnvironmentVariables('${esc(path)}'); $exists = Test-Path -LiteralPath $path; $isDir = $false; if ($exists) { $isDir = (Get-Item -LiteralPath $path).PSIsContainer }; [pscustomobject]@{ Exists = $exists; IsDirectory = $isDir }`, true);
+        const exists = pick(r, "exists", "Exists");
+        const isDirectory = pick(r, "isDirectory", "IsDirectory");
+        setStatus(`${exists ? "Exists" : "Not found"}${exists ? (isDirectory ? " (directory)" : " (file)") : ""}`);
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+    async function copySelected() {
+      const value = lastSelectedPath || getPath();
+      if (!value) return;
+      try {
+        await runPs(`Set-Clipboard -Value '${esc(value)}'`);
+        setStatus("Path copied to clipboard.");
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+  </script>
+</body>
+</html>

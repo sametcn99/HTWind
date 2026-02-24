@@ -1,0 +1,81 @@
+<ui:FluentWindow
+    x:Class="HTWind.HtmlCodeEditorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+    xmlns:loc="clr-namespace:HTWind.Localization"
+    Title="{loc:Loc EditorWindow_Title}"
+    Width="980"
+    Height="720"
+    MinWidth="760"
+    MinHeight="520"
+    WindowBackdropType="Mica"
+    ExtendsContentIntoTitleBar="True"
+    WindowCornerPreference="Round">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="{loc:Loc EditorWindow_Title}" />
+
+        <Grid Grid.Row="1" Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <ui:Card Grid.Row="0" Padding="12" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{loc:Loc EditorWindow_FileLabel}" FontWeight="SemiBold" />
+                        <TextBlock
+                            x:Name="FilePathText"
+                            Margin="0,4,0,0"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                            TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+
+                    <ui:Button
+                        Grid.Column="2"
+                        Margin="12,0,0,0"
+                        Content="{loc:Loc EditorWindow_Save}"
+                        Appearance="Primary"
+                        Click="Save_Click" />
+
+                    <ui:ToggleSwitch
+                        x:Name="HotReloadToggle"
+                        Grid.Column="1"
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="{loc:Loc EditorWindow_HotReload}"
+                        Checked="HotReload_Changed"
+                        Unchecked="HotReload_Changed" />
+
+                    <ui:Button
+                        Grid.Column="3"
+                        Margin="8,0,0,0"
+                        Content="{loc:Loc EditorWindow_Close}"
+                        Click="Close_Click" />
+                </Grid>
+            </ui:Card>
+
+            <Border
+                Grid.Row="1"
+                CornerRadius="10"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1">
+                <wv2:WebView2 x:Name="EditorWebView" />
+            </Border>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

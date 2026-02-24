@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DNS Lookup</title>
+  <style>
+    :root { --text:#eef4ff; --muted:#aabbd5; --line:rgba(182,213,255,.24); --bg:radial-gradient(circle at 14% 12%, rgba(101,170,255,.31), transparent 44%), linear-gradient(160deg, rgba(14,24,42,.95), rgba(6,11,23,.98)); }
+    html, body { width:100%; height:100%; margin:0; font-family:"Bahnschrift","Segoe UI",sans-serif; color:var(--text); background:transparent; }
+    .card { width:100%; height:100%; box-sizing:border-box; padding:12px; border-radius:16px; border:1px solid var(--line); background:var(--bg); display:grid; grid-template-rows:auto auto auto 1fr auto; gap:8px; }
+    .label { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+    .row { display:grid; grid-template-columns:1fr auto; gap:8px; }
+    input { min-width:0; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.06); color:var(--text); padding:9px; font:inherit; outline:none; }
+    button { border:none; border-radius:10px; background:linear-gradient(135deg,#75c0ff,#4fa8ff); color:#041423; padding:9px 12px; font:inherit; font-weight:700; cursor:pointer; }
+    .list { overflow:auto; border:1px solid rgba(182,213,255,.2); border-radius:10px; background:rgba(255,255,255,.03); padding:8px; }
+    .item { font-size:.8rem; margin-bottom:5px; }
+    .meta { font-size:.8rem; color:var(--muted); min-height:1.1em; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">DNS Lookup</div>
+    <div class="row">
+      <input id="host" value="google.com" placeholder="Host name" />
+      <button onclick="lookup()">Lookup</button>
+    </div>
+    <div id="local" class="meta">Local addresses loading...</div>
+    <div id="list" class="list"></div>
+    <div id="status" class="meta">Ready.</div>
+  </div>
+  <script>
+    function pick(obj, camel, pascal) { return obj?.[camel] ?? obj?.[pascal]; }
+    function esc(value) { return String(value ?? "").replace(/'/g, "''"); }
+    async function runPs(script, parseJson = false, timeoutMs = 10000) {
+      const executableScript = parseJson
+        ? `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`
+        : script;
+
+      const result = await window.HTWind.invoke("powershell.exec", { script: executableScript, timeoutMs });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+      if (timedOut) throw new Error("PowerShell command timed out.");
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      if (!parseJson) return result;
+      if (!stdout.trim()) return {};
+      return JSON.parse(stdout);
+    }
+    const listEl = document.getElementById("list");
+    const localEl = document.getElementById("local");
+    const statusEl = document.getElementById("status");
+
+    async function loadLocal() {
+      try {
+        const local = await runPs("$hostName = [System.Net.Dns]::GetHostName(); $async = [System.Net.Dns]::BeginGetHostAddresses($hostName, $null, $null); if (-not $async.AsyncWaitHandle.WaitOne(2500)) { [pscustomobject]@{ HostName = $hostName; Addresses = @(); TimedOut = $true; Error = '' } } else { try { $addrs = [System.Net.Dns]::EndGetHostAddresses($async) | ForEach-Object { $_.ToString() }; [pscustomobject]@{ HostName = $hostName; Addresses = @($addrs); TimedOut = $false; Error = '' } } catch { [pscustomobject]@{ HostName = $hostName; Addresses = @(); TimedOut = $false; Error = $_.Exception.Message } } }", true, 12000);
+        const hostName = pick(local, "hostName", "HostName") || "-";
+        const addressesRaw = pick(local, "addresses", "Addresses");
+        const addresses = Array.isArray(addressesRaw)
+          ? addressesRaw
+          : (addressesRaw ? [addressesRaw] : []);
+        const timedOut = !!pick(local, "timedOut", "TimedOut");
+        const err = pick(local, "error", "Error");
+        if (timedOut) {
+          localEl.textContent = `Local: ${hostName} - DNS read timed out`;
+        } else if (err) {
+          localEl.textContent = `Local: ${hostName} - ${err}`;
+        } else {
+          localEl.textContent = `Local: ${hostName} - ${addresses.join(", ")}`;
+        }
+      } catch {
+        localEl.textContent = "Could not read local addresses.";
+      }
+    }
+
+    async function lookup() {
+      const host = document.getElementById("host").value.trim();
+      if (!host) return;
+      statusEl.textContent = `Resolving ${host}...`;
+
+      try {
+        const result = await runPs(`$h = '${esc(host)}'; $async = [System.Net.Dns]::BeginGetHostAddresses($h, $null, $null); if (-not $async.AsyncWaitHandle.WaitOne(3000)) { [pscustomobject]@{ Addresses = @(); TimedOut = $true; Error = '' } } else { try { $addrs = [System.Net.Dns]::EndGetHostAddresses($async) | ForEach-Object { $_.ToString() }; [pscustomobject]@{ Addresses = @($addrs); TimedOut = $false; Error = '' } } catch { [pscustomobject]@{ Addresses = @(); TimedOut = $false; Error = $_.Exception.Message } } }`, true, 12000);
+        const addressesRaw = pick(result, "addresses", "Addresses");
+        const addresses = Array.isArray(addressesRaw)
+          ? addressesRaw
+          : (addressesRaw ? [addressesRaw] : []);
+        const timedOut = !!pick(result, "timedOut", "TimedOut");
+        const err = pick(result, "error", "Error");
+        listEl.innerHTML = "";
+
+        if (timedOut) {
+          statusEl.textContent = "DNS lookup timed out.";
+          return;
+        }
+
+        if (err) {
+          statusEl.textContent = `Error: ${err}`;
+          return;
+        }
+
+        addresses.forEach((address) => {
+          const item = document.createElement("div");
+          item.className = "item";
+          item.textContent = address;
+          listEl.appendChild(item);
+        });
+        statusEl.textContent = `${addresses.length} address(es) found.`;
+      } catch (error) {
+        statusEl.textContent = `Error: ${error.message}`;
+      }
+    }
+
+    loadLocal();
+    lookup();
+  </script>
+</body>
+</html>

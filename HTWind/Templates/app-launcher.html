@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App Launcher</title>
+  <style>
+    :root {
+      --bg-top: rgba(20, 28, 45, 0.92);
+      --bg-bottom: rgba(8, 14, 27, 0.92);
+      --text: #eef4ff;
+      --muted: #a9b9d4;
+      --line: rgba(175, 205, 255, 0.24);
+      --accent: #7dc1ff;
+      --accent-strong: #4ea9ff;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: "Bahnschrift", "Segoe UI", sans-serif;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      background: linear-gradient(160deg, var(--bg-top), var(--bg-bottom));
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 10px;
+      overflow: hidden;
+    }
+
+    .title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px;
+      font: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      background: rgba(125, 193, 255, 0.16);
+      border-color: rgba(125, 193, 255, 0.55);
+    }
+
+    .custom {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    input {
+      min-width: 0;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px;
+      font: inherit;
+      font-size: 0.84rem;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(78, 169, 255, 0.2);
+    }
+
+    .launch {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      border-color: transparent;
+      color: #041423;
+      font-weight: 700;
+      padding-inline: 14px;
+    }
+
+    .msg {
+      font-size: 0.8rem;
+      color: var(--muted);
+      min-height: 1.1em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="title">Quick Launcher</div>
+    <div class="grid">
+      <button onclick="run('notepad.exe')">Notepad</button>
+      <button onclick="run('calc.exe')">Calculator</button>
+      <button onclick="run('mspaint.exe')">Paint</button>
+      <button onclick="run('taskmgr.exe')">Task Manager</button>
+    </div>
+    <div class="custom">
+      <input id="customApp" placeholder="Run custom app (example: code)" />
+      <button class="launch" onclick="runCustom()">Run</button>
+    </div>
+    <div id="msg" class="msg"></div>
+  </div>
+  <script>
+    function esc(value) {
+      return String(value ?? "").replace(/'/g, "''");
+    }
+
+    async function execPs(script) {
+      const result = await window.HTWind.invoke("powershell.exec", { script });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+      if (timedOut) throw new Error("PowerShell command timed out.");
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      return stdout;
+    }
+
+    async function execPsJson(script) {
+      const wrapped = `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`;
+      const output = await execPs(wrapped);
+      return output.trim() ? JSON.parse(output) : {};
+    }
+
+    function setMessage(text) {
+      document.getElementById("msg").textContent = text;
+    }
+
+    async function run(fileName) {
+      setMessage(`Starting ${fileName}...`);
+      try {
+        const script = `$name = '${esc(fileName)}'; try { $p = Start-Process -FilePath $name -PassThru -ErrorAction Stop; [pscustomobject]@{ Started = $true; ProcessId = $p.Id } } catch { [pscustomobject]@{ Started = $false; ProcessId = 0 } }`;
+        const result = await execPsJson(script);
+        const started = result?.started ?? result?.Started;
+        const processId = result?.processId ?? result?.ProcessId;
+        setMessage(started
+          ? `${fileName} started${processId ? ` (PID ${processId})` : ""}`
+          : `${fileName} could not be started.`);
+      } catch (error) {
+        setMessage(`Error: ${error.message}`);
+      }
+    }
+
+    function runCustom() {
+      const input = document.getElementById("customApp");
+      const app = input.value.trim();
+      if (!app) {
+        setMessage("Enter an app name first.");
+        return;
+      }
+
+      run(app);
+      input.select();
+    }
+
+    document.getElementById("customApp").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        runCustom();
+      }
+    });
+
+    setMessage("Ready.");
+  </script>
+</body>
+</html>

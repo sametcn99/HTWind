@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Environment Info</title>
+  <style>
+    :root { --text:#eef4ff; --muted:#a9bad3; --line:rgba(182,213,255,.24); --bg:radial-gradient(circle at 12% 8%, rgba(102,174,255,.3), transparent 42%), linear-gradient(160deg, rgba(13,22,40,.96), rgba(6,11,23,.98)); }
+    html, body { width:100%; height:100%; margin:0; font-family:"Bahnschrift","Segoe UI",sans-serif; color:var(--text); background:transparent; }
+    .card { width:100%; height:100%; box-sizing:border-box; padding:12px; border-radius:16px; border:1px solid var(--line); background:var(--bg); display:grid; grid-template-rows:auto 1fr auto; gap:8px; }
+    .label { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+    .list { overflow:auto; display:grid; gap:6px; }
+    .item { border:1px solid rgba(182,213,255,.2); border-radius:10px; padding:8px; background:rgba(255,255,255,.04); }
+    .name { font-size:.75rem; color:var(--muted); text-transform:uppercase; }
+    .path { font-size:.82rem; word-break:break-all; }
+    .actions { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; }
+    button { border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.08); color:var(--text); padding:8px; font:inherit; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">Environment Folders</div>
+    <div id="list" class="list"></div>
+    <div id="actions" class="actions"></div>
+  </div>
+  <script>
+    function pick(obj, camel, pascal) { return obj?.[camel] ?? obj?.[pascal]; }
+    function esc(value) { return String(value ?? "").replace(/'/g, "''"); }
+    async function runPs(script, parseJson = false) {
+      const executableScript = parseJson
+        ? `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`
+        : script;
+
+      const result = await window.HTWind.invoke("powershell.exec", { script: executableScript });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+      if (timedOut) throw new Error("PowerShell command timed out.");
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      if (!parseJson) return result;
+      if (!stdout.trim()) return {};
+      return JSON.parse(stdout);
+    }
+    async function load() {
+      const env = await runPs("[pscustomobject]@{ Desktop = [Environment]::GetFolderPath('Desktop'); Documents = [Environment]::GetFolderPath('MyDocuments'); UserProfile = $env:USERPROFILE; TempPath = [IO.Path]::GetTempPath(); CurrentDirectory = [Environment]::CurrentDirectory }", true);
+      const entries = [
+        ["Desktop", pick(env, "desktop", "Desktop")],
+        ["Documents", pick(env, "documents", "Documents")],
+        ["User Profile", pick(env, "userProfile", "UserProfile")],
+        ["Temp", pick(env, "tempPath", "TempPath")],
+        ["Current", pick(env, "currentDirectory", "CurrentDirectory")]
+      ];
+
+      const list = document.getElementById("list");
+      const actions = document.getElementById("actions");
+      list.innerHTML = "";
+      actions.innerHTML = "";
+
+      entries.forEach(([name, path]) => {
+        const item = document.createElement("div");
+        item.className = "item";
+        item.innerHTML = `<div class="name">${name}</div><div class="path">${path || "-"}</div>`;
+        list.appendChild(item);
+
+        if (path) {
+          const btn = document.createElement("button");
+          btn.textContent = name;
+          btn.onclick = () => runPs(`$p = '${esc(path)}'; Start-Process -FilePath $p`).catch(() => {});
+          actions.appendChild(btn);
+        }
+      });
+    }
+    load().catch(() => {});
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+Thank you for installing HTWind!
+
+HTWind is now ready to transform your Windows desktop with custom HTML widgets.
+
+Quick Start Guide:
+- Locate the HTWind icon in your system tray (bottom-right corner).
+- Use the "Add Widget" button to browse and add HTML widgets to your desktop.
+- Toggle "Locked" mode on widgets to switch between moving/resizing and interacting.
+- Use "Pin on top" for widgets you want to keep visible above other windows.
+
+Create & Share:
+- Build your own widgets using plain HTML, CSS, and JavaScript.
+- Use the built-in Editor with live preview to customize or create widgets from scratch.
+- Join our community to share your amazing widgets or find new inspirations!
+
+Official Links:
+- Repository & Documentation: https://github.com/sametcn99/HTWind
+- Community Showcases: https://github.com/sametcn99/HTWind/discussions
+- Bug Reports & Feature Requests: https://github.com/sametcn99/HTWind/issues
+
+Your feedback and contributions help make HTWind better for everyone.
+
+Enjoy your new desktop experience!
+
+---
+Developer Website: https://sametcc.me

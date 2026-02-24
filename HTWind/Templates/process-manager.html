@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Process Manager</title>
+  <style>
+    :root { --text:#edf4ff; --muted:#a8bad4; --line:rgba(182,213,255,.24); --bg:radial-gradient(circle at 86% 84%, rgba(104,174,255,.35), transparent 44%), linear-gradient(160deg, rgba(15,24,41,.96), rgba(6,11,22,.98)); }
+    html, body { width:100%; height:100%; margin:0; font-family:"Bahnschrift","Segoe UI",sans-serif; color:var(--text); background:transparent; }
+    .card { width:100%; height:100%; box-sizing:border-box; padding:12px; border-radius:16px; border:1px solid var(--line); background:var(--bg); display:grid; grid-template-rows:auto auto auto 1fr auto; gap:8px; }
+    .label { font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+    .row { display:grid; grid-template-columns:1fr auto; gap:8px; }
+    input, button { border-radius:10px; font:inherit; }
+    input { border:1px solid var(--line); background:rgba(255,255,255,.06); color:var(--text); padding:9px; outline:none; }
+    button { border:1px solid var(--line); background:rgba(255,255,255,.08); color:var(--text); padding:9px 10px; cursor:pointer; }
+    .primary { border:none; background:linear-gradient(135deg,#76c1ff,#4ca7ff); color:#041423; font-weight:700; }
+    .list { overflow:auto; border:1px solid rgba(182,213,255,.18); border-radius:10px; background:rgba(255,255,255,.03); padding:8px; }
+    .item { font-size:.79rem; margin-bottom:5px; display:flex; justify-content:space-between; gap:8px; }
+    .pid { color:var(--muted); }
+    .status { color:var(--muted); font-size:.79rem; min-height:1.1em; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">Process Manager</div>
+    <div class="row">
+      <input id="startName" placeholder="Start process (example: notepad.exe)" />
+      <button class="primary" onclick="startProcess()">Start</button>
+    </div>
+    <div class="row">
+      <input id="killPid" placeholder="Kill PID" />
+      <button onclick="killProcess()">Kill</button>
+    </div>
+    <div id="list" class="list"></div>
+    <div id="status" class="status">Ready.</div>
+  </div>
+  <script>
+    function pick(obj, camel, pascal) { return obj?.[camel] ?? obj?.[pascal]; }
+    function esc(value) { return String(value ?? "").replace(/'/g, "''"); }
+    async function runPs(script, parseJson = false) {
+      const executableScript = parseJson
+        ? `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`
+        : script;
+
+      const result = await window.HTWind.invoke("powershell.exec", { script: executableScript });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+
+      if (timedOut) throw new Error("PowerShell command timed out.");
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      if (!parseJson) return result;
+      if (!stdout.trim()) return {};
+      return JSON.parse(stdout);
+    }
+    const listEl = document.getElementById("list");
+    const statusEl = document.getElementById("status");
+    function setStatus(text) { statusEl.textContent = text; }
+
+    async function loadProcesses() {
+      try {
+        const processes = await runPs("Get-Process | Sort-Object ProcessName | Select-Object -First 60 @{n='ProcessId';e={$_.Id}}, @{n='Name';e={$_.ProcessName}}", true);
+        listEl.innerHTML = "";
+        processes.forEach((p) => {
+          const name = pick(p, "name", "Name") || "-";
+          const pid = pick(p, "processId", "ProcessId") || 0;
+          const item = document.createElement("div");
+          item.className = "item";
+          item.innerHTML = `<span>${name}</span><span class="pid">PID ${pid}</span>`;
+          item.onclick = () => { document.getElementById("killPid").value = String(pid); };
+          listEl.appendChild(item);
+        });
+      } catch {
+        setStatus("Failed to load process list.");
+      }
+    }
+
+    async function startProcess() {
+      const fileName = document.getElementById("startName").value.trim();
+      if (!fileName) return;
+      setStatus(`Starting ${fileName}...`);
+      try {
+        const r = await runPs(`$name = '${esc(fileName)}'; try { $p = Start-Process -FilePath $name -PassThru -ErrorAction Stop; [pscustomobject]@{ ProcessId = $p.Id } } catch { [pscustomobject]@{ ProcessId = 0 } }`, true);
+        const pid = pick(r, "processId", "ProcessId") || "n/a";
+        setStatus(`Started with PID ${pid}`);
+        loadProcesses();
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+    async function killProcess() {
+      const processId = Number(document.getElementById("killPid").value);
+      if (!Number.isFinite(processId) || processId <= 0) return;
+      setStatus(`Killing PID ${processId}...`);
+      try {
+        await runPs(`Stop-Process -Id ${processId} -Force`);
+        setStatus(`Killed PID ${processId}`);
+        loadProcesses();
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+    loadProcesses();
+    setInterval(loadProcesses, 5000);
+  </script>
+</body>
+</html>

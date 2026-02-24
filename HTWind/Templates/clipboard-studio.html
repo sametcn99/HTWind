@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clipboard Studio</title>
+  <style>
+    :root {
+      --text: #eef4ff;
+      --muted: #a8b9d4;
+      --line: rgba(181, 212, 255, 0.24);
+      --bg: radial-gradient(circle at 84% 84%, rgba(108, 161, 255, 0.35), transparent 42%),
+            linear-gradient(160deg, rgba(17, 27, 46, 0.96), rgba(6, 11, 23, 0.98));
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: "Bahnschrift", "Segoe UI", sans-serif;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      display: grid;
+      grid-template-rows: auto 1fr auto auto;
+      gap: 9px;
+    }
+
+    .label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    textarea {
+      width: 100%;
+      height: 100%;
+      resize: none;
+      box-sizing: border-box;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      padding: 10px;
+      font: inherit;
+      font-size: 0.84rem;
+      outline: none;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      font: inherit;
+      font-size: 0.82rem;
+      padding: 9px;
+      cursor: pointer;
+    }
+
+    button.primary {
+      border-color: transparent;
+      color: #041423;
+      background: linear-gradient(135deg, #75c0ff, #4fa9ff);
+      font-weight: 700;
+    }
+
+    #status {
+      min-height: 1.1em;
+      color: var(--muted);
+      font-size: 0.79rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">Clipboard Studio</div>
+    <textarea id="text" placeholder="Paste notes here, then copy to system clipboard..."></textarea>
+    <div class="actions">
+      <button class="primary" onclick="writeClipboard()">Copy</button>
+      <button onclick="readClipboard()">Paste</button>
+      <button onclick="clearClipboard()">Clear</button>
+    </div>
+    <div id="status">Ready.</div>
+  </div>
+
+  <script>
+    const textEl = document.getElementById("text");
+    const statusEl = document.getElementById("status");
+    function esc(value) { return String(value ?? "").replace(/'/g, "''"); }
+    async function runPs(script, parseJson = false) {
+      const executableScript = parseJson
+        ? `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`
+        : script;
+
+      const result = await window.HTWind.invoke("powershell.exec", { script: executableScript });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+
+      if (timedOut) {
+        throw new Error("PowerShell command timed out.");
+      }
+
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      if (!parseJson) {
+        return result;
+      }
+
+      if (!stdout.trim()) {
+        return {};
+      }
+
+      return JSON.parse(stdout);
+    }
+
+    function setStatus(text) {
+      statusEl.textContent = text;
+    }
+
+    async function writeClipboard() {
+      const text = textEl.value;
+      if (!text.trim()) {
+        setStatus("Nothing to copy.");
+        return;
+      }
+
+      try {
+        const result = await runPs(`$t = '${esc(text)}'; Set-Clipboard -Value $t; [pscustomobject]@{ Length = $t.Length }`, true);
+        const length = result?.length ?? result?.Length ?? text.length;
+        setStatus(`Copied ${length} characters.`);
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+    async function readClipboard() {
+      try {
+        const result = await runPs("$text = Get-Clipboard -Raw -ErrorAction SilentlyContinue; [pscustomobject]@{ Text = [string]$text }", true);
+        const text = result?.text ?? result?.Text ?? "";
+        textEl.value = text;
+        setStatus(text ? "Loaded from clipboard." : "Clipboard is empty.");
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+    async function clearClipboard() {
+      try {
+        await runPs("Set-Clipboard -Value ''");
+        textEl.value = "";
+        setStatus("Clipboard cleared.");
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+  </script>
+</body>
+</html>

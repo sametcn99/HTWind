@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Now Playing Visualizer</title>
+  <style>
+    html, body { width: 100%; height: 100%; margin: 0; font-family: Segoe UI, sans-serif; color: #f5f7fb; background: transparent; }
+    .card { width: 100%; height: 100%; box-sizing: border-box; padding: 12px; background: rgba(20,24,30,0.5); border: 1px solid rgba(255,255,255,0.15); display: grid; grid-template-rows: auto auto 1fr; gap: 8px; }
+    .title { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .artist { opacity: 0.8; font-size: 0.9rem; }
+    .bars { display: grid; grid-template-columns: repeat(16, 1fr); align-items: end; gap: 4px; }
+    .bar { background: #67b6ff; border-radius: 4px 4px 0 0; min-height: 8px; transition: height 0.22s linear; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="title" class="title">No media session</div>
+    <div id="artist" class="artist">-</div>
+    <div id="bars" class="bars"></div>
+  </div>
+  <script>
+    function pick(obj, camelKey, pascalKey) {
+      return obj?.[camelKey] ?? obj?.[pascalKey];
+    }
+
+    const barsHost = document.getElementById("bars");
+    const titleEl = document.getElementById("title");
+    const artistEl = document.getElementById("artist");
+    const bars = [];
+    for (let i = 0; i < 16; i++) {
+      const el = document.createElement("div");
+      el.className = "bar";
+      barsHost.appendChild(el);
+      bars.push(el);
+    }
+
+    function hashSeed(text) {
+      let h = 0;
+      for (let i = 0; i < text.length; i++) h = ((h << 5) - h) + text.charCodeAt(i);
+      return Math.abs(h);
+    }
+
+    function animate(seedBase) {
+      const t = Date.now() / 260;
+      bars.forEach((bar, i) => {
+        const v = Math.abs(Math.sin((t + (seedBase % 50) + i * 0.8) * 0.6));
+        bar.style.height = `${8 + Math.round(v * 64)}px`;
+      });
+    }
+
+    async function refresh() {
+      try {
+        const media = await execPsJson("$p = Get-Process | Where-Object { $_.MainWindowTitle -and $_.ProcessName -match 'spotify|music|vlc|chrome|msedge' } | Select-Object -First 1; if ($null -eq $p) { $null } else { $parts = $p.MainWindowTitle -split ' - ', 2; [pscustomobject]@{ Title = if ($parts.Count -gt 0) { $parts[0] } else { $p.MainWindowTitle }; Artist = if ($parts.Count -gt 1) { $parts[1] } else { $p.ProcessName }; SourceAppUserModelId = $p.ProcessName } }");
+        if (!media) {
+          titleEl.textContent = "No media session";
+          artistEl.textContent = "-";
+          animate(1);
+          return;
+        }
+
+        const title = pick(media, "title", "Title") || "Unknown track";
+        const artist = pick(media, "artist", "Artist") || pick(media, "sourceAppUserModelId", "SourceAppUserModelId") || "Unknown source";
+
+        titleEl.textContent = title;
+        artistEl.textContent = artist;
+        animate(hashSeed(`${title}:${artist}`));
+      } catch {
+        titleEl.textContent = "Media API error";
+        artistEl.textContent = "-";
+      }
+    }
+
+    async function execPs(script) {
+      const result = await window.HTWind.invoke("powershell.exec", { script });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+      if (timedOut) throw new Error("PowerShell command timed out.");
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      return stdout;
+    }
+
+    async function execPsJson(script) {
+      const wrapped = `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`;
+      const output = await execPs(wrapped);
+      return output.trim() ? JSON.parse(output) : {};
+    }
+
+    refresh();
+    setInterval(refresh, 1500);
+  </script>
+</body>
+</html>

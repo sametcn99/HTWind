@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerShell Console</title>
+    <style>
+      :root {
+        --text: #edf4ff;
+        --muted: #a9b9d4;
+        --line: rgba(181, 212, 255, 0.24);
+        --bg:
+          radial-gradient(circle at 12% 12%, rgba(101, 174, 255, 0.31), transparent 44%),
+          linear-gradient(160deg, rgba(14, 23, 42, 0.95), rgba(6, 11, 23, 0.98));
+        --ok: #90efb8;
+        --err: #ff9ea1;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        font-family: "Bahnschrift", "Segoe UI", sans-serif;
+        color: var(--text);
+        background: transparent;
+      }
+
+      .card {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: var(--bg);
+        display: grid;
+        grid-template-rows: auto auto 1fr auto auto;
+        gap: 8px;
+      }
+
+      .label {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+
+      textarea {
+        width: 100%;
+        height: 100%;
+        resize: none;
+        box-sizing: border-box;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        padding: 10px;
+        font:
+          12px/1.45 "Cascadia Code",
+          Consolas,
+          monospace;
+        outline: none;
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: auto auto auto 1fr;
+        gap: 8px;
+        align-items: center;
+      }
+
+      button,
+      select {
+        border-radius: 10px;
+        font: inherit;
+        font-size: 0.82rem;
+      }
+
+      button {
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        padding: 8px 10px;
+        cursor: pointer;
+      }
+
+      button.primary {
+        border: none;
+        background: linear-gradient(135deg, #75c0ff, #4fa8ff);
+        color: #041423;
+        font-weight: 700;
+      }
+
+      select {
+        min-width: 110px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        padding: 8px;
+        outline: none;
+      }
+
+      .status {
+        font-size: 0.8rem;
+        color: var(--muted);
+        min-height: 1.2em;
+      }
+
+      .status.ok {
+        color: var(--ok);
+      }
+      .status.err {
+        color: var(--err);
+      }
+
+      .output {
+        border: 1px solid rgba(181, 212, 255, 0.2);
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.24);
+        padding: 8px;
+        overflow: auto;
+        font:
+          12px/1.45 "Cascadia Code",
+          Consolas,
+          monospace;
+        white-space: pre-wrap;
+        word-break: break-word;
+        min-height: 110px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="label">PowerShell Console</div>
+      <textarea id="script">Get-Process | Sort-Object CPU -Descending | Select-Object -First 5 Name, Id, CPU</textarea>
+
+      <div class="actions">
+        <button class="primary" onclick="runScript()">Run</button>
+        <button onclick="useSample('disk')">Disk</button>
+        <button onclick="useSample('network')">Network</button>
+        <select id="shell">
+          <option value="powershell">powershell</option>
+          <option value="pwsh">pwsh</option>
+        </select>
+      </div>
+
+      <div id="status" class="status">Ready.</div>
+      <div id="output" class="output">Output will appear here...</div>
+    </div>
+
+    <script>
+      function pick(obj, camel, pascal) {
+        return obj?.[camel] ?? obj?.[pascal];
+      }
+
+      const scriptEl = document.getElementById("script");
+      const shellEl = document.getElementById("shell");
+      const statusEl = document.getElementById("status");
+      const outputEl = document.getElementById("output");
+
+      function setStatus(text, kind) {
+        statusEl.textContent = text;
+        statusEl.className = `status${kind ? ` ${kind}` : ""}`;
+      }
+
+      function useSample(name) {
+        const samples = {
+          disk: "Get-PSDrive -PSProvider FileSystem | Select-Object Name, Used, Free",
+          network: "Get-NetIPAddress -AddressFamily IPv4 | Select-Object InterfaceAlias, IPAddress",
+        };
+
+        scriptEl.value = samples[name] || scriptEl.value;
+      }
+
+      async function runScript() {
+        const script = scriptEl.value.trim();
+        if (!script) {
+          setStatus("Script is empty.", "err");
+          return;
+        }
+
+        setStatus("Running script...", "");
+        outputEl.textContent = "";
+
+        try {
+          const result = await window.HTWind.invoke("powershell.exec", {
+            script,
+            shell: shellEl.value,
+            timeoutMs: 8000,
+            maxOutputChars: 20000,
+          });
+
+          const timedOut = !!pick(result, "timedOut", "TimedOut");
+          const exitCode = pick(result, "exitCode", "ExitCode");
+          const stdout = pick(result, "output", "Output") || "";
+          const stderr = pick(result, "error", "Error") || "";
+
+          outputEl.textContent = stdout || stderr || "(no output)";
+
+          if (timedOut) {
+            setStatus("Timed out.", "err");
+            return;
+          }
+
+          if (exitCode === 0) {
+            setStatus("Completed successfully.", "ok");
+          } else {
+            setStatus(`Finished with exit code ${exitCode}.`, "err");
+          }
+        } catch (error) {
+          setStatus(`Error: ${error.message}`, "err");
+        }
+      }
+    </script>
+  </body>
+</html>

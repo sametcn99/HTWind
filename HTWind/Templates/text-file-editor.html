@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text File Editor</title>
+  <style>
+    :root { --text:#edf4ff; --muted:#a9b9d3; --line:rgba(181,212,255,.24); --bg:radial-gradient(circle at 84% 84%, rgba(98,169,255,.33), transparent 44%), linear-gradient(160deg, rgba(15,23,41,.96), rgba(6,11,22,.98)); }
+    html, body { width:100%; height:100%; margin:0; font-family:"Bahnschrift","Segoe UI",sans-serif; color:var(--text); background:transparent; }
+    .card { width:100%; height:100%; box-sizing:border-box; padding:12px; border-radius:16px; border:1px solid var(--line); background:var(--bg); display:grid; grid-template-rows:auto auto 1fr auto auto; gap:8px; }
+    .label { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+    .path-row { display:grid; grid-template-columns:1fr auto auto; gap:6px; }
+    input, textarea { border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.06); color:var(--text); font:inherit; outline:none; }
+    input { min-width:0; padding:9px; }
+    textarea { width:100%; height:100%; resize:none; box-sizing:border-box; padding:10px; font-size:.82rem; }
+    .actions { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; }
+    button { border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.08); color:var(--text); padding:8px; font:inherit; cursor:pointer; }
+    .primary { border:none; background:linear-gradient(135deg,#75c0ff,#4fa8ff); color:#041423; font-weight:700; }
+    .status { font-size:.79rem; color:var(--muted); min-height:1.1em; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">Text File Editor</div>
+    <div class="path-row">
+      <input id="path" placeholder="File path (example: %TEMP%\\note.txt)" />
+      <button onclick="loadFile()">Load</button>
+      <button onclick="checkFile()">Check</button>
+    </div>
+    <textarea id="text" placeholder="File content..."></textarea>
+    <div class="actions">
+      <button class="primary" onclick="save(false)">Save</button>
+      <button onclick="save(true)">Append</button>
+      <button onclick="copyContent()">Copy</button>
+    </div>
+    <div id="status" class="status">Ready.</div>
+  </div>
+  <script>
+    const pathEl = document.getElementById("path");
+    const textEl = document.getElementById("text");
+    const statusEl = document.getElementById("status");
+    function pick(obj, camel, pascal) { return obj?.[camel] ?? obj?.[pascal]; }
+    function esc(value) { return String(value ?? "").replace(/'/g, "''"); }
+    function toBase64Utf8(value) {
+      return btoa(unescape(encodeURIComponent(value ?? "")));
+    }
+    async function runPs(script, parseJson = false) {
+      const executableScript = parseJson
+        ? `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`
+        : script;
+
+      const result = await window.HTWind.invoke("powershell.exec", { script: executableScript });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+
+      if (timedOut) throw new Error("PowerShell command timed out.");
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      if (!parseJson) return result;
+      if (!stdout.trim()) return {};
+      return JSON.parse(stdout);
+    }
+    function setStatus(text) { statusEl.textContent = text; }
+
+    async function loadFile() {
+      const path = pathEl.value.trim();
+      if (!path) return;
+      try {
+        const result = await runPs(`$path = [Environment]::ExpandEnvironmentVariables('${esc(path)}'); $max = 120000; $text = [IO.File]::ReadAllText($path); $truncated = $false; if ($text.Length -gt $max) { $text = $text.Substring(0, $max); $truncated = $true }; [pscustomobject]@{ Text = $text; IsTruncated = $truncated }`, true);
+        textEl.value = pick(result, "text", "Text") || "";
+        const truncated = pick(result, "isTruncated", "IsTruncated");
+        setStatus(truncated ? "Loaded (truncated)." : "Loaded.");
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+    async function save(append) {
+      const path = pathEl.value.trim();
+      if (!path) {
+        setStatus("Enter file path first.");
+        return;
+      }
+      try {
+        const text = textEl.value;
+        const appendFlag = append ? "$true" : "$false";
+        const textBase64 = toBase64Utf8(text);
+        await runPs(`$path = [Environment]::ExpandEnvironmentVariables('${esc(path)}'); $bytes = [Convert]::FromBase64String('${textBase64}'); $text = [Text.Encoding]::UTF8.GetString($bytes); if (${appendFlag}) { [IO.File]::AppendAllText($path, $text) } else { [IO.File]::WriteAllText($path, $text) }`);
+        setStatus(append ? "Appended." : "Saved.");
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+    async function checkFile() {
+      const path = pathEl.value.trim();
+      if (!path) return;
+      try {
+        const result = await runPs(`$path = [Environment]::ExpandEnvironmentVariables('${esc(path)}'); [pscustomobject]@{ Exists = (Test-Path -LiteralPath $path -PathType Leaf) }`, true);
+        const exists = pick(result, "exists", "Exists");
+        setStatus(exists ? "File exists." : "File not found.");
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+    async function copyContent() {
+      try {
+        await runPs(`Set-Clipboard -Value '${esc(textEl.value)}'`);
+        setStatus("Content copied.");
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+  </script>
+</body>
+</html>

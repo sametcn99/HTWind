@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memory Stats</title>
+  <style>
+    :root { --text:#eef4ff; --muted:#aabbd5; --line:rgba(180,210,255,.24); --bg:radial-gradient(circle at 80% 14%, rgba(98,176,255,.32), transparent 43%), linear-gradient(160deg, rgba(13,23,42,.95), rgba(6,11,23,.98)); }
+    html, body { width:100%; height:100%; margin:0; font-family:"Bahnschrift","Segoe UI",sans-serif; color:var(--text); background:transparent; }
+    .card { width:100%; height:100%; box-sizing:border-box; padding:12px; border-radius:16px; border:1px solid var(--line); background:var(--bg); display:grid; grid-template-rows:auto auto auto auto 1fr; gap:8px; }
+    .label { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+    .row { font-size:.84rem; color:var(--muted); }
+    .value { color:var(--text); font-weight:700; }
+    .bar { height:8px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden; }
+    .fill { height:100%; background:linear-gradient(90deg,#74c1ff,#4ea6ff); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">Memory Stats</div>
+    <div class="row">Process Working Set: <span id="ws" class="value">-</span></div>
+    <div class="row">GC Memory: <span id="gc" class="value">-</span></div>
+    <div class="bar"><div id="fill" class="fill" style="width:0%"></div></div>
+    <div id="meta" class="row">Loading...</div>
+  </div>
+  <script>
+    function pick(obj, camel, pascal) { return obj?.[camel] ?? obj?.[pascal]; }
+
+    async function execPs(script) {
+      const result = await window.HTWind.invoke("powershell.exec", { script });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+      if (timedOut) throw new Error("PowerShell command timed out.");
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      return stdout;
+    }
+
+    async function execPsJson(script) {
+      const wrapped = `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`;
+      const output = await execPs(wrapped);
+      return output.trim() ? JSON.parse(output) : {};
+    }
+
+    function fmtBytes(v) {
+      const n = Number(v || 0);
+      if (n < 1024) return `${n} B`;
+      if (n < 1024 ** 2) return `${(n / 1024).toFixed(1)} KB`;
+      if (n < 1024 ** 3) return `${(n / 1024 ** 2).toFixed(1)} MB`;
+      return `${(n / 1024 ** 3).toFixed(2)} GB`;
+    }
+    async function refresh() {
+      try {
+        const m = await execPsJson("$p = [System.Diagnostics.Process]::GetCurrentProcess(); $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop; [pscustomobject]@{ ProcessWorkingSetBytes = [int64]$p.WorkingSet64; GcTotalMemoryBytes = [int64][GC]::GetTotalMemory($false); TotalAvailableMemoryBytes = [int64]$os.TotalVisibleMemorySize * 1024 }");
+        const ws = Number(pick(m, "processWorkingSetBytes", "ProcessWorkingSetBytes") || 0);
+        const gc = Number(pick(m, "gcTotalMemoryBytes", "GcTotalMemoryBytes") || 0);
+        const total = Number(pick(m, "totalAvailableMemoryBytes", "TotalAvailableMemoryBytes") || 0);
+        const ratio = total > 0 ? Math.min(100, Math.round((gc / total) * 100)) : 0;
+        document.getElementById("ws").textContent = fmtBytes(ws);
+        document.getElementById("gc").textContent = fmtBytes(gc);
+        document.getElementById("fill").style.width = `${ratio}%`;
+        document.getElementById("meta").textContent = `Heap ratio: ${ratio}%`;
+      } catch {
+        document.getElementById("meta").textContent = "Unable to read memory stats.";
+      }
+    }
+    refresh();
+    setInterval(refresh, 2000);
+  </script>
+</body>
+</html>

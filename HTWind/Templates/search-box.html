@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search Box</title>
+  <style>
+    :root {
+      --text: #eef4ff;
+      --muted: #a8bbd7;
+      --line: rgba(180, 211, 255, 0.24);
+      --bg: radial-gradient(circle at 84% 14%, rgba(96, 164, 255, 0.34), transparent 40%),
+            linear-gradient(160deg, rgba(14, 24, 44, 0.95), rgba(6, 10, 22, 0.98));
+      --accent: #73beff;
+      --accent-strong: #4ea8ff;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: "Bahnschrift", "Segoe UI", sans-serif;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      display: grid;
+      grid-template-rows: auto auto auto auto 1fr;
+      gap: 10px;
+    }
+
+    .label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .title {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .search-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    input, select {
+      min-width: 0;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      padding: 10px;
+      font: inherit;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding-right: 34px;
+      cursor: pointer;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--accent) 50%),
+        linear-gradient(135deg, var(--accent) 50%, transparent 50%);
+      background-position:
+        calc(100% - 16px) calc(50% - 2px),
+        calc(100% - 11px) calc(50% - 2px);
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+    }
+
+    select:hover {
+      border-color: rgba(115, 190, 255, 0.55);
+      background-color: rgba(115, 190, 255, 0.08);
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(78, 168, 255, 0.2);
+    }
+
+    button {
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #041525;
+      font-weight: 700;
+      padding: 10px 14px;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 0.16s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    #status {
+      min-height: 1.2em;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">Web Search</div>
+    <div class="title">Search from widget</div>
+    <div class="search-row">
+      <input id="query" placeholder="Search anything..." />
+      <button id="go">Go</button>
+    </div>
+    <select id="engine">
+      <option value="bing">Bing</option>
+      <option value="google">Google</option>
+      <option value="duckduckgo">DuckDuckGo</option>
+    </select>
+    <div id="status" class="hint">Press Enter to open in default browser.</div>
+  </div>
+
+  <script>
+    const queryEl = document.getElementById("query");
+    const engineEl = document.getElementById("engine");
+    const statusEl = document.getElementById("status");
+
+    function setStatus(text) {
+      statusEl.textContent = text;
+    }
+
+    async function execPs(script) {
+      const result = await window.HTWind.invoke("powershell.exec", { script });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+      if (timedOut) throw new Error("PowerShell command timed out.");
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      return stdout;
+    }
+
+    async function execPsJson(script) {
+      const wrapped = `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`;
+      const output = await execPs(wrapped);
+      return output.trim() ? JSON.parse(output) : {};
+    }
+
+    function esc(value) {
+      return String(value ?? "").replace(/'/g, "''");
+    }
+
+    async function searchNow() {
+      const query = queryEl.value.trim();
+      if (!query) {
+        setStatus("Write something to search.");
+        return;
+      }
+
+      setStatus(`Searching for: ${query}`);
+      try {
+        const encodedQuery = encodeURIComponent(query);
+        const url = engineEl.value === "google"
+          ? `https://www.google.com/search?q=${encodedQuery}`
+          : engineEl.value === "duckduckgo"
+            ? `https://duckduckgo.com/?q=${encodedQuery}`
+            : `https://www.bing.com/search?q=${encodedQuery}`;
+        const result = await execPsJson(`$url = '${esc(url)}'; Start-Process -FilePath $url; [pscustomobject]@{ Url = $url }`);
+
+        const openedUrl = result?.url ?? result?.Url;
+        setStatus(`Opened: ${openedUrl || "browser"}`);
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+    document.getElementById("go").addEventListener("click", searchNow);
+    queryEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        searchNow();
+      }
+    });
+
+    queryEl.focus();
+  </script>
+</body>
+</html>

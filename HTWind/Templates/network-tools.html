@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Network Tools</title>
+  <style>
+    :root { --text:#eef4ff; --muted:#a9b9d4; --line:rgba(181,212,255,.24); --bg:radial-gradient(circle at 86% 12%, rgba(103,176,255,.33), transparent 41%), linear-gradient(160deg, rgba(15,24,42,.95), rgba(6,11,23,.98)); }
+    html, body { width:100%; height:100%; margin:0; font-family:"Bahnschrift","Segoe UI",sans-serif; color:var(--text); background:transparent; }
+    .card { width:100%; height:100%; box-sizing:border-box; padding:12px; border-radius:16px; border:1px solid var(--line); background:var(--bg); display:grid; grid-template-rows:auto auto auto 1fr auto; gap:8px; }
+    .label { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+    .meta { font-size:.82rem; color:var(--muted); }
+    .ping { display:grid; grid-template-columns:1fr auto; gap:8px; }
+    input, button { border-radius:10px; font:inherit; }
+    input { border:1px solid var(--line); background:rgba(255,255,255,.06); color:var(--text); padding:9px; outline:none; }
+    button { border:none; background:linear-gradient(135deg,#74beff,#4da8ff); color:#041423; font-weight:700; padding:9px 12px; cursor:pointer; }
+    .list { overflow:auto; border:1px solid rgba(181,212,255,.18); border-radius:10px; padding:8px; background:rgba(255,255,255,.03); }
+    .item { font-size:.8rem; margin-bottom:6px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">Network Tools</div>
+    <div id="stats" class="meta">Loading network stats...</div>
+    <div class="ping">
+      <input id="host" placeholder="Ping host (example: 1.1.1.1)" value="1.1.1.1" />
+      <button onclick="pingHost()">Ping</button>
+    </div>
+    <div id="adapters" class="list"></div>
+    <div id="result" class="meta">Ready.</div>
+  </div>
+  <script>
+    function pick(obj, camel, pascal) { return obj?.[camel] ?? obj?.[pascal]; }
+    function fmtMbps(bps) { return `${(Number(bps || 0) / 1000000).toFixed(0)} Mbps`; }
+    function esc(value) { return String(value ?? "").replace(/'/g, "''"); }
+    async function runPs(script, parseJson = false, timeoutMs = 7000) {
+      const executableScript = parseJson
+        ? `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`
+        : script;
+
+      const result = await window.HTWind.invoke("powershell.exec", { script: executableScript, timeoutMs });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+
+      if (timedOut) {
+        throw new Error("PowerShell command timed out.");
+      }
+
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      if (!parseJson) {
+        return result;
+      }
+
+      if (!stdout.trim()) {
+        return {};
+      }
+
+      return JSON.parse(stdout);
+    }
+
+    async function refresh() {
+      const stats = await runPs("$ifs = [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() | Where-Object { $_.OperationalStatus -eq 'Up' -and $_.NetworkInterfaceType -ne 'Loopback' -and $_.NetworkInterfaceType -ne 'Tunnel' }; $sent = 0L; $recv = 0L; foreach ($n in $ifs) { $s = $n.GetIPv4Statistics(); $sent += [int64]$s.BytesSent; $recv += [int64]$s.BytesReceived }; [pscustomobject]@{ TotalBytesReceived = $recv; TotalBytesSent = $sent }", true, 9000);
+      const adapters = await runPs("[System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() | ForEach-Object { [pscustomobject]@{ Name = $_.Name; Status = $_.OperationalStatus.ToString(); SpeedBitsPerSecond = [int64]$_.Speed } }", true, 9000);
+      const totalRx = pick(stats, "totalBytesReceived", "TotalBytesReceived") || 0;
+      const totalTx = pick(stats, "totalBytesSent", "TotalBytesSent") || 0;
+      document.getElementById("stats").textContent = `RX ${totalRx} bytes | TX ${totalTx} bytes`;
+
+      const host = document.getElementById("adapters");
+      host.innerHTML = "";
+      adapters.slice(0, 12).forEach((a) => {
+        const name = pick(a, "name", "Name") || "-";
+        const status = pick(a, "status", "Status") || "-";
+        const speed = fmtMbps(pick(a, "speedBitsPerSecond", "SpeedBitsPerSecond"));
+        const item = document.createElement("div");
+        item.className = "item";
+        item.textContent = `${name} - ${status} - ${speed}`;
+        host.appendChild(item);
+      });
+    }
+
+    async function pingHost() {
+      const hostValue = document.getElementById("host").value.trim();
+      if (!hostValue) return;
+
+      const resultEl = document.getElementById("result");
+      resultEl.textContent = `Pinging ${hostValue}...`;
+      try {
+        const reply = await runPs(`$p = [System.Net.NetworkInformation.Ping]::new(); try { $r = $p.Send('${esc(hostValue)}', 2000); if ($r -and $r.Status -eq [System.Net.NetworkInformation.IPStatus]::Success) { [pscustomobject]@{ Status = 'Success'; RoundtripTimeMs = [int]$r.RoundtripTime } } else { [pscustomobject]@{ Status = 'Timeout'; RoundtripTimeMs = 0 } } } finally { $p.Dispose() }`, true, 5000);
+        const status = pick(reply, "status", "Status") || "Unknown";
+        const ms = pick(reply, "roundtripTimeMs", "RoundtripTimeMs") || 0;
+        resultEl.textContent = `${status} - ${ms} ms`;
+      } catch (error) {
+        resultEl.textContent = `Ping failed: ${error.message}`;
+      }
+    }
+
+    refresh().catch(() => {});
+    setInterval(() => refresh().catch(() => {}), 5000);
+  </script>
+</body>
+</html>

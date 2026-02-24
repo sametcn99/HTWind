@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Monitor</title>
+  <style>
+    :root {
+      --text: #edf4ff;
+      --muted: #a8b9d2;
+      --line: rgba(177, 208, 255, 0.25);
+      --bg: radial-gradient(circle at 90% 8%, rgba(86, 164, 255, 0.3), transparent 42%),
+            linear-gradient(165deg, rgba(14, 24, 40, 0.95), rgba(5, 11, 24, 0.98));
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: "Bahnschrift", "Segoe UI", sans-serif;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      overflow: auto;
+      display: grid;
+      grid-template-rows: auto auto auto 1fr;
+      gap: 8px;
+    }
+
+    .label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .row {
+      margin-bottom: 6px;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .bar {
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.15);
+      overflow: hidden;
+      margin-top: 3px;
+    }
+
+    .fill {
+      height: 100%;
+      background: linear-gradient(90deg, #6ac7ff, #4e9fff);
+    }
+
+    .disk {
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(177, 208, 255, 0.2);
+      background: rgba(255, 255, 255, 0.03);
+      margin-top: 7px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">System Monitor</div>
+    <div id="machine" class="row"></div>
+    <div id="uptime" class="row small"></div>
+    <div id="network" class="row small"></div>
+    <div id="disks"></div>
+  </div>
+  <script>
+    function pick(obj, camelKey, pascalKey) {
+      return obj?.[camelKey] ?? obj?.[pascalKey];
+    }
+
+    async function runPs(script, parseJson = false, timeoutMs = 10000) {
+      const executableScript = parseJson
+        ? `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`
+        : script;
+
+      const result = await window.HTWind.invoke("powershell.exec", { script: executableScript, timeoutMs });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+
+      if (timedOut) throw new Error("PowerShell command timed out.");
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      if (!parseJson) return result;
+      if (!stdout.trim()) return {};
+      return JSON.parse(stdout);
+    }
+
+    function fmtBytes(v) {
+      if (v == null || Number.isNaN(v)) return "0 B";
+      if (v < 1024) return `${v} B`;
+      if (v < 1024 ** 2) return `${(v / 1024).toFixed(1)} KB`;
+      if (v < 1024 ** 3) return `${(v / 1024 ** 2).toFixed(1)} MB`;
+      return `${(v / 1024 ** 3).toFixed(1)} GB`;
+    }
+
+    function toArray(value) {
+      if (Array.isArray(value)) return value;
+      if (value == null) return [];
+      if (typeof value === "object") return [value];
+      return [];
+    }
+
+    async function refresh() {
+      const [sysResult, netResult, disksResult] = await Promise.allSettled([
+        runPs("$uptime = [Environment]::TickCount64 / 1000; [pscustomobject]@{ MachineName = $env:COMPUTERNAME; OsVersion = [Environment]::OSVersion.VersionString; UptimeSeconds = [int64]$uptime }", true, 7000),
+        runPs("$ifs = [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() | Where-Object { $_.OperationalStatus -eq 'Up' -and $_.NetworkInterfaceType -ne 'Loopback' -and $_.NetworkInterfaceType -ne 'Tunnel' }; $sent = 0L; $recv = 0L; foreach ($n in $ifs) { try { $s = $n.GetIPv4Statistics(); $sent += [int64]$s.BytesSent; $recv += [int64]$s.BytesReceived } catch { } }; [pscustomobject]@{ TotalBytesReceived = $recv; TotalBytesSent = $sent }", true, 9000),
+        runPs("[System.IO.DriveInfo]::GetDrives() | Where-Object { $_.IsReady } | ForEach-Object { try { $used = [int64]($_.TotalSize - $_.AvailableFreeSpace); $total = [int64]$_.TotalSize; $pct = if ($total -gt 0) { [math]::Round(($used / $total) * 100, 1) } else { 0 }; [pscustomobject]@{ Name = $_.Name; Label = $_.VolumeLabel; UsedPercent = $pct; UsedBytes = $used; TotalBytes = $total } } catch { } }", true, 10000)
+      ]);
+
+      const sys = sysResult.status === "fulfilled" ? sysResult.value : {};
+      const net = netResult.status === "fulfilled" ? netResult.value : {};
+      const disks = disksResult.status === "fulfilled" ? toArray(disksResult.value) : [];
+
+      const machineName = pick(sys, "machineName", "MachineName") || "Unknown";
+      const osVersion = pick(sys, "osVersion", "OsVersion") || "Unknown OS";
+      const uptimeSeconds = Number(pick(sys, "uptimeSeconds", "UptimeSeconds") || 0);
+      const totalBytesReceived = Number(pick(net, "totalBytesReceived", "TotalBytesReceived") || 0);
+      const totalBytesSent = Number(pick(net, "totalBytesSent", "TotalBytesSent") || 0);
+
+      document.getElementById("machine").textContent = `${machineName} (${osVersion})`;
+      document.getElementById("uptime").textContent = `Uptime: ${Math.round(uptimeSeconds / 60)} minutes`;
+      document.getElementById("network").textContent = `RX ${fmtBytes(totalBytesReceived)} | TX ${fmtBytes(totalBytesSent)}`;
+
+      const disksHost = document.getElementById("disks");
+      disksHost.innerHTML = "";
+      disks.forEach((d) => {
+        const name = pick(d, "name", "Name") || "-";
+        const label = pick(d, "label", "Label") || "";
+        const usedPercent = Number(pick(d, "usedPercent", "UsedPercent") || 0);
+        const usedBytes = Number(pick(d, "usedBytes", "UsedBytes") || 0);
+        const totalBytes = Number(pick(d, "totalBytes", "TotalBytes") || 0);
+
+        const wrap = document.createElement("div");
+        wrap.className = "disk";
+        wrap.innerHTML = `<div>${name} ${label} - ${usedPercent.toFixed(1)}%</div>
+          <div class="bar"><div class="fill" style="width:${usedPercent}%"></div></div>
+          <div class="small">Used ${fmtBytes(usedBytes)} / ${fmtBytes(totalBytes)}</div>`;
+        disksHost.appendChild(wrap);
+      });
+    }
+
+    refresh().catch(console.error);
+    setInterval(() => refresh().catch(console.error), 4000);
+  </script>
+</body>
+</html>

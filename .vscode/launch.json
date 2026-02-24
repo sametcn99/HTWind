@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "HTWind (.NET Dev Kit)",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/HTWind/HTWind.csproj",
+            "preLaunchTask": "build HTWind"
+        },
+        {
+            "name": "HTWind (coreclr)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/HTWind/bin/Debug/net10.0-windows10.0.19041.0/HTWind.exe",
+            "cwd": "${workspaceFolder}/HTWind",
+            "stopAtEntry": false,
+            "preLaunchTask": "build HTWind"
+        }
+    ]
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drive Roots</title>
+  <style>
+    :root { --text:#edf4ff; --muted:#a9bad5; --line:rgba(181,212,255,.24); --bg:radial-gradient(circle at 10% 86%, rgba(98,170,255,.31), transparent 44%), linear-gradient(160deg, rgba(14,23,42,.95), rgba(6,11,23,.98)); }
+    html, body { width:100%; height:100%; margin:0; font-family:"Bahnschrift","Segoe UI",sans-serif; color:var(--text); background:transparent; }
+    .card { width:100%; height:100%; box-sizing:border-box; padding:12px; border-radius:16px; border:1px solid var(--line); background:var(--bg); display:grid; grid-template-rows:auto 1fr auto; gap:8px; }
+    .label { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+    .list { overflow:auto; border:1px solid rgba(181,212,255,.2); border-radius:10px; background:rgba(255,255,255,.03); padding:8px; }
+    .item { margin-bottom:7px; border:1px solid rgba(181,212,255,.2); border-radius:10px; padding:8px; display:grid; gap:3px; font-size:.82rem; }
+    .muted { color:var(--muted); font-size:.78rem; }
+    button { border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.08); color:var(--text); padding:8px 10px; font:inherit; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">Drive Roots</div>
+    <div id="list" class="list"></div>
+    <button onclick="loadRoots()">Refresh</button>
+  </div>
+  <script>
+    function pick(obj, camel, pascal) { return obj?.[camel] ?? obj?.[pascal]; }
+    function esc(value) { return String(value ?? "").replace(/'/g, "''"); }
+    async function runPs(script, parseJson = false) {
+      const executableScript = parseJson
+        ? `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`
+        : script;
+
+      const result = await window.HTWind.invoke("powershell.exec", { script: executableScript });
+      const timedOut = !!(result?.timedOut ?? result?.TimedOut);
+      const exitCode = result?.exitCode ?? result?.ExitCode;
+      const stdout = String(result?.output ?? result?.Output ?? "");
+      const stderr = String(result?.error ?? result?.Error ?? "");
+      if (timedOut) throw new Error("PowerShell command timed out.");
+      if (typeof exitCode === "number" && exitCode !== 0) {
+        throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
+      }
+
+      if (!parseJson) return result;
+      if (!stdout.trim()) return {};
+      return JSON.parse(stdout);
+    }
+
+    async function loadRoots() {
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+      try {
+        const result = await runPs("$roots = [System.IO.DriveInfo]::GetDrives() | ForEach-Object { [pscustomobject]@{ Name = $_.Name; DriveType = $_.DriveType.ToString(); IsReady = $_.IsReady; Label = if ($_.IsReady) { $_.VolumeLabel } else { '' } } }; [pscustomobject]@{ Roots = @($roots) }", true);
+        const roots = pick(result, "roots", "Roots") || [];
+        roots.forEach((root) => {
+          const name = pick(root, "name", "Name") || "-";
+          const driveType = pick(root, "driveType", "DriveType") || "-";
+          const isReady = pick(root, "isReady", "IsReady");
+          const label = pick(root, "label", "Label") || "";
+
+          const item = document.createElement("div");
+          item.className = "item";
+          item.innerHTML = `<div><strong>${name}</strong> ${label ? `(${label})` : ""}</div><div class="muted">${driveType} - ${isReady ? "Ready" : "Not ready"}</div>`;
+          item.onclick = () => runPs(`$p = '${esc(name)}'; Start-Process -FilePath $p`).catch(() => {});
+          list.appendChild(item);
+        });
+      } catch {
+        list.innerHTML = "<div class='muted'>Failed to load drives.</div>";
+      }
+    }
+
+    loadRoots();
+  </script>
+</body>
+</html>

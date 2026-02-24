@@ -1,0 +1,85 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "restore HTWind",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "restore",
+        "HTWind/HTWind.csproj"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build HTWind",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "HTWind/HTWind.csproj"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "run HTWind",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "HTWind/HTWind.csproj"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "clean HTWind",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "clean",
+        "HTWind/HTWind.csproj"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "package HTWind installer (local)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/package-installer.ps1"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "package HTWind portable (local)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/package-portable.ps1"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "package HTWind all (local)",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "package HTWind portable (local)",
+        "package HTWind installer (local)"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather Widget</title>
+  <style>
+    :root {
+      --text: #ecf4ff;
+      --muted: #a9b8cf;
+      --line: rgba(180, 210, 255, 0.24);
+      --bg: radial-gradient(circle at 78% 4%, rgba(96, 185, 255, 0.36), transparent 46%),
+            linear-gradient(160deg, rgba(13, 25, 43, 0.94), rgba(6, 13, 24, 0.96));
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: "Bahnschrift", "Segoe UI", sans-serif;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      display: grid;
+      grid-template-rows: auto auto auto 1fr;
+      gap: 6px;
+    }
+
+    .label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .temp {
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    #desc {
+      font-size: 1rem;
+      opacity: 0.95;
+    }
+
+    .meta {
+      opacity: 0.88;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">Current Weather</div>
+    <div id="temp" class="temp">--</div>
+    <div id="desc">Loading...</div>
+    <div id="meta" class="meta">Detecting location...</div>
+  </div>
+  <script>
+    const codeMap = { 0: "Clear", 1: "Mostly clear", 2: "Partly cloudy", 3: "Overcast", 45: "Fog", 61: "Rain", 80: "Showers" };
+    const tempEl = document.getElementById("temp");
+    const descEl = document.getElementById("desc");
+    const metaEl = document.getElementById("meta");
+
+    function setError(message) {
+      tempEl.textContent = "--";
+      descEl.textContent = "Unavailable";
+      metaEl.textContent = message;
+    }
+
+    async function loadWeather(lat, lon) {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m&timezone=auto`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("weather request failed");
+      const data = await response.json();
+      const current = data.current || {};
+      tempEl.textContent = `${Math.round(current.temperature_2m || 0)} C`;
+      descEl.textContent = codeMap[current.weather_code] || "Unknown";
+      metaEl.textContent = `Wind ${Math.round(current.wind_speed_10m || 0)} km/h`;
+    }
+
+    if (!navigator.geolocation) {
+      setError("Geolocation not available.");
+    } else {
+      navigator.geolocation.getCurrentPosition(async (p) => {
+        try { await loadWeather(p.coords.latitude, p.coords.longitude); }
+        catch { setError("Failed to fetch weather."); }
+      }, () => setError("Location permission denied."), { timeout: 6000 });
+    }
+  </script>
+</body>
+</html>

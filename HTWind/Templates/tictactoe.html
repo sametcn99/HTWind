@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic Tac Toe</title>
+  <style>
+    :root {
+      --text: #eef4ff;
+      --muted: #aabbd4;
+      --line: rgba(176, 208, 255, 0.26);
+      --bg: radial-gradient(circle at 12% 14%, rgba(98, 140, 255, 0.32), transparent 42%),
+            linear-gradient(165deg, rgba(18, 25, 43, 0.94), rgba(7, 12, 24, 0.96));
+      --accent: #7fc1ff;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: "Bahnschrift", "Segoe UI", sans-serif;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 8px;
+    }
+
+    .label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .cell {
+      min-height: 50px;
+      font-size: 1.45rem;
+      font-weight: 700;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.07);
+      color: inherit;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .cell:hover {
+      transform: translateY(-1px);
+      background: rgba(127, 193, 255, 0.16);
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+    }
+
+    .score {
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    #reset {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 9px;
+      color: var(--text);
+      padding: 8px 12px;
+      cursor: pointer;
+      font: inherit;
+      width: fit-content;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">Tic Tac Toe</div>
+    <div class="row"><div id="status">Turn: X</div><div id="score" class="score">X 0 - 0 O</div></div>
+    <div id="board" class="board"></div>
+    <div class="row"><button id="reset">Reset</button></div>
+  </div>
+  <script>
+    const boardEl = document.getElementById("board");
+    const statusEl = document.getElementById("status");
+    const scoreEl = document.getElementById("score");
+    const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    let cells = Array(9).fill("");
+    let current = "X";
+    let done = false;
+    let xScore = 0;
+    let oScore = 0;
+
+    function draw() {
+      boardEl.innerHTML = "";
+      cells.forEach((v, i) => {
+        const b = document.createElement("button");
+        b.className = "cell";
+        b.textContent = v;
+        b.onclick = () => play(i);
+        boardEl.appendChild(b);
+      });
+      scoreEl.textContent = `X ${xScore} - ${oScore} O`;
+    }
+
+    function won(p) { return wins.some(([a,b,c]) => cells[a]===p && cells[b]===p && cells[c]===p); }
+
+    function play(i) {
+      if (done || cells[i]) return;
+      cells[i] = current;
+      if (won(current)) {
+        done = true;
+        if (current === "X") xScore++; else oScore++;
+        statusEl.textContent = `${current} wins`;
+      } else if (cells.every(Boolean)) {
+        done = true;
+        statusEl.textContent = "Draw";
+      } else {
+        current = current === "X" ? "O" : "X";
+        statusEl.textContent = `Turn: ${current}`;
+      }
+      draw();
+    }
+
+    document.getElementById("reset").onclick = () => {
+      cells = Array(9).fill("");
+      current = "X";
+      done = false;
+      statusEl.textContent = "Turn: X";
+      draw();
+    };
+
+    draw();
+  </script>
+</body>
+</html>

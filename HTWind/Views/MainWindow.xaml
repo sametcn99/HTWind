@@ -1,0 +1,323 @@
+﻿<ui:FluentWindow
+    x:Class="HTWind.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:loc="clr-namespace:HTWind.Localization"
+    xmlns:tb="http://www.hardcodet.net/taskbar"
+    mc:Ignorable="d"
+    Title="{loc:Loc MainWindow_WindowTitle}"
+    Icon="/Assets/favicon.ico"
+    Width="920"
+    Height="660"
+    MinWidth="760"
+    MinHeight="520"
+    WindowBackdropType="Mica"
+    ExtendsContentIntoTitleBar="True"
+    WindowCornerPreference="Round"
+    Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <tb:TaskbarIcon
+            x:Name="TrayIcon"
+            ToolTipText="{loc:Loc MainWindow_WindowTitle}"
+            TrayMouseDoubleClick="TrayIcon_TrayMouseDoubleClick">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="{loc:Loc MainWindow_Show}" Click="TrayIcon_Show_Click" />
+                    <MenuItem Header="{loc:Loc MainWindow_Exit}" Click="TrayIcon_Exit_Click" />
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
+
+        <ui:TitleBar Grid.Row="0" Title="{loc:Loc MainWindow_TitleBarTitle}" />
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="28,8,28,28">
+                <!-- Header -->
+                <Grid Margin="0,0,0,24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock
+                            Text="{loc:Loc MainWindow_HeaderTitle}"
+                            FontSize="28"
+                            FontWeight="SemiBold" />
+                        <TextBlock
+                            Margin="0,4,0,0"
+                            FontSize="13"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                            Text="{loc:Loc MainWindow_HeaderDescription}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <ui:Button
+                            Margin="0,0,10,0"
+                            Content="{loc:Loc MainWindow_About}"
+                            Icon="{ui:SymbolIcon Info24}"
+                            Click="About_Click" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <ui:Button
+                                Grid.Column="0"
+                                Content="{loc:Loc MainWindow_AddWidget}"
+                                Icon="{ui:SymbolIcon Add24}"
+                                Appearance="Primary"
+                                Command="{Binding AddWidgetCommand}" />
+
+                            <ui:Button
+                                x:Name="AddWidgetOptionsButton"
+                                Grid.Column="1"
+                                Margin="4,0,0,0"
+                                Width="36"
+                                Appearance="Primary"
+                                Icon="{ui:SymbolIcon ChevronDown24}"
+                                ToolTip="{loc:Loc MainWindow_AddWidgetOptions}"
+                                AutomationProperties.Name="{loc:Loc MainWindow_AddWidgetOptions}"
+                                Click="AddWidgetOptionsButton_Click">
+                                <ui:Button.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem
+                                            Header="{loc:Loc MainWindow_CreateWithEditor}"
+                                            Click="CreateWithEditorMenuItem_Click" />
+                                    </ContextMenu>
+                                </ui:Button.ContextMenu>
+                            </ui:Button>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Settings Section -->
+                <TextBlock
+                    Text="{loc:Loc MainWindow_SettingsTitle}"
+                    FontSize="14"
+                    FontWeight="SemiBold"
+                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                    Margin="0,0,0,8" />
+
+                <ui:Card Margin="0,0,0,8" Padding="16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <ui:SymbolIcon
+                            Symbol="PaintBrush24"
+                            FontSize="20"
+                            VerticalAlignment="Center"
+                            Margin="0,0,14,0" />
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="{loc:Loc MainWindow_Theme}" FontSize="14" FontWeight="SemiBold" />
+                        </StackPanel>
+
+                        <ComboBox
+                            x:Name="ThemeComboBox"
+                            Grid.Column="2"
+                            Width="140"
+                            VerticalAlignment="Center"
+                            SelectedValuePath="Tag"
+                            SelectedValue="{Binding SelectedThemeOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem
+                                Content="{loc:Loc MainWindow_ThemeDevice}"
+                                Tag="Device"
+                                IsSelected="True" />
+                            <ComboBoxItem Content="{loc:Loc MainWindow_ThemeLight}" Tag="Light" />
+                            <ComboBoxItem Content="{loc:Loc MainWindow_ThemeDark}" Tag="Dark" />
+                        </ComboBox>
+                    </Grid>
+                </ui:Card>
+
+                <ui:Card Margin="0,0,0,24" Padding="16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <ui:SymbolIcon
+                            Symbol="Rocket24"
+                            FontSize="20"
+                            VerticalAlignment="Center"
+                            Margin="0,0,14,0" />
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock
+                                Text="{loc:Loc MainWindow_RunOnStartup}"
+                                FontSize="14"
+                                FontWeight="SemiBold" />
+                        </StackPanel>
+
+                        <ui:ToggleSwitch
+                            x:Name="RunOnStartupToggle"
+                            Grid.Column="2"
+                            VerticalAlignment="Center"
+                            IsChecked="{Binding IsRunOnStartupEnabled, Mode=OneWay}"
+                            Checked="RunOnStartupToggle_Checked"
+                            Unchecked="RunOnStartupToggle_Unchecked" />
+                    </Grid>
+                </ui:Card>
+
+                <!-- Widgets Section -->
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Text="{loc:Loc MainWindow_WidgetsSection}"
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                        VerticalAlignment="Center" />
+                </Grid>
+
+                <!-- Tip Card -->
+                <ui:Card Margin="0,0,0,12" Padding="14">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ui:SymbolIcon
+                            Symbol="Info24"
+                            FontSize="16"
+                            VerticalAlignment="Center"
+                            Margin="0,0,10,0"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <TextBlock
+                            Grid.Column="1"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                            Text="{loc:Loc MainWindow_Tips}"
+                            TextWrapping="Wrap" />
+                    </Grid>
+                </ui:Card>
+
+                <!-- Widget List -->
+                <ItemsControl Name="WidgetsList" ItemsSource="{Binding Widgets}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ui:Card Margin="0,0,0,8" Padding="14">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" Margin="0,0,12,0" VerticalAlignment="Center">
+                                        <TextBlock
+                                            Text="{Binding Name}"
+                                            FontSize="14"
+                                            FontWeight="SemiBold"
+                                            TextTrimming="CharacterEllipsis" />
+                                        <TextBlock
+                                            Text="{Binding FilePath}"
+                                            FontSize="12"
+                                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                            TextTrimming="CharacterEllipsis"
+                                            ToolTip="{Binding FilePath}" />
+                                    </StackPanel>
+
+                                    <ui:ToggleSwitch
+                                        Grid.Column="1"
+                                        Margin="8,0"
+                                        VerticalAlignment="Center"
+                                        Content="{loc:Loc MainWindow_Visible}"
+                                        IsChecked="{Binding IsVisible}"
+                                        Command="{Binding DataContext.ChangeVisibilityCommand, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
+                                        CommandParameter="{Binding}" />
+
+                                    <ui:ToggleSwitch
+                                        Grid.Column="2"
+                                        Margin="8,0"
+                                        VerticalAlignment="Center"
+                                        Content="{loc:Loc MainWindow_Locked}"
+                                        IsChecked="{Binding IsLocked}" />
+
+                                    <ui:ToggleSwitch
+                                        Grid.Column="3"
+                                        Margin="8,0"
+                                        VerticalAlignment="Center"
+                                        Content="{loc:Loc MainWindow_PinOnTop}"
+                                        IsChecked="{Binding IsPinned}"
+                                        Command="{Binding DataContext.ChangePinStateCommand, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
+                                        CommandParameter="{Binding}" />
+
+                                    <ui:Button
+                                        Grid.Column="4"
+                                        Margin="8,0,0,0"
+                                        Content="{loc:Loc MainWindow_Edit}"
+                                        Command="{Binding DataContext.EditWidgetCommand, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
+                                        CommandParameter="{Binding}" />
+
+                                    <ui:Button
+                                        Grid.Column="5"
+                                        Margin="8,0,0,0"
+                                        Content="{loc:Loc MainWindow_Remove}"
+                                        Icon="{ui:SymbolIcon Delete24}"
+                                        Appearance="Danger"
+                                        Command="{Binding DataContext.RemoveWidgetCommand, RelativeSource={RelativeSource AncestorType=ui:FluentWindow}}"
+                                        CommandParameter="{Binding}" />
+                                </Grid>
+                            </ui:Card>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Empty State -->
+                <ui:Card HorizontalAlignment="Center" Padding="32,24" Margin="0,20,0,0">
+                    <ui:Card.Style>
+                        <Style TargetType="ui:Card">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Widgets.Count}" Value="0">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ui:Card.Style>
+                    <StackPanel>
+                        <ui:SymbolIcon
+                            Symbol="Info24"
+                            FontSize="36"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,12"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Text="{loc:Loc MainWindow_EmptyTitle}" />
+                        <TextBlock
+                            Margin="0,6,0,0"
+                            HorizontalAlignment="Center"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                            Text="{loc:Loc MainWindow_EmptyDescription}" />
+                    </StackPanel>
+                </ui:Card>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</ui:FluentWindow>

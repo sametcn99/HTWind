@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="MainWindow_WindowTitle" xml:space="preserve">
+    <value>HTWind</value>
+  </data>
+  <data name="MainWindow_TitleBarTitle" xml:space="preserve">
+    <value>HTWind</value>
+  </data>
+  <data name="MainWindow_HeaderTitle" xml:space="preserve">
+    <value>Widget Library</value>
+  </data>
+  <data name="MainWindow_HeaderDescription" xml:space="preserve">
+    <value>Add HTML files to your desktop and manage widget visibility and lock state.</value>
+  </data>
+  <data name="MainWindow_AddWidget" xml:space="preserve">
+    <value>Add Widget</value>
+  </data>
+  <data name="MainWindow_AddClockWidget" xml:space="preserve">
+    <value>Clock</value>
+  </data>
+  <data name="MainWindow_AddWeatherWidget" xml:space="preserve">
+    <value>Weather</value>
+  </data>
+  <data name="MainWindow_AddTicTacToeWidget" xml:space="preserve">
+    <value>TicTacToe</value>
+  </data>
+  <data name="MainWindow_Tips" xml:space="preserve">
+    <value>Tip: In unlocked mode, widgets can be moved and resized. In locked mode, you can interact with HTML content.</value>
+  </data>
+  <data name="MainWindow_Visible" xml:space="preserve">
+    <value>Visible</value>
+  </data>
+  <data name="MainWindow_Locked" xml:space="preserve">
+    <value>Locked</value>
+  </data>
+  <data name="MainWindow_PinOnTop" xml:space="preserve">
+    <value>Pin on top</value>
+  </data>
+  <data name="MainWindow_Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="MainWindow_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="MainWindow_EmptyTitle" xml:space="preserve">
+    <value>No widgets added yet</value>
+  </data>
+  <data name="MainWindow_EmptyDescription" xml:space="preserve">
+    <value>Use the 'Add Widget' button to get started.</value>
+  </data>
+  <data name="MainWindow_Theme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="MainWindow_ThemeDevice" xml:space="preserve">
+    <value>Device</value>
+  </data>
+  <data name="MainWindow_ThemeLight" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="MainWindow_ThemeDark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="MainWindow_SettingsTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="MainWindow_WidgetsSection" xml:space="preserve">
+    <value>Widgets</value>
+  </data>
+  <data name="MainWindow_FileDialogFilter" xml:space="preserve">
+    <value>HTML Files (*.html;*.htm)|*.html;*.htm|All Files (*.*)|*.*</value>
+  </data>
+  <data name="MainWindow_FileDialogTitle" xml:space="preserve">
+    <value>Select an HTML file for widget</value>
+  </data>
+
+  <data name="WidgetWindow_Title" xml:space="preserve">
+    <value>Widget</value>
+  </data>
+  <data name="WidgetWindow_DragTooltip" xml:space="preserve">
+    <value>Hold to move. Drag corners to resize.</value>
+  </data>
+  <data name="WidgetWindow_DragOverlayText" xml:space="preserve">
+    <value>Unlocked (Move / Resize)</value>
+  </data>
+  <data name="EditorWindow_Title" xml:space="preserve">
+    <value>Widget Code Editor</value>
+  </data>
+  <data name="EditorWindow_FileLabel" xml:space="preserve">
+    <value>Editing file</value>
+  </data>
+  <data name="EditorWindow_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="EditorWindow_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="EditorWindow_HotReload" xml:space="preserve">
+    <value>Hot Reload</value>
+  </data>
+  <data name="EditorWindow_SaveSuccess" xml:space="preserve">
+    <value>Changes saved.</value>
+  </data>
+  <data name="EditorWindow_SaveError" xml:space="preserve">
+    <value>Failed to save changes.</value>
+  </data>
+  <data name="EditorWindow_LoadError" xml:space="preserve">
+    <value>The widget file could not be found.</value>
+  </data>
+  <data name="MainWindow_RunOnStartup" xml:space="preserve">
+    <value>Run on Startup</value>
+  </data>
+  <data name="MainWindow_Show" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="MainWindow_Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="MainWindow_About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="AboutWindow_Title" xml:space="preserve">
+    <value>About HTWind</value>
+  </data>
+  <data name="AboutWindow_Heading" xml:space="preserve">
+    <value>HTWind</value>
+  </data>
+  <data name="AboutWindow_Description" xml:space="preserve">
+    <value>Desktop HTML widget host for Windows.</value>
+  </data>
+  <data name="AboutWindow_AppName" xml:space="preserve">
+    <value>Application</value>
+  </data>
+  <data name="AboutWindow_Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="AboutWindow_GitHubRepository" xml:space="preserve">
+    <value>GitHub Repository</value>
+  </data>
+  <data name="AboutWindow_DeveloperWebsite" xml:space="preserve">
+    <value>Developer Website</value>
+  </data>
+  <data name="AboutWindow_Issues" xml:space="preserve">
+    <value>Issues</value>
+  </data>
+  <data name="AboutWindow_Discussions" xml:space="preserve">
+    <value>Discussions</value>
+  </data>
+  <data name="AboutWindow_Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="AboutWindow_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="AboutWindow_OpenUrlError" xml:space="preserve">
+    <value>The link could not be opened.</value>
+  </data>
+  <data name="AboutWindow_Updates" xml:space="preserve">
+    <value>Updates</value>
+  </data>
+  <data name="AboutWindow_UpdateNotChecked" xml:space="preserve">
+    <value>Update status not checked yet.</value>
+  </data>
+  <data name="AboutWindow_CheckUpdates" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
+  <data name="AboutWindow_OpenLatestRelease" xml:space="preserve">
+    <value>Open latest release</value>
+  </data>
+  <data name="AboutWindow_UpdateChecking" xml:space="preserve">
+    <value>Checking for updates...</value>
+  </data>
+  <data name="AboutWindow_UpdateAvailable" xml:space="preserve">
+    <value>Update available: {0}</value>
+  </data>
+  <data name="AboutWindow_UpToDate" xml:space="preserve">
+    <value>You are using the latest version.</value>
+  </data>
+  <data name="AboutWindow_LatestReleaseTag" xml:space="preserve">
+    <value>Latest release: {0}</value>
+  </data>
+  <data name="AboutWindow_UpdateUnknown" xml:space="preserve">
+    <value>Could not determine latest release version.</value>
+  </data>
+  <data name="AboutWindow_UpdateCheckFailed" xml:space="preserve">
+    <value>Failed to check updates. Please try again.</value>
+  </data>
+  <data name="RiskConsentWindow_Title" xml:space="preserve">
+    <value>Execution Risk Consent</value>
+  </data>
+  <data name="RiskConsentWindow_Header" xml:space="preserve">
+    <value>Important Security Notice</value>
+  </data>
+  <data name="RiskConsentWindow_Body" xml:space="preserve">
+    <value>HTWind widgets can execute PowerShell commands through the host bridge. Executing commands may affect system files, data, network settings, and account security.</value>
+  </data>
+  <data name="RiskConsentWindow_Body2" xml:space="preserve">
+    <value>By continuing, you acknowledge and accept that all risks and consequences of command execution are fully your responsibility.</value>
+  </data>
+  <data name="RiskConsentWindow_Accept" xml:space="preserve">
+    <value>I Understand and Accept</value>
+  </data>
+  <data name="MainWindow_AddWidgetOptions" xml:space="preserve">
+    <value>Widget creation options</value>
+  </data>
+  <data name="MainWindow_CreateWithEditor" xml:space="preserve">
+    <value>Create with editor</value>
+  </data>
+  <data name="CreateWithEditorWindow_Title" xml:space="preserve">
+    <value>Create Widget with Editor</value>
+  </data>
+  <data name="CreateWithEditorWindow_FileNameLabel" xml:space="preserve">
+    <value>Widget file name</value>
+  </data>
+  <data name="CreateWithEditorWindow_FileNameHint" xml:space="preserve">
+    <value>The file will be created under AppData\Local\HTWind\Widgets. Extension is optional.</value>
+  </data>
+  <data name="CreateWithEditorWindow_Create" xml:space="preserve">
+    <value>Create and open editor</value>
+  </data>
+  <data name="CreateWithEditorWindow_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CreateWithEditorWindow_FileNameRequired" xml:space="preserve">
+    <value>Please enter a file name.</value>
+  </data>
+  <data name="CreateWithEditorWindow_DefaultFileName" xml:space="preserve">
+    <value>my-widget.html</value>
+  </data>
+</root>
