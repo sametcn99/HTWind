@@ -1,7 +1,7 @@
 # HTWind
 
-HTWind is a .NET 10 WPF desktop app for running HTML widgets directly on your Windows desktop.
-It combines a fluent host UI, a widget manager, and a lightweight host bridge so widgets can call selected Windows-side actions.
+HTWind is a desktop app that lets you place helpful widgets directly on your Windows desktop.
+It also supports running PowerShell commands when you need quick system actions.
 
 ![HTWind Screenshot](assets/screenshot.png)
 
@@ -43,6 +43,19 @@ HTWind currently ships with these built-in templates:
 - `powershell-console`
 
 Template source files live in `HTWind/Templates`.
+
+## Releases
+
+This repository includes automated release workflow at:
+
+- `.github/workflows/release.yml`
+
+When you push a tag like `v1.0.0`, GitHub Actions builds:
+
+- installer (`HTWind-setup-*.exe`) via Inno Setup
+- portable archive (`HTWind-portable-*.zip`)
+
+Both are uploaded to the GitHub Release page.
 
 ## Installation
 
@@ -145,124 +158,7 @@ Users can copy the shared HTML file and add it through `Add Widget` inside HTWin
 
 ## Contributing
 
-Contributions are welcome.
-
-1. Fork the repository
-2. Create a feature branch
-3. Make focused changes
-4. Build, run, and validate locally
-5. Open a Pull Request with a clear description
-
-### Local Development
-
-#### Option 1: Terminal Commands
-
-Use these commands from the repository root:
-
-```powershell
-dotnet restore HTWind/HTWind.csproj
-dotnet build HTWind/HTWind.csproj
-dotnet run --project HTWind/HTWind.csproj
-```
-
-Optional cleanup:
-
-```powershell
-dotnet clean HTWind/HTWind.csproj
-```
-
-#### Option 2: VS Code Packaging Tasks
-
-You can run the same workflow from VS Code task runner.
-
-Available tasks:
-
-- `restore HTWind`
-- `build HTWind`
-- `run HTWind`
-- `clean HTWind`
-
-Run via:
-
-1. `Terminal` -> `Run Task...`
-2. Select one of the tasks above
-
-### Creating Local Packages
-
-#### Option 1: Terminal Scripts
-
-Create installer:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-installer.ps1
-```
-
-Create portable zip:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-portable.ps1
-```
-
-#### Option 2: VS Code Tasks
-
-Available packaging tasks:
-
-- `package HTWind installer (local)`
-- `package HTWind portable (local)`
-- `package HTWind all (local)`
-
-Run via:
-
-1. `Terminal` -> `Run Task...`
-2. Choose the package task you need
-
-Before opening a PR, at minimum run:
-
-```powershell
-dotnet build HTWind/HTWind.csproj
-```
-
-### Contribution areas
-
-- New built-in widgets
-- Host API improvements
-- UI/UX polish for WPF screens
-- Stability/performance fixes
-- Documentation and localization
-
-## Adding A New Translation
-
-HTWind already uses `Resources/Strings.resx` and `LocalizationService`.
-
-To add a new language:
-
-1. Create a culture-specific resource file in `HTWind/Resources`:
-
-- Example: `Strings.tr-TR.resx`
-
-1. Copy all keys from `Strings.resx`.
-2. Translate only values (do not change keys).
-3. Keep placeholders and formatting tokens unchanged.
-4. Build and test.
-
-Current startup culture is set in `HTWind/App.xaml.cs`:
-
-- `LocalizationService.SetCulture("en-US");`
-
-For local testing, temporarily switch that value to your new culture (for example `tr-TR`) and run the app.
-
-## Releases
-
-This repository includes automated release workflow at:
-
-- `.github/workflows/release.yml`
-
-When you push a tag like `v1.0.0`, GitHub Actions builds:
-
-- installer (`HTWind-setup-*.exe`) via Inno Setup
-- portable archive (`HTWind-portable-*.zip`)
-
-Both are uploaded to the GitHub Release page.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contribution guide.
 
 ## Support
 
