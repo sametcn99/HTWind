@@ -5,45 +5,215 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Memory Stats</title>
   <style>
-    :root { --text:#eef4ff; --muted:#aabbd5; --line:rgba(180,210,255,.24); --bg:radial-gradient(circle at 80% 14%, rgba(98,176,255,.32), transparent 43%), linear-gradient(160deg, rgba(13,23,42,.95), rgba(6,11,23,.98)); }
-    html, body { width:100%; height:100%; margin:0; font-family:"Bahnschrift","Segoe UI",sans-serif; color:var(--text); background:transparent; }
-    .card { width:100%; height:100%; box-sizing:border-box; padding:12px; border-radius:16px; border:1px solid var(--line); background:var(--bg); display:grid; grid-template-rows:auto auto auto auto 1fr; gap:8px; }
-    .label { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
-    .row { font-size:.84rem; color:var(--muted); }
-    .value { color:var(--text); font-weight:700; }
-    .bar { height:8px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden; }
-    .fill { height:100%; background:linear-gradient(90deg,#74c1ff,#4ea6ff); }
+    :root {
+      --text: #eef4ff;
+      --muted: #aabbd5;
+      --line: rgba(180, 210, 255, 0.22);
+      --soft: rgba(255, 255, 255, 0.06);
+      --bg: radial-gradient(circle at 82% 12%, rgba(98, 176, 255, 0.28), transparent 42%),
+        radial-gradient(circle at 10% 100%, rgba(80, 218, 255, 0.12), transparent 34%),
+        linear-gradient(160deg, rgba(13, 23, 42, 0.95), rgba(6, 11, 23, 0.98));
+      --physical: linear-gradient(90deg, #6bd8ff, #4ea6ff);
+      --virtual: linear-gradient(90deg, #73ffde, #3bc8a4);
+      --proc: linear-gradient(90deg, #ffcf7a, #ff9e57);
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: "Bahnschrift", "Segoe UI", sans-serif;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow: auto;
+    }
+
+    .label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 10px;
+      padding: 8px;
+      min-height: 66px;
+      box-sizing: border-box;
+    }
+
+    .stat-name {
+      color: var(--muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .stat-value {
+      margin-top: 3px;
+      font-size: 1.04rem;
+      font-weight: 700;
+      line-height: 1.28;
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+    }
+
+    #physicalFill {
+      background: var(--physical);
+    }
+
+    #virtualFill {
+      background: var(--virtual);
+    }
+
+    .section-title {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-size: 0.7rem;
+      margin-top: 2px;
+    }
+
+    .process-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .process-item {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 10px;
+      padding: 7px 8px;
+    }
+
+    .process-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: baseline;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .error {
+      display: none;
+      border: 1px solid rgba(255, 126, 126, 0.35);
+      background: rgba(130, 34, 34, 0.18);
+      color: #ffd6d6;
+      border-radius: 10px;
+      padding: 8px;
+      font-size: 0.82rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    @media (max-width: 460px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="label">Memory Stats</div>
-    <div class="row">Process Working Set: <span id="ws" class="value">-</span></div>
-    <div class="row">GC Memory: <span id="gc" class="value">-</span></div>
-    <div class="bar"><div id="fill" class="fill" style="width:0%"></div></div>
-    <div id="meta" class="row">Loading...</div>
+    <div id="machine" class="title">-</div>
+    <div id="meta" class="small">Loading memory telemetry...</div>
+
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-name">Physical RAM</div>
+        <div id="physicalText" class="stat-value">-</div>
+        <div class="bar"><div id="physicalFill" class="fill"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-name">Virtual Memory</div>
+        <div id="virtualText" class="stat-value">-</div>
+        <div class="bar"><div id="virtualFill" class="fill"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-name">Process Working Set</div>
+        <div id="workingSet" class="stat-value">-</div>
+      </div>
+      <div class="stat">
+        <div class="stat-name">Managed Heap</div>
+        <div id="managedHeap" class="stat-value">-</div>
+      </div>
+    </div>
+
+    <div class="section-title">Top Memory Processes</div>
+    <div id="processList" class="process-list"></div>
+    <div id="error" class="error"></div>
   </div>
   <script>
-    function pick(obj, camel, pascal) { return obj?.[camel] ?? obj?.[pascal]; }
+    function pick(obj, camel, pascal) {
+      return obj?.[camel] ?? obj?.[pascal];
+    }
 
-    async function execPs(script) {
-      const result = await window.HTWind.invoke("powershell.exec", { script });
+    async function runPs(script, parseJson = false, timeoutMs = 10000) {
+      const executableScript = parseJson
+        ? `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`
+        : script;
+
+      const result = await window.HTWind.invoke("powershell.exec", { script: executableScript, timeoutMs });
       const timedOut = !!(result?.timedOut ?? result?.TimedOut);
       const exitCode = result?.exitCode ?? result?.ExitCode;
       const stdout = String(result?.output ?? result?.Output ?? "");
       const stderr = String(result?.error ?? result?.Error ?? "");
+
       if (timedOut) throw new Error("PowerShell command timed out.");
       if (typeof exitCode === "number" && exitCode !== 0) {
         throw new Error(stderr || stdout || `PowerShell failed with exit code ${exitCode}.`);
       }
 
-      return stdout;
-    }
-
-    async function execPsJson(script) {
-      const wrapped = `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`;
-      const output = await execPs(wrapped);
-      return output.trim() ? JSON.parse(output) : {};
+      if (!parseJson) return result;
+      if (!stdout.trim()) return {};
+      return JSON.parse(stdout);
     }
 
     function fmtBytes(v) {
@@ -53,23 +223,144 @@
       if (n < 1024 ** 3) return `${(n / 1024 ** 2).toFixed(1)} MB`;
       return `${(n / 1024 ** 3).toFixed(2)} GB`;
     }
+
+    function clampPercent(value) {
+      const n = Number(value);
+      if (Number.isNaN(n)) return 0;
+      return Math.max(0, Math.min(100, n));
+    }
+
+    function toArray(value) {
+      if (Array.isArray(value)) return value;
+      if (value == null) return [];
+      if (typeof value === "object") return [value];
+      return [];
+    }
+
+    function setError(message) {
+      const el = document.getElementById("error");
+      if (!message) {
+        el.style.display = "none";
+        el.textContent = "";
+        return;
+      }
+
+      el.style.display = "block";
+      el.textContent = message;
+    }
+
+    function renderProcessList(processes) {
+      const host = document.getElementById("processList");
+      host.innerHTML = "";
+
+      if (processes.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "small";
+        empty.textContent = "No process memory data available.";
+        host.appendChild(empty);
+        return;
+      }
+
+      processes.forEach((p) => {
+        const name = pick(p, "name", "Name") || "Unknown";
+        const id = Number(pick(p, "id", "Id") || 0);
+        const workingSetBytes = Number(pick(p, "workingSetBytes", "WorkingSetBytes") || 0);
+        const privateBytes = Number(pick(p, "privateBytes", "PrivateBytes") || 0);
+
+        const item = document.createElement("div");
+        item.className = "process-item";
+        item.innerHTML = `<div class="process-head"><span>${name} (${id})</span><span>${fmtBytes(workingSetBytes)}</span></div>
+          <div class="small">Private: ${fmtBytes(privateBytes)}</div>`;
+        host.appendChild(item);
+      });
+    }
+
     async function refresh() {
+      const payload = await runPs(`
+        $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop
+        $proc = [System.Diagnostics.Process]::GetCurrentProcess()
+
+        $totalPhysical = [int64]$os.TotalVisibleMemorySize * 1KB
+        $freePhysical = [int64]$os.FreePhysicalMemory * 1KB
+        $usedPhysical = [int64]($totalPhysical - $freePhysical)
+        $physicalPercent = if ($totalPhysical -gt 0) { [math]::Round(($usedPhysical / $totalPhysical) * 100, 1) } else { 0 }
+
+        $totalVirtual = [int64]$os.TotalVirtualMemorySize * 1KB
+        $freeVirtual = [int64]$os.FreeVirtualMemory * 1KB
+        $usedVirtual = [int64]($totalVirtual - $freeVirtual)
+        $virtualPercent = if ($totalVirtual -gt 0) { [math]::Round(($usedVirtual / $totalVirtual) * 100, 1) } else { 0 }
+
+        $top = Get-Process |
+          Sort-Object -Property WorkingSet64 -Descending |
+          Select-Object -First 4 |
+          ForEach-Object {
+            [pscustomobject]@{
+              Name = $_.ProcessName
+              Id = $_.Id
+              WorkingSetBytes = [int64]$_.WorkingSet64
+              PrivateBytes = [int64]$_.PrivateMemorySize64
+            }
+          }
+
+        [pscustomobject]@{
+          MachineName = $env:COMPUTERNAME
+          LastBootUpTime = [string]$os.LastBootUpTime
+          PhysicalUsedBytes = $usedPhysical
+          PhysicalTotalBytes = $totalPhysical
+          PhysicalUsedPercent = $physicalPercent
+          VirtualUsedBytes = $usedVirtual
+          VirtualTotalBytes = $totalVirtual
+          VirtualUsedPercent = $virtualPercent
+          ProcessWorkingSetBytes = [int64]$proc.WorkingSet64
+          ProcessPrivateBytes = [int64]$proc.PrivateMemorySize64
+          GcTotalMemoryBytes = [int64][GC]::GetTotalMemory($false)
+          TopProcesses = $top
+        }
+      `, true, 12000);
+
+      const machineName = pick(payload, "machineName", "MachineName") || "Unknown";
+      const bootTime = pick(payload, "lastBootUpTime", "LastBootUpTime") || "-";
+
+      const physicalUsed = Number(pick(payload, "physicalUsedBytes", "PhysicalUsedBytes") || 0);
+      const physicalTotal = Number(pick(payload, "physicalTotalBytes", "PhysicalTotalBytes") || 0);
+      const physicalPercent = clampPercent(pick(payload, "physicalUsedPercent", "PhysicalUsedPercent") || 0);
+
+      const virtualUsed = Number(pick(payload, "virtualUsedBytes", "VirtualUsedBytes") || 0);
+      const virtualTotal = Number(pick(payload, "virtualTotalBytes", "VirtualTotalBytes") || 0);
+      const virtualPercent = clampPercent(pick(payload, "virtualUsedPercent", "VirtualUsedPercent") || 0);
+
+      const processWorkingSet = Number(pick(payload, "processWorkingSetBytes", "ProcessWorkingSetBytes") || 0);
+      const processPrivateBytes = Number(pick(payload, "processPrivateBytes", "ProcessPrivateBytes") || 0);
+      const gcTotalMemory = Number(pick(payload, "gcTotalMemoryBytes", "GcTotalMemoryBytes") || 0);
+      const topProcesses = toArray(pick(payload, "topProcesses", "TopProcesses"));
+
+      document.getElementById("machine").textContent = machineName;
+      document.getElementById("meta").textContent = `Boot: ${bootTime}`;
+
+      document.getElementById("physicalText").textContent = `${fmtBytes(physicalUsed)} / ${fmtBytes(physicalTotal)}`;
+      document.getElementById("virtualText").textContent = `${fmtBytes(virtualUsed)} / ${fmtBytes(virtualTotal)}`;
+      document.getElementById("workingSet").textContent = `${fmtBytes(processWorkingSet)}`;
+      document.getElementById("managedHeap").textContent = `${fmtBytes(gcTotalMemory)} (Private ${fmtBytes(processPrivateBytes)})`;
+
+      document.getElementById("physicalFill").style.width = `${physicalPercent}%`;
+      document.getElementById("virtualFill").style.width = `${virtualPercent}%`;
+
+      renderProcessList(topProcesses);
+      setError("");
+    }
+
+    async function refreshSafely() {
       try {
-        const m = await execPsJson("$p = [System.Diagnostics.Process]::GetCurrentProcess(); $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop; [pscustomobject]@{ ProcessWorkingSetBytes = [int64]$p.WorkingSet64; GcTotalMemoryBytes = [int64][GC]::GetTotalMemory($false); TotalAvailableMemoryBytes = [int64]$os.TotalVisibleMemorySize * 1024 }");
-        const ws = Number(pick(m, "processWorkingSetBytes", "ProcessWorkingSetBytes") || 0);
-        const gc = Number(pick(m, "gcTotalMemoryBytes", "GcTotalMemoryBytes") || 0);
-        const total = Number(pick(m, "totalAvailableMemoryBytes", "TotalAvailableMemoryBytes") || 0);
-        const ratio = total > 0 ? Math.min(100, Math.round((gc / total) * 100)) : 0;
-        document.getElementById("ws").textContent = fmtBytes(ws);
-        document.getElementById("gc").textContent = fmtBytes(gc);
-        document.getElementById("fill").style.width = `${ratio}%`;
-        document.getElementById("meta").textContent = `Heap ratio: ${ratio}%`;
-      } catch {
-        document.getElementById("meta").textContent = "Unable to read memory stats.";
+        await refresh();
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        setError(`Memory stats update failed.\n${message}`);
+        console.error(error);
       }
     }
-    refresh();
-    setInterval(refresh, 2000);
+
+    refreshSafely();
+    setInterval(refreshSafely, 3000);
   </script>
 </body>
 </html>

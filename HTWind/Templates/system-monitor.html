@@ -8,9 +8,14 @@
     :root {
       --text: #edf4ff;
       --muted: #a8b9d2;
-      --line: rgba(177, 208, 255, 0.25);
-      --bg: radial-gradient(circle at 90% 8%, rgba(86, 164, 255, 0.3), transparent 42%),
-            linear-gradient(165deg, rgba(14, 24, 40, 0.95), rgba(5, 11, 24, 0.98));
+      --line: rgba(177, 208, 255, 0.2);
+      --soft: rgba(255, 255, 255, 0.06);
+      --bg: radial-gradient(circle at 88% 6%, rgba(86, 164, 255, 0.28), transparent 44%),
+        radial-gradient(circle at 0% 100%, rgba(46, 140, 255, 0.16), transparent 36%),
+        linear-gradient(165deg, rgba(14, 24, 40, 0.95), rgba(5, 11, 24, 0.98));
+      --cpu: linear-gradient(90deg, #65d5ff, #4fa5ff);
+      --mem: linear-gradient(90deg, #67ffc5, #36d59c);
+      --disk: linear-gradient(90deg, #94b8ff, #5c8dff);
     }
 
     html, body {
@@ -26,14 +31,14 @@
       width: 100%;
       height: 100%;
       box-sizing: border-box;
-      padding: 12px;
+      padding: 14px;
       border-radius: 16px;
       border: 1px solid var(--line);
       background: var(--bg);
       overflow: auto;
-      display: grid;
-      grid-template-rows: auto auto auto 1fr;
-      gap: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .label {
@@ -43,8 +48,10 @@
       color: var(--muted);
     }
 
-    .row {
-      margin-bottom: 6px;
+    .title {
+      font-size: 1.08rem;
+      font-weight: 600;
+      line-height: 1.35;
     }
 
     .small {
@@ -53,34 +60,121 @@
     }
 
     .bar {
-      height: 9px;
+      height: 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.16);
       overflow: hidden;
-      margin-top: 3px;
+      margin-top: 6px;
     }
 
     .fill {
       height: 100%;
-      background: linear-gradient(90deg, #6ac7ff, #4e9fff);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 10px;
+      padding: 8px;
+      min-height: 64px;
+      box-sizing: border-box;
+    }
+
+    .stat-name {
+      color: var(--muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .stat-value {
+      margin-top: 3px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .section-title {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-size: 0.7rem;
+      margin-top: 2px;
     }
 
     .disk {
       padding: 8px;
       border-radius: 10px;
-      border: 1px solid rgba(177, 208, 255, 0.2);
-      background: rgba(255, 255, 255, 0.03);
-      margin-top: 7px;
+      border: 1px solid var(--line);
+      background: var(--soft);
+      margin-top: 8px;
+    }
+
+    .disk-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: baseline;
+      font-size: 0.93rem;
+      font-weight: 600;
+    }
+
+    .error {
+      display: none;
+      border: 1px solid rgba(255, 126, 126, 0.35);
+      background: rgba(130, 34, 34, 0.18);
+      color: #ffd6d6;
+      border-radius: 10px;
+      padding: 8px;
+      font-size: 0.82rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    @media (max-width: 460px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="label">System Monitor</div>
-    <div id="machine" class="row"></div>
-    <div id="uptime" class="row small"></div>
-    <div id="network" class="row small"></div>
+    <div id="machine" class="title"></div>
+    <div id="osVersion" class="small"></div>
+
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-name">Uptime</div>
+        <div id="uptime" class="stat-value">-</div>
+      </div>
+      <div class="stat">
+        <div class="stat-name">CPU Load</div>
+        <div id="cpuLoad" class="stat-value">-</div>
+        <div class="bar"><div id="cpuFill" class="fill" style="background:var(--cpu); width:0%"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-name">Memory</div>
+        <div id="memoryText" class="stat-value">-</div>
+        <div class="bar"><div id="memoryFill" class="fill" style="background:var(--mem); width:0%"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-name">Processes</div>
+        <div id="procCount" class="stat-value">-</div>
+        <div id="network" class="small">RX - | TX -</div>
+      </div>
+    </div>
+
+    <div class="section-title">Disk Usage</div>
     <div id="disks"></div>
+    <div id="error" class="error"></div>
   </div>
   <script>
     function pick(obj, camelKey, pascalKey) {
@@ -116,6 +210,25 @@
       return `${(v / 1024 ** 3).toFixed(1)} GB`;
     }
 
+    function formatUptime(totalSeconds) {
+      const seconds = Math.max(0, Number(totalSeconds) || 0);
+      const days = Math.floor(seconds / 86400);
+      const hours = Math.floor((seconds % 86400) / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+
+      if (days > 0) return `${days}d ${hours}h ${minutes}m`;
+      if (hours > 0) return `${hours}h ${minutes}m`;
+      return `${minutes}m`;
+    }
+
+    function clampPercent(value) {
+      const n = Number(value);
+      if (Number.isNaN(n)) return 0;
+      return Math.max(0, Math.min(100, n));
+    }
+
+    let previousNetworkSample = null;
+
     function toArray(value) {
       if (Array.isArray(value)) return value;
       if (value == null) return [];
@@ -123,47 +236,158 @@
       return [];
     }
 
+    function updateNetworkText(totalBytesReceived, totalBytesSent) {
+      const now = Date.now();
+      let rxText = "-";
+      let txText = "-";
+
+      if (previousNetworkSample) {
+        const elapsedSec = Math.max(0.001, (now - previousNetworkSample.ts) / 1000);
+        const rxDelta = Math.max(0, totalBytesReceived - previousNetworkSample.rx);
+        const txDelta = Math.max(0, totalBytesSent - previousNetworkSample.tx);
+        rxText = `${fmtBytes(Math.round(rxDelta / elapsedSec))}/s`;
+        txText = `${fmtBytes(Math.round(txDelta / elapsedSec))}/s`;
+      }
+
+      previousNetworkSample = { ts: now, rx: totalBytesReceived, tx: totalBytesSent };
+      document.getElementById("network").textContent = `RX ${rxText} | TX ${txText}`;
+    }
+
+    function setError(message) {
+      const el = document.getElementById("error");
+      if (!message) {
+        el.style.display = "none";
+        el.textContent = "";
+        return;
+      }
+
+      el.style.display = "block";
+      el.textContent = message;
+    }
+
     async function refresh() {
-      const [sysResult, netResult, disksResult] = await Promise.allSettled([
-        runPs("$uptime = [Environment]::TickCount64 / 1000; [pscustomobject]@{ MachineName = $env:COMPUTERNAME; OsVersion = [Environment]::OSVersion.VersionString; UptimeSeconds = [int64]$uptime }", true, 7000),
-        runPs("$ifs = [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() | Where-Object { $_.OperationalStatus -eq 'Up' -and $_.NetworkInterfaceType -ne 'Loopback' -and $_.NetworkInterfaceType -ne 'Tunnel' }; $sent = 0L; $recv = 0L; foreach ($n in $ifs) { try { $s = $n.GetIPv4Statistics(); $sent += [int64]$s.BytesSent; $recv += [int64]$s.BytesReceived } catch { } }; [pscustomobject]@{ TotalBytesReceived = $recv; TotalBytesSent = $sent }", true, 9000),
-        runPs("[System.IO.DriveInfo]::GetDrives() | Where-Object { $_.IsReady } | ForEach-Object { try { $used = [int64]($_.TotalSize - $_.AvailableFreeSpace); $total = [int64]$_.TotalSize; $pct = if ($total -gt 0) { [math]::Round(($used / $total) * 100, 1) } else { 0 }; [pscustomobject]@{ Name = $_.Name; Label = $_.VolumeLabel; UsedPercent = $pct; UsedBytes = $used; TotalBytes = $total } } catch { } }", true, 10000)
-      ]);
+      const payload = await runPs(`
+        $os = Get-CimInstance Win32_OperatingSystem
+        $uptime = (Get-Date) - $os.LastBootUpTime
+        $cpuAvg = (Get-CimInstance Win32_Processor | Measure-Object -Property LoadPercentage -Average).Average
+        if ($null -eq $cpuAvg) { $cpuAvg = 0 }
 
-      const sys = sysResult.status === "fulfilled" ? sysResult.value : {};
-      const net = netResult.status === "fulfilled" ? netResult.value : {};
-      const disks = disksResult.status === "fulfilled" ? toArray(disksResult.value) : [];
+        $totalMem = [int64]$os.TotalVisibleMemorySize * 1KB
+        $freeMem = [int64]$os.FreePhysicalMemory * 1KB
+        $usedMem = [int64]($totalMem - $freeMem)
+        $memPercent = if ($totalMem -gt 0) { [math]::Round(($usedMem / $totalMem) * 100, 1) } else { 0 }
 
-      const machineName = pick(sys, "machineName", "MachineName") || "Unknown";
-      const osVersion = pick(sys, "osVersion", "OsVersion") || "Unknown OS";
-      const uptimeSeconds = Number(pick(sys, "uptimeSeconds", "UptimeSeconds") || 0);
-      const totalBytesReceived = Number(pick(net, "totalBytesReceived", "TotalBytesReceived") || 0);
-      const totalBytesSent = Number(pick(net, "totalBytesSent", "TotalBytesSent") || 0);
+        $ifs = [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() |
+          Where-Object {
+            $_.OperationalStatus -eq 'Up' -and
+            $_.NetworkInterfaceType -ne 'Loopback' -and
+            $_.NetworkInterfaceType -ne 'Tunnel'
+          }
+        $rx = 0L
+        $tx = 0L
+        foreach ($n in $ifs) {
+          try {
+            $stats = $n.GetIPv4Statistics()
+            $rx += [int64]$stats.BytesReceived
+            $tx += [int64]$stats.BytesSent
+          } catch { }
+        }
 
-      document.getElementById("machine").textContent = `${machineName} (${osVersion})`;
-      document.getElementById("uptime").textContent = `Uptime: ${Math.round(uptimeSeconds / 60)} minutes`;
-      document.getElementById("network").textContent = `RX ${fmtBytes(totalBytesReceived)} | TX ${fmtBytes(totalBytesSent)}`;
+        $disks = Get-CimInstance Win32_LogicalDisk -Filter "DriveType=3" | ForEach-Object {
+          try {
+            $total = [int64]$_.Size
+            $free = [int64]$_.FreeSpace
+            $used = [int64]($total - $free)
+            $pct = if ($total -gt 0) { [math]::Round(($used / $total) * 100, 1) } else { 0 }
+            [pscustomobject]@{
+              Name = "$($_.DeviceID)\\"
+              Label = $_.VolumeName
+              UsedPercent = $pct
+              UsedBytes = $used
+              TotalBytes = $total
+            }
+          } catch { }
+        }
+
+        [pscustomobject]@{
+          MachineName = $env:COMPUTERNAME
+          OsVersion = [string]$os.Caption
+          OsBuild = [string]$os.Version
+          UptimeSeconds = [int64]$uptime.TotalSeconds
+          CpuLoadPercent = [double]$cpuAvg
+          ProcessCount = [int](Get-Process).Count
+          MemoryUsedBytes = $usedMem
+          MemoryTotalBytes = $totalMem
+          MemoryUsedPercent = $memPercent
+          TotalBytesReceived = $rx
+          TotalBytesSent = $tx
+          Disks = $disks
+        }
+      `, true, 12000);
+
+      const machineName = pick(payload, "machineName", "MachineName") || "Unknown";
+      const osVersion = pick(payload, "osVersion", "OsVersion") || "Unknown OS";
+      const osBuild = pick(payload, "osBuild", "OsBuild") || "-";
+      const uptimeSeconds = Number(pick(payload, "uptimeSeconds", "UptimeSeconds") || 0);
+      const cpuLoadPercent = clampPercent(pick(payload, "cpuLoadPercent", "CpuLoadPercent") || 0);
+      const processCount = Number(pick(payload, "processCount", "ProcessCount") || 0);
+      const memoryUsedBytes = Number(pick(payload, "memoryUsedBytes", "MemoryUsedBytes") || 0);
+      const memoryTotalBytes = Number(pick(payload, "memoryTotalBytes", "MemoryTotalBytes") || 0);
+      const memoryUsedPercent = clampPercent(pick(payload, "memoryUsedPercent", "MemoryUsedPercent") || 0);
+      const totalBytesReceived = Number(pick(payload, "totalBytesReceived", "TotalBytesReceived") || 0);
+      const totalBytesSent = Number(pick(payload, "totalBytesSent", "TotalBytesSent") || 0);
+      const disks = toArray(pick(payload, "disks", "Disks"));
+
+      document.getElementById("machine").textContent = machineName;
+      document.getElementById("osVersion").textContent = `${osVersion} (${osBuild})`;
+      document.getElementById("uptime").textContent = formatUptime(uptimeSeconds);
+      document.getElementById("cpuLoad").textContent = `${cpuLoadPercent.toFixed(1)}%`;
+      document.getElementById("cpuFill").style.width = `${cpuLoadPercent}%`;
+      document.getElementById("memoryText").textContent = `${fmtBytes(memoryUsedBytes)} / ${fmtBytes(memoryTotalBytes)}`;
+      document.getElementById("memoryFill").style.width = `${memoryUsedPercent}%`;
+      document.getElementById("procCount").textContent = `${processCount}`;
+      updateNetworkText(totalBytesReceived, totalBytesSent);
 
       const disksHost = document.getElementById("disks");
       disksHost.innerHTML = "";
+
+      if (disks.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "small";
+        empty.textContent = "No ready disks detected.";
+        disksHost.appendChild(empty);
+      }
+
       disks.forEach((d) => {
         const name = pick(d, "name", "Name") || "-";
         const label = pick(d, "label", "Label") || "";
-        const usedPercent = Number(pick(d, "usedPercent", "UsedPercent") || 0);
+        const usedPercent = clampPercent(pick(d, "usedPercent", "UsedPercent") || 0);
         const usedBytes = Number(pick(d, "usedBytes", "UsedBytes") || 0);
         const totalBytes = Number(pick(d, "totalBytes", "TotalBytes") || 0);
 
         const wrap = document.createElement("div");
         wrap.className = "disk";
-        wrap.innerHTML = `<div>${name} ${label} - ${usedPercent.toFixed(1)}%</div>
-          <div class="bar"><div class="fill" style="width:${usedPercent}%"></div></div>
+        wrap.innerHTML = `<div class="disk-head"><span>${name} ${label}</span><span>${usedPercent.toFixed(1)}%</span></div>
+          <div class="bar"><div class="fill" style="background:var(--disk); width:${usedPercent}%"></div></div>
           <div class="small">Used ${fmtBytes(usedBytes)} / ${fmtBytes(totalBytes)}</div>`;
         disksHost.appendChild(wrap);
       });
+
+      setError("");
     }
 
-    refresh().catch(console.error);
-    setInterval(() => refresh().catch(console.error), 4000);
+    async function refreshSafely() {
+      try {
+        await refresh();
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        setError(`System monitor update failed.\n${message}`);
+        console.error(error);
+      }
+    }
+
+    refreshSafely();
+    setInterval(refreshSafely, 3000);
   </script>
 </body>
 </html>

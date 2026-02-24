@@ -3,6 +3,8 @@
 HTWind is a .NET 10 WPF desktop app for running HTML widgets directly on your Windows desktop.
 It combines a fluent host UI, a widget manager, and a lightweight host bridge so widgets can call selected Windows-side actions.
 
+![HTWind Screenshot](assets/screenshot.png)
+
 ## Highlights
 
 - Desktop HTML widgets with lock/unlock interaction modes
