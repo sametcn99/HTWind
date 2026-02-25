@@ -5,6 +5,10 @@ It also supports running PowerShell commands when you need quick system actions.
 
 [Website](https://htwind.vercel.app)
 
+<a href="https://apps.microsoft.com/detail/9PN58CG1P20L?referrer=appbadge&cid=sametcn99&mode=full" target="_blank"  rel="noopener noreferrer">
+	<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200"/>
+</a>
+
 ![HTWind Screenshot](assets/screenshot.png)
 
 ## Highlights

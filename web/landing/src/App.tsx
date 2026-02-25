@@ -699,6 +699,21 @@ function App() {
                 {isLoadingRelease ? <Spinner size="tiny" labelPosition="after" label="Loading" /> : releaseText}
               </span>
               <Caption1>{releaseDate}</Caption1>
+                <div style={{ marginTop: '10px' }}>
+                  <a
+                    href="https://apps.microsoft.com/detail/9PN58CG1P20L?referrer=appbadge&cid=sametcn99&mode=full"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Get it from Microsoft Store"
+                  >
+                    <img
+                      src="https://get.microsoft.com/images/en-us%20dark.svg"
+                      width="160"
+                      alt="Get it from Microsoft Store"
+                      style={{ display: 'block' }}
+                    />
+                  </a>
+                </div>
             </aside>
           </div>
 
@@ -715,17 +730,7 @@ function App() {
               View on GitHub
             </Button>
 
-            <Button
-              as="a"
-              href={RELEASES_URL}
-              target="_blank"
-              rel="noreferrer"
-              icon={<ArrowDownload24Regular />}
-              className={styles.ghostButton}
-              size="large"
-            >
-              Browse Releases
-            </Button>
+            {/* Browse Releases removed per request; Microsoft Store badge placed at row end */}
 
             <Button
               as="a"
@@ -782,6 +787,8 @@ function App() {
                 </div>
               )}
             </div>
+
+
           </div>
 
           <Body1 className={styles.communityNotice}>
