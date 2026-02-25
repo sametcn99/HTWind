@@ -12,12 +12,12 @@ It also supports running PowerShell commands when you need quick system actions.
 - **Native PowerShell script execution support for system automation and quick tasks**
 - Desktop HTML widgets with lock/unlock interaction modes
 - Built-in widget library (clock, weather, system tools, file helpers, and more)
-- **Widget code editor with live preview (hot reload)**
+- **Widget built-in code editor with live preview (hot reload)**
 - Tray integration (show/hide app, background workflow)
 - Pin-on-top, visibility toggle, and persisted widget geometry/state
 - Startup toggle (`HKCU\Software\Microsoft\Windows\CurrentVersion\Run`)
 - Localization infrastructure (`resx` + `LocExtension`)
-- Built in code editor with syntax highlighting and live preview (hot reload)
+- Built-in code editor with syntax highlighting and live preview (hot reload)
 - Open-source and community-driven development
 
 ## Built-In Widgets
@@ -51,16 +51,18 @@ Template source files live in `HTWind/Templates`.
 
 ## Releases
 
-This repository includes automated release workflow at:
+This repository includes an automated release workflow at:
 
 - `.github/workflows/release.yml`
 
-When you push a tag like `v1.0.0`, GitHub Actions builds:
+This workflow can be manually triggered via **GitHub Actions UI** (manual `workflow_dispatch`).
 
-- installer (`HTWind-setup-*.exe`) via Inno Setup
-- portable archive (`HTWind-portable-*.zip`)
+The workflow resolves the current version from `HTWind/HTWind.csproj`, builds the assets, and creates a tagged GitHub Release with:
 
-Both are uploaded to the GitHub Release page.
+- Installer (`HTWind-setup-*.exe`) via Inno Setup
+- Portable archive (`HTWind-portable-*.zip`)
+
+Both are automatically uploaded to the GitHub Release page as a new release (`v<version>`).
 
 ## Installation
 
