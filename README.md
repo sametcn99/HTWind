@@ -6,7 +6,7 @@ It also supports running PowerShell commands when you need quick system actions.
 [Website](https://htwind.vercel.app)
 
 <a href="https://apps.microsoft.com/detail/9PN58CG1P20L?referrer=appbadge&cid=sametcn99&mode=full" target="_blank"  rel="noopener noreferrer">
-	<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200"/>
+ <img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200"/>
 </a>
 
 ![HTWind Screenshot](assets/screenshot.png)
@@ -146,9 +146,12 @@ Important:
 - All command execution risk is owned by the user running HTWind.
 - On first launch, HTWind requires explicit acceptance of this risk before the app opens.
 
-## Share Widgets Via GitHub Discussions
+## Share Widgets and Feedback With The Community
 
-Use repository Discussions to share reusable widgets with the community.
+Use GitHub Discussions and the HTWind Reddit community to share reusable widgets, desktop setups, bug reports, and feature requests.
+
+- GitHub Discussions: <https://github.com/sametcn99/HTWind/discussions>
+- Reddit: <https://www.reddit.com/r/HTWind/>
 
 Suggested post format:
 
@@ -158,6 +161,8 @@ Suggested post format:
 4. Code: attach `.html` file or paste source
 5. Notes: permissions, external APIs, and known limitations
 6. Version: compatible HTWind version
+
+You can also share your desktop layout screenshots in Reddit to help others discover practical HTWind setups.
 
 Suggested categories:
 
@@ -175,6 +180,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contribution guide.
 
 - Issues: <https://github.com/sametcn99/HTWind/issues>
 - Discussions: <https://github.com/sametcn99/HTWind/discussions>
+- Reddit community: <https://www.reddit.com/r/HTWind/>
 
 If you find a bug, please include reproduction steps, expected behavior, and environment details.
 

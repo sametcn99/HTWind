@@ -28,6 +28,7 @@ import './App.css'
 
 const GITHUB_REPOSITORY_URL = 'https://github.com/sametcn99/HTWind'
 const GITHUB_DISCUSSIONS_URL = 'https://github.com/sametcn99/HTWind/discussions'
+const REDDIT_COMMUNITY_URL = 'https://www.reddit.com/r/HTWind/'
 const RELEASES_URL = 'https://github.com/sametcn99/HTWind/releases'
 const LATEST_RELEASE_API_URL = 'https://api.github.com/repos/sametcn99/HTWind/releases/latest'
 const SUPPORT_URL = 'https://sametcc.me/support'
@@ -653,10 +654,10 @@ function App() {
   ]
 
   const communitySharingSteps = [
-    'Open the HTWind GitHub Discussions area and create a new discussion in the widget-sharing category.',
-    'Add a short widget summary, screenshots, and the main problem your widget solves on Windows.',
-    'Share setup notes, expected permissions, and any host API or PowerShell usage details for safe adoption.',
-    'Update your discussion when you publish improvements so other users can track versions and feedback.',
+    'Share widget releases in GitHub Discussions and post highlights in the HTWind Reddit community to reach more users.',
+    'Add a short widget summary, screenshots, and the main Windows workflow your widget improves.',
+    'Include setup notes, expected permissions, and any host API or PowerShell usage details for safe adoption.',
+    'Publish update notes in both channels so users can track versions, fixes, and feature changes.',
   ]
 
   const faqItems = [
@@ -810,6 +811,10 @@ function App() {
             <Link href={GITHUB_DISCUSSIONS_URL} target="_blank" rel="noreferrer">
               GitHub Discussions
             </Link>
+            {' '}and{' '}
+            <Link href={REDDIT_COMMUNITY_URL} target="_blank" rel="noreferrer">
+              Reddit
+            </Link>
             , discover ready-to-use examples, and get feedback from other HTWind users.
           </Body1>
         </Card>
@@ -952,16 +957,17 @@ function App() {
         <section aria-labelledby="htwind-community-sharing-heading">
           <Card className={styles.communitySection}>
             <h2 id="htwind-community-sharing-heading" className={styles.sectionHeading}>
-              Share your widgets in HTWind GitHub Discussions
+              Share your widgets with the HTWind community
             </h2>
             <p className={styles.sectionLead}>
               HTWind supports a community-driven workflow where users publish and discuss widget ideas directly in
-              GitHub Discussions. This makes it easy to exchange desktop widget templates, compare approaches for
-              Windows automation, and improve widget quality through real usage feedback.
+              GitHub Discussions and in the HTWind Reddit community. This makes it easy to exchange desktop widget
+              templates, compare approaches for Windows automation, and improve widget quality through real usage
+              feedback.
             </p>
             <p className={styles.sectionLead}>
               If you build a clock variation, a system monitor, a file utility panel, or any custom HTML widget,
-              you can post it in Discussions so others can test and adapt it. Include screenshots, usage notes,
+              you can post it in both channels so others can test and adapt it. Include screenshots, usage notes,
               and integration details to help users quickly adopt your widget in their own HTWind setup.
             </p>
             <ul className={styles.bulletList}>
@@ -970,11 +976,15 @@ function App() {
               ))}
             </ul>
             <Body1>
-              Visit the{' '}
+              Visit{' '}
               <Link href={GITHUB_DISCUSSIONS_URL} target="_blank" rel="noreferrer">
-                HTWind Discussions board
+                HTWind GitHub Discussions
               </Link>{' '}
-              to publish your widgets and collaborate with the community.
+              and{' '}
+              <Link href={REDDIT_COMMUNITY_URL} target="_blank" rel="noreferrer">
+                r/HTWind on Reddit
+              </Link>{' '}
+              to publish widgets, report bugs, request features, and share desktop setups.
             </Body1>
           </Card>
         </section>
