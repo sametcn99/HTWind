@@ -24,35 +24,6 @@ It also supports running PowerShell commands when you need quick system actions.
 - Built-in code editor with syntax highlighting and live preview (hot reload)
 - Open-source and community-driven development
 
-## Built-In Widgets
-
-HTWind currently ships with these built-in templates:
-
-- `clock`
-- `weather`
-- `tictactoe`
-- `system-monitor`
-- `app-launcher`
-- `visualizer`
-- `search-box`
-- `quick-links`
-- `clipboard-studio`
-- `system-time`
-- `memory-stats`
-- `environment-info`
-- `network-tools`
-- `process-manager`
-- `file-explorer`
-- `text-file-editor`
-- `app-info`
-- `media-controls`
-- `dns-lookup`
-- `file-actions`
-- `drive-roots`
-- `powershell-console`
-
-Template source files live in `HTWind/Templates`.
-
 ## Releases
 
 This repository includes an automated release workflow at:
@@ -67,6 +38,32 @@ The workflow resolves the current version from `HTWind/HTWind.csproj`, builds th
 - Portable archive (`HTWind-portable-*.zip`)
 
 Both are automatically uploaded to the GitHub Release page as a new release (`v<version>`).
+
+## Share Widgets and Feedback With The Community
+
+Use GitHub Discussions and the HTWind Reddit community to share reusable widgets, desktop setups, bug reports, and feature requests.
+
+- GitHub Discussions: <https://github.com/sametcn99/HTWind/discussions>
+- Reddit: <https://www.reddit.com/r/HTWind/>
+
+Suggested post format:
+
+1. Title: `[Widget] <name>`
+2. Summary: what it does
+3. Preview: screenshot or short GIF
+4. Code: attach `.html` file or paste source
+5. Notes: permissions, external APIs, and known limitations
+6. Version: compatible HTWind version
+
+You can also share your desktop layout screenshots in Reddit to help others discover practical HTWind setups.
+
+Suggested categories:
+
+- `Widget Showcase`
+- `Widget Requests`
+- `Widget Help`
+
+Users can copy the shared HTML file and add it through `Add Widget` inside HTWind.
 
 ## Installation
 
@@ -102,19 +99,6 @@ If you are using the installed version of HTWind, you can uninstall it from **Wi
 > [!IMPORTANT]
 > Uninstalling HTWind will delete all widgets and data stored in `%LocalAppData%\HTWind`. If you are uninstalling the app to perform a clean update, make sure to take a backup of this folder before proceeding.
 
-## How To Use
-
-1. Launch HTWind.
-2. Add a widget (`Add Widget`) from an HTML file.
-3. Use per-widget controls:
-
-- `Visible` to show/hide
-- `Locked` to switch between interaction and move/resize mode
-- `Pin on top` to keep above other windows
-- `Edit` to open the code editor
-
-1. Use tray icon actions for quick show/exit behavior.
-
 ## Widget Development
 
 You can build custom widgets using plain HTML/CSS/JavaScript.
@@ -145,32 +129,6 @@ Important:
 - Running commands can modify files, processes, registry entries, and network/system settings.
 - All command execution risk is owned by the user running HTWind.
 - On first launch, HTWind requires explicit acceptance of this risk before the app opens.
-
-## Share Widgets and Feedback With The Community
-
-Use GitHub Discussions and the HTWind Reddit community to share reusable widgets, desktop setups, bug reports, and feature requests.
-
-- GitHub Discussions: <https://github.com/sametcn99/HTWind/discussions>
-- Reddit: <https://www.reddit.com/r/HTWind/>
-
-Suggested post format:
-
-1. Title: `[Widget] <name>`
-2. Summary: what it does
-3. Preview: screenshot or short GIF
-4. Code: attach `.html` file or paste source
-5. Notes: permissions, external APIs, and known limitations
-6. Version: compatible HTWind version
-
-You can also share your desktop layout screenshots in Reddit to help others discover practical HTWind setups.
-
-Suggested categories:
-
-- `Widget Showcase`
-- `Widget Requests`
-- `Widget Help`
-
-Users can copy the shared HTML file and add it through `Add Widget` inside HTWind.
 
 ## Contributing
 
