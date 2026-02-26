@@ -1,0 +1,51 @@
+name: Bug report
+description: Create a report to help us improve HTWind
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us what you expected to happen
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: How can we reproduce it?
+      description: Describe the steps to reproduce the issue
+      placeholder: |
+        1. Open HTWind
+        2. Click on ...
+        3. See error
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: What version of HTWind are you using?
+      options:
+        - Latest Release
+        - Development (main branch)
+        - Older version
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Your Environment
+      description: e.g. Windows 11 23H2, .NET 10 SDK
+      placeholder: Windows 11 Build ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs-or-screenshots
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here (screenshots, error messages, logs).
