@@ -24,46 +24,12 @@ It also supports running PowerShell commands when you need quick system actions.
 - Built-in code editor with syntax highlighting and live preview (hot reload)
 - Open-source and community-driven development
 
-## Releases
-
-This repository includes an automated release workflow at:
-
-- `.github/workflows/release.yml`
-
-This workflow can be manually triggered via **GitHub Actions UI** (manual `workflow_dispatch`).
-
-The workflow resolves the current version from `HTWind/HTWind.csproj`, builds the assets, and creates a tagged GitHub Release with:
-
-- Installer (`HTWind-setup-*.exe`) via Inno Setup
-- Portable archive (`HTWind-portable-*.zip`)
-
-Both are automatically uploaded to the GitHub Release page as a new release (`v<version>`).
-
 ## Share Widgets and Feedback With The Community
 
 Use GitHub Discussions and the HTWind Reddit community to share reusable widgets, desktop setups, bug reports, and feature requests.
 
 - GitHub Discussions: <https://github.com/sametcn99/HTWind/discussions>
 - Reddit: <https://www.reddit.com/r/HTWind/>
-
-Suggested post format:
-
-1. Title: `[Widget] <name>`
-2. Summary: what it does
-3. Preview: screenshot or short GIF
-4. Code: attach `.html` file or paste source
-5. Notes: permissions, external APIs, and known limitations
-6. Version: compatible HTWind version
-
-You can also share your desktop layout screenshots in Reddit to help others discover practical HTWind setups.
-
-Suggested categories:
-
-- `Widget Showcase`
-- `Widget Requests`
-- `Widget Help`
-
-Users can copy the shared HTML file and add it through `Add Widget` inside HTWind.
 
 ## Installation
 
