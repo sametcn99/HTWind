@@ -219,6 +219,12 @@ public partial class WidgetWindow : Window
         Hide();
     }
 
+    public async Task ShowAndInitializeAsync()
+    {
+        Show();
+        await ResumeExecutionAsync();
+    }
+
     public void RefreshContent()
     {
         _pendingLivePreviewHtml = null;

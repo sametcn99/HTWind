@@ -88,19 +88,12 @@
             <!-- Search Card -->
             <ui:Card Grid.Row="2" Margin="0,0,0,8" Padding="14,10">
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                    <ui:SymbolIcon
-                        Symbol="Search24"
-                        FontSize="16"
-                        VerticalAlignment="Center"
-                        Margin="0,0,10,0"
-                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-
-                    <Grid Grid.Column="1">
+                    <Grid>
                         <TextBox
                             x:Name="WidgetSearchTextBox"
                             MinHeight="32"
@@ -136,6 +129,61 @@
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                            Text="{loc:Loc MainWindow_VisibilityFilter}" />
+
+                        <ComboBox
+                            x:Name="VisibilityFilterComboBox"
+                            Grid.Column="1"
+                            MinHeight="32"
+                            MinWidth="160"
+                            Margin="8,0,0,0"
+                            ToolTip="{loc:Loc MainWindow_VisibilityFilterDescription}"
+                            AutomationProperties.Name="{loc:Loc MainWindow_VisibilityFilter}"
+                            SelectionChanged="VisibilityFilterComboBox_SelectionChanged"
+                            SelectedIndex="0">
+                            <ComboBoxItem Tag="All" Content="{loc:Loc MainWindow_FilterAll}" />
+                            <ComboBoxItem Tag="VisibleOnly" Content="{loc:Loc MainWindow_FilterVisibleOnly}" />
+                            <ComboBoxItem Tag="HiddenOnly" Content="{loc:Loc MainWindow_FilterHiddenOnly}" />
+                        </ComboBox>
+
+                        <TextBlock
+                            Grid.Column="3"
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                            Text="{loc:Loc MainWindow_SortBy}" />
+
+                        <ComboBox
+                            x:Name="SortComboBox"
+                            Grid.Column="4"
+                            MinHeight="32"
+                            MinWidth="180"
+                            Margin="8,0,0,0"
+                            ToolTip="{loc:Loc MainWindow_SortByDescription}"
+                            AutomationProperties.Name="{loc:Loc MainWindow_SortBy}"
+                            SelectionChanged="SortComboBox_SelectionChanged"
+                            SelectedIndex="0">
+                            <ComboBoxItem Tag="NameAsc" Content="{loc:Loc MainWindow_SortNameAsc}" />
+                            <ComboBoxItem Tag="NameDesc" Content="{loc:Loc MainWindow_SortNameDesc}" />
+                            <ComboBoxItem Tag="CreatedNewest" Content="{loc:Loc MainWindow_SortCreatedNewest}" />
+                            <ComboBoxItem Tag="CreatedOldest" Content="{loc:Loc MainWindow_SortCreatedOldest}" />
+                            <ComboBoxItem Tag="UpdatedNewest" Content="{loc:Loc MainWindow_SortUpdatedNewest}" />
+                            <ComboBoxItem Tag="UpdatedOldest" Content="{loc:Loc MainWindow_SortUpdatedOldest}" />
+                        </ComboBox>
                     </Grid>
                 </Grid>
             </ui:Card>

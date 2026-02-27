@@ -60,7 +60,10 @@ public class WidgetManager : IWidgetManager
     private readonly IWidgetPermissionStateService _widgetPermissionStateService;
     private readonly IWidgetWindowFactory _windowFactory;
     private readonly Dictionary<string, WidgetWindow> _windowsById = new();
+    private readonly Queue<(WidgetModel Model, bool HasPersistedGeometry)> _visibleWindowCreateQueue = new();
+    private readonly HashSet<string> _queuedVisibleWindowIds = new(StringComparer.Ordinal);
     private bool _isRestoring;
+    private bool _isProcessingVisibleWindowQueue;
 
     public WidgetManager(
         IWidgetWindowFactory windowFactory,
@@ -136,8 +139,13 @@ public class WidgetManager : IWidgetManager
                         .ToList()
                 };
 
-                CreateAndTrackWidgetWindow(model, true);
                 Widgets.Add(model);
+                RegisterModelChangeHandler(model);
+
+                if (model.IsVisible)
+                {
+                    EnqueueVisibleWindowCreation(model, true);
+                }
             }
         }
         finally
@@ -193,8 +201,14 @@ public class WidgetManager : IWidgetManager
             IsPinned = false
         };
 
-        CreateAndTrackWidgetWindow(model, false);
         Widgets.Add(model);
+        RegisterModelChangeHandler(model);
+
+        if (model.IsVisible)
+        {
+            EnqueueVisibleWindowCreation(model, false);
+        }
+
         ScheduleSave();
         return model;
     }
@@ -284,7 +298,7 @@ public class WidgetManager : IWidgetManager
                 || model.Top.HasValue
                 || model.WidgetWidth.HasValue
                 || model.WidgetHeight.HasValue;
-            CreateAndTrackWidgetWindow(model, hasPersistedGeometry);
+            EnqueueVisibleWindowCreation(model, hasPersistedGeometry);
             return;
         }
 
@@ -403,6 +417,8 @@ public class WidgetManager : IWidgetManager
             _windowsById.Remove(model.Id);
         }
 
+        _queuedVisibleWindowIds.Remove(model.Id);
+
         UnregisterModelChangeHandler(model);
         _stateRepository.DeleteManagedWidgetFile(model.FilePath);
 
@@ -427,6 +443,9 @@ public class WidgetManager : IWidgetManager
         }
 
         _windowsById.Clear();
+        _visibleWindowCreateQueue.Clear();
+        _queuedVisibleWindowIds.Clear();
+        _isProcessingVisibleWindowQueue = false;
         foreach (var model in Widgets.ToList())
         {
             UnregisterModelChangeHandler(model);
@@ -437,6 +456,11 @@ public class WidgetManager : IWidgetManager
 
     private void CreateAndTrackWidgetWindow(WidgetModel model, bool hasPersistedGeometry)
     {
+        if (_windowsById.ContainsKey(model.Id))
+        {
+            return;
+        }
+
         NormalizePersistedGeometry(model);
 
         var window = _windowFactory.Create(model);
@@ -471,13 +495,101 @@ public class WidgetManager : IWidgetManager
         window.Closed += (_, _) =>
         {
             _windowsById.Remove(model.Id);
+            _queuedVisibleWindowIds.Remove(model.Id);
             UnregisterModelChangeHandler(model);
         };
 
-        window.SetRuntimeVisibility(model.IsVisible);
+        window.SetRuntimeVisibility(false);
         _geometryService.CaptureGeometry(window, model);
 
         window.Topmost = model.IsPinned;
+
+    }
+
+    private void EnqueueVisibleWindowCreation(WidgetModel model, bool hasPersistedGeometry)
+    {
+        ArgumentNullException.ThrowIfNull(model);
+
+        if (string.IsNullOrWhiteSpace(model.Id))
+        {
+            return;
+        }
+
+        if (_windowsById.ContainsKey(model.Id))
+        {
+            _ = _windowsById[model.Id].ShowAndInitializeAsync();
+            return;
+        }
+
+        if (!_queuedVisibleWindowIds.Add(model.Id))
+        {
+            return;
+        }
+
+        _visibleWindowCreateQueue.Enqueue((model, hasPersistedGeometry));
+        StartVisibleWindowQueueProcessing();
+    }
+
+    private void StartVisibleWindowQueueProcessing()
+    {
+        if (_isProcessingVisibleWindowQueue)
+        {
+            return;
+        }
+
+        _isProcessingVisibleWindowQueue = true;
+        _ = ProcessVisibleWindowQueueAsync();
+    }
+
+    private async Task ProcessVisibleWindowQueueAsync()
+    {
+        try
+        {
+            while (_visibleWindowCreateQueue.Count > 0)
+            {
+                var (model, hasPersistedGeometry) = _visibleWindowCreateQueue.Dequeue();
+                _queuedVisibleWindowIds.Remove(model.Id);
+
+                if (!model.IsVisible)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(model.FilePath) || !File.Exists(model.FilePath))
+                {
+                    continue;
+                }
+
+                if (!_windowsById.TryGetValue(model.Id, out var window))
+                {
+                    CreateAndTrackWidgetWindow(model, hasPersistedGeometry);
+                    if (!_windowsById.TryGetValue(model.Id, out window))
+                    {
+                        continue;
+                    }
+                }
+
+                try
+                {
+                    await window.ShowAndInitializeAsync();
+                }
+                catch
+                {
+                    // Keep queue processing resilient if a widget fails to initialize.
+                }
+
+                await Task.Delay(80);
+            }
+        }
+        finally
+        {
+            _isProcessingVisibleWindowQueue = false;
+
+            if (_visibleWindowCreateQueue.Count > 0)
+            {
+                StartVisibleWindowQueueProcessing();
+            }
+        }
     }
 
     private static void NormalizePersistedGeometry(WidgetModel model)

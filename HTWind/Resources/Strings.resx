@@ -94,6 +94,45 @@
   <data name="MainWindow_SearchWidgetsDescription" xml:space="preserve">
     <value>Filter added widgets by name.</value>
   </data>
+  <data name="MainWindow_VisibilityFilter" xml:space="preserve">
+    <value>Visibility</value>
+  </data>
+  <data name="MainWindow_VisibilityFilterDescription" xml:space="preserve">
+    <value>Filter widgets by visibility state.</value>
+  </data>
+  <data name="MainWindow_FilterAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="MainWindow_FilterVisibleOnly" xml:space="preserve">
+    <value>Visible only</value>
+  </data>
+  <data name="MainWindow_FilterHiddenOnly" xml:space="preserve">
+    <value>Hidden only</value>
+  </data>
+  <data name="MainWindow_SortBy" xml:space="preserve">
+    <value>Sort by</value>
+  </data>
+  <data name="MainWindow_SortByDescription" xml:space="preserve">
+    <value>Sort widgets by name, creation date, or update date.</value>
+  </data>
+  <data name="MainWindow_SortNameAsc" xml:space="preserve">
+    <value>Name (A-Z)</value>
+  </data>
+  <data name="MainWindow_SortNameDesc" xml:space="preserve">
+    <value>Name (Z-A)</value>
+  </data>
+  <data name="MainWindow_SortCreatedNewest" xml:space="preserve">
+    <value>Created date (newest first)</value>
+  </data>
+  <data name="MainWindow_SortCreatedOldest" xml:space="preserve">
+    <value>Created date (oldest first)</value>
+  </data>
+  <data name="MainWindow_SortUpdatedNewest" xml:space="preserve">
+    <value>Updated date (newest first)</value>
+  </data>
+  <data name="MainWindow_SortUpdatedOldest" xml:space="preserve">
+    <value>Updated date (oldest first)</value>
+  </data>
   <data name="MainWindow_FileDialogFilter" xml:space="preserve">
     <value>HTML Files (*.html;*.htm)|*.html;*.htm|All Files (*.*)|*.*</value>
   </data>
