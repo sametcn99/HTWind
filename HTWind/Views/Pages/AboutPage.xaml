@@ -1,121 +1,164 @@
 <UserControl
-    x:Class="HTWind.Views.Pages.AboutPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    xmlns:loc="clr-namespace:HTWind.Localization">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="28,8,28,28">
-            <ui:Card Padding="16" Margin="0,0,0,12">
-                <StackPanel>
-                    <TextBlock Text="{loc:Loc AboutWindow_Heading}" FontSize="24" FontWeight="SemiBold" />
-                    <TextBlock
-                        Margin="0,6,0,0"
-                        Text="{loc:Loc AboutWindow_Description}"
-                        TextWrapping="Wrap"
-                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                </StackPanel>
-            </ui:Card>
-
-            <ui:Card Padding="16" Margin="0,0,0,8">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="{loc:Loc AboutWindow_Version}" FontWeight="SemiBold" />
-                        <TextBlock x:Name="VersionText" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                        <TextBlock
-                            x:Name="UpdateStatusText"
-                            Margin="0,4,0,0"
-                            Text="{loc:Loc AboutWindow_UpdateNotChecked}"
-                            TextWrapping="Wrap"
-                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                    </StackPanel>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0">
-                        <ui:Button
-                            Width="160"
-                            Content="{loc:Loc AboutWindow_CheckUpdates}"
-                            Click="CheckUpdates_Click" />
-                        <ui:Button
-                            Width="160"
-                            Margin="0,8,0,0"
-                            Content="{loc:Loc AboutWindow_OpenLatestRelease}"
-                            Click="OpenLatestRelease_Click" />
-                    </StackPanel>
-                </Grid>
-            </ui:Card>
-
-            <ui:Card Padding="16" Margin="0,0,0,8">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel>
-                        <TextBlock Text="{loc:Loc AboutWindow_GitHubRepository}" FontWeight="SemiBold" />
-                        <TextBlock x:Name="RepositoryText" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
-                    </StackPanel>
-                    <ui:Button Grid.Column="1" Margin="12,0,0,0" Content="{loc:Loc AboutWindow_Open}" Click="OpenRepository_Click" />
-                </Grid>
-            </ui:Card>
-
-            <ui:Card Padding="16" Margin="0,0,0,8">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel>
-                        <TextBlock Text="{loc:Loc AboutWindow_DeveloperWebsite}" FontWeight="SemiBold" />
-                        <TextBlock x:Name="DeveloperSiteText" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
-                    </StackPanel>
-                    <ui:Button Grid.Column="1" Margin="12,0,0,0" Content="{loc:Loc AboutWindow_Open}" Click="OpenDeveloperSite_Click" />
-                </Grid>
-            </ui:Card>
-
-            <ui:Card Padding="16" Margin="0,0,0,8">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel>
-                        <TextBlock Text="{loc:Loc AboutWindow_Issues}" FontWeight="SemiBold" />
-                        <TextBlock x:Name="IssuesText" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
-                    </StackPanel>
-                    <ui:Button Grid.Column="1" Margin="12,0,0,0" Content="{loc:Loc AboutWindow_Open}" Click="OpenIssues_Click" />
-                </Grid>
-            </ui:Card>
-
-            <ui:Card Padding="16" Margin="0,0,0,8">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel>
-                        <TextBlock Text="{loc:Loc AboutWindow_Discussions}" FontWeight="SemiBold" />
-                        <TextBlock x:Name="DiscussionsText" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
-                    </StackPanel>
-                    <ui:Button Grid.Column="1" Margin="12,0,0,0" Content="{loc:Loc AboutWindow_Open}" Click="OpenDiscussions_Click" />
-                </Grid>
-            </ui:Card>
-
-            <ui:Card Padding="16" Margin="0,0,0,8">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel>
-                        <TextBlock Text="{loc:Loc AboutWindow_RedditCommunity}" FontWeight="SemiBold" />
-                        <TextBlock x:Name="RedditText" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
-                    </StackPanel>
-                    <ui:Button Grid.Column="1" Margin="12,0,0,0" Content="{loc:Loc AboutWindow_Open}" Click="OpenReddit_Click" />
-                </Grid>
-            </ui:Card>
+  x:Class="HTWind.Views.Pages.AboutPage"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+  xmlns:loc="clr-namespace:HTWind.Localization">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="28,8,28,28">
+      <ui:Card Padding="16"
+          Margin="0,0,0,12">
+        <StackPanel>
+          <TextBlock Text="{loc:Loc AboutWindow_Heading}"
+              FontSize="24"
+              FontWeight="SemiBold"/>
+          <TextBlock
+            Margin="0,6,0,0"
+            Text="{loc:Loc AboutWindow_Description}"
+            TextWrapping="Wrap"
+            Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
         </StackPanel>
-    </ScrollViewer>
+      </ui:Card>
+
+      <ui:Card Padding="16"
+          Margin="0,0,0,8">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="{loc:Loc AboutWindow_Version}"
+                FontWeight="SemiBold"/>
+            <TextBlock x:Name="VersionText"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+            <TextBlock
+              x:Name="UpdateStatusText"
+              Margin="0,4,0,0"
+              Text="{loc:Loc AboutWindow_UpdateNotChecked}"
+              TextWrapping="Wrap"
+              Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+          </StackPanel>
+          <StackPanel Grid.Column="1"
+              VerticalAlignment="Center"
+              Margin="12,0,0,0">
+            <ui:Button
+              Width="160"
+              Content="{loc:Loc AboutWindow_CheckUpdates}"
+              Click="CheckUpdates_Click"/>
+            <ui:Button
+              Width="160"
+              Margin="0,8,0,0"
+              Content="{loc:Loc AboutWindow_OpenLatestRelease}"
+              Click="OpenLatestRelease_Click"/>
+          </StackPanel>
+        </Grid>
+      </ui:Card>
+
+      <ui:Card Padding="16"
+          Margin="0,0,0,8">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel>
+            <TextBlock Text="{loc:Loc AboutWindow_GitHubRepository}"
+                FontWeight="SemiBold"/>
+            <TextBlock x:Name="RepositoryText"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                TextWrapping="Wrap"/>
+          </StackPanel>
+          <ui:Button Grid.Column="1"
+              Margin="12,0,0,0"
+              Content="{loc:Loc AboutWindow_Open}"
+              Click="OpenRepository_Click"/>
+        </Grid>
+      </ui:Card>
+
+      <ui:Card Padding="16"
+          Margin="0,0,0,8">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel>
+            <TextBlock Text="{loc:Loc AboutWindow_DeveloperWebsite}"
+                FontWeight="SemiBold"/>
+            <TextBlock x:Name="DeveloperSiteText"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                TextWrapping="Wrap"/>
+          </StackPanel>
+          <ui:Button Grid.Column="1"
+              Margin="12,0,0,0"
+              Content="{loc:Loc AboutWindow_Open}"
+              Click="OpenDeveloperSite_Click"/>
+        </Grid>
+      </ui:Card>
+
+      <ui:Card Padding="16"
+          Margin="0,0,0,8">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel>
+            <TextBlock Text="{loc:Loc AboutWindow_Issues}"
+                FontWeight="SemiBold"/>
+            <TextBlock x:Name="IssuesText"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                TextWrapping="Wrap"/>
+          </StackPanel>
+          <ui:Button Grid.Column="1"
+              Margin="12,0,0,0"
+              Content="{loc:Loc AboutWindow_Open}"
+              Click="OpenIssues_Click"/>
+        </Grid>
+      </ui:Card>
+
+      <ui:Card Padding="16"
+          Margin="0,0,0,8">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel>
+            <TextBlock Text="{loc:Loc AboutWindow_Discussions}"
+                FontWeight="SemiBold"/>
+            <TextBlock x:Name="DiscussionsText"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                TextWrapping="Wrap"/>
+          </StackPanel>
+          <ui:Button Grid.Column="1"
+              Margin="12,0,0,0"
+              Content="{loc:Loc AboutWindow_Open}"
+              Click="OpenDiscussions_Click"/>
+        </Grid>
+      </ui:Card>
+
+      <ui:Card Padding="16"
+          Margin="0,0,0,8">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel>
+            <TextBlock Text="{loc:Loc AboutWindow_RedditCommunity}"
+                FontWeight="SemiBold"/>
+            <TextBlock x:Name="RedditText"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                TextWrapping="Wrap"/>
+          </StackPanel>
+          <ui:Button Grid.Column="1"
+              Margin="12,0,0,0"
+              Content="{loc:Loc AboutWindow_Open}"
+              Click="OpenReddit_Click"/>
+        </Grid>
+      </ui:Card>
+    </StackPanel>
+  </ScrollViewer>
 </UserControl>

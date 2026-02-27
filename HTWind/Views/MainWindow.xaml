@@ -1,78 +1,81 @@
 ﻿<ui:FluentWindow
-    x:Class="HTWind.MainWindow"
-    x:Name="MainWindowRoot"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    xmlns:anim="clr-namespace:Wpf.Ui.Animations;assembly=Wpf.Ui"
-    xmlns:loc="clr-namespace:HTWind.Localization"
-    xmlns:tb="http://www.hardcodet.net/taskbar"
-    mc:Ignorable="d"
-    Title="{loc:Loc MainWindow_WindowTitle}"
-    Icon="/Assets/favicon.ico"
-    Width="920"
-    Height="660"
-    MinWidth="760"
-    MinHeight="520"
-    WindowBackdropType="Mica"
-    ExtendsContentIntoTitleBar="True"
-    WindowCornerPreference="Round"
-    Closing="Window_Closing">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+  x:Class="HTWind.MainWindow"
+  x:Name="MainWindowRoot"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+  xmlns:anim="clr-namespace:Wpf.Ui.Animations;assembly=Wpf.Ui"
+  xmlns:loc="clr-namespace:HTWind.Localization"
+  xmlns:tb="http://www.hardcodet.net/taskbar"
+  mc:Ignorable="d"
+  Title="{loc:Loc MainWindow_WindowTitle}"
+  Icon="/Assets/favicon.ico"
+  Width="920"
+  Height="660"
+  MinWidth="760"
+  MinHeight="520"
+  WindowBackdropType="Mica"
+  ExtendsContentIntoTitleBar="True"
+  WindowCornerPreference="Round"
+  Closing="Window_Closing">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
 
-        <tb:TaskbarIcon
-            x:Name="TrayIcon"
-            ToolTipText="{loc:Loc MainWindow_WindowTitle}"
-            TrayMouseDoubleClick="TrayIcon_TrayMouseDoubleClick">
-            <tb:TaskbarIcon.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="{loc:Loc MainWindow_Show}" Click="TrayIcon_Show_Click" />
-                    <MenuItem Header="{loc:Loc MainWindow_Exit}" Click="TrayIcon_Exit_Click" />
-                </ContextMenu>
-            </tb:TaskbarIcon.ContextMenu>
-        </tb:TaskbarIcon>
+    <tb:TaskbarIcon
+      x:Name="TrayIcon"
+      ToolTipText="{loc:Loc MainWindow_WindowTitle}"
+      TrayMouseDoubleClick="TrayIcon_TrayMouseDoubleClick">
+      <tb:TaskbarIcon.ContextMenu>
+        <ContextMenu>
+          <MenuItem Header="{loc:Loc MainWindow_Show}"
+              Click="TrayIcon_Show_Click"/>
+          <MenuItem Header="{loc:Loc MainWindow_Exit}"
+              Click="TrayIcon_Exit_Click"/>
+        </ContextMenu>
+      </tb:TaskbarIcon.ContextMenu>
+    </tb:TaskbarIcon>
 
-        <ui:TitleBar Grid.Row="0" Title="{loc:Loc MainWindow_TitleBarTitle}" />
+    <ui:TitleBar Grid.Row="0"
+        Title="{loc:Loc MainWindow_TitleBarTitle}"/>
 
-        <ui:NavigationView
-            x:Name="NavigationView"
-            Grid.Row="1"
-            PaneDisplayMode="Left"
-            IsBackButtonVisible="Collapsed"
-            IsPaneToggleVisible="False"
-            OpenPaneLength="240"
-            FrameMargin="12,10,12,12"
-            Transition="{x:Static anim:Transition.FadeInWithSlide}"
-            TransitionDuration="220">
-            <ui:NavigationView.MenuItems>
-                <ui:NavigationViewItem
-                    x:Name="HomeNavItem"
-                    Margin="0,2,0,2"
-                    Content="{loc:Loc MainWindow_HomeTab}"
-                    Icon="{ui:SymbolIcon Home24}"
-                    Tag="Home"
-                    Click="HomeNavItem_Click" />
-                <ui:NavigationViewItem
-                    x:Name="SettingsNavItem"
-                    Margin="0,2,0,2"
-                    Content="{loc:Loc MainWindow_SettingsTab}"
-                    Icon="{ui:SymbolIcon Settings24}"
-                    Tag="Settings"
-                    Click="SettingsNavItem_Click" />
-                <ui:NavigationViewItem
-                    x:Name="AboutNavItem"
-                    Margin="0,2,0,2"
-                    Content="{loc:Loc MainWindow_AboutTab}"
-                    Icon="{ui:SymbolIcon Info24}"
-                    Tag="About"
-                    Click="AboutNavItem_Click" />
-            </ui:NavigationView.MenuItems>
-        </ui:NavigationView>
-    </Grid>
+    <ui:NavigationView
+      x:Name="NavigationView"
+      Grid.Row="1"
+      PaneDisplayMode="Left"
+      IsBackButtonVisible="Collapsed"
+      IsPaneToggleVisible="False"
+      OpenPaneLength="240"
+      FrameMargin="12,10,12,12"
+      Transition="{x:Static anim:Transition.FadeInWithSlide}"
+      TransitionDuration="220">
+      <ui:NavigationView.MenuItems>
+        <ui:NavigationViewItem
+          x:Name="HomeNavItem"
+          Margin="0,2,0,2"
+          Content="{loc:Loc MainWindow_HomeTab}"
+          Icon="{ui:SymbolIcon Home24}"
+          Tag="Home"
+          Click="HomeNavItem_Click"/>
+        <ui:NavigationViewItem
+          x:Name="SettingsNavItem"
+          Margin="0,2,0,2"
+          Content="{loc:Loc MainWindow_SettingsTab}"
+          Icon="{ui:SymbolIcon Settings24}"
+          Tag="Settings"
+          Click="SettingsNavItem_Click"/>
+        <ui:NavigationViewItem
+          x:Name="AboutNavItem"
+          Margin="0,2,0,2"
+          Content="{loc:Loc MainWindow_AboutTab}"
+          Icon="{ui:SymbolIcon Info24}"
+          Tag="About"
+          Click="AboutNavItem_Click"/>
+      </ui:NavigationView.MenuItems>
+    </ui:NavigationView>
+  </Grid>
 </ui:FluentWindow>
