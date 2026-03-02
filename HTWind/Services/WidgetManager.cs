@@ -306,7 +306,7 @@ public class WidgetManager : IWidgetManager
         {
             _geometryService.CaptureGeometry(window, model);
             ScheduleSave();
-            window.SetRuntimeVisibility(false);
+            window.Close();
             return;
         }
 
