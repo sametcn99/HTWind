@@ -37,10 +37,26 @@ It also supports running PowerShell commands when you need quick system actions.
 - **Widget built-in code editor with live preview (hot reload)**
 - Tray integration (show/hide app, background workflow)
 - Pin-on-top, visibility toggle, and persisted widget geometry/state
+- Smart visibility suppression by display: hide widget windows while another app is fullscreen (toggle)
+- Optional maximized-window suppression by display (separate toggle from fullscreen suppression)
 - Startup toggle (`HKCU\Software\Microsoft\Windows\CurrentVersion\Run`)
 - Localization infrastructure (`resx` + `LocExtension`)
 - Built-in code editor with syntax highlighting and live preview (hot reload)
 - Open-source and community-driven development
+
+## Visibility Suppression Modes
+
+HTWind includes per-display runtime suppression options in **Settings** to reduce distraction and improve performance while other apps are in focus.
+
+- **Hide widgets on fullscreen apps** (enabled by default):
+Widget windows are temporarily closed on the same display when another app enters fullscreen, then restored when fullscreen ends.
+- **Hide widgets on maximized apps** (optional):
+Widget windows are temporarily closed on the same display when another app is maximized, then restored when that app is no longer maximized.
+
+Notes:
+
+- These options do not change the widget `Visible` state in app data.
+- Suppression is runtime-only and windows are restored automatically.
 
 ## Share Widgets and Feedback With The Community
 

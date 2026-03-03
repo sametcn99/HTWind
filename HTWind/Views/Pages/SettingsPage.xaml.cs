@@ -46,4 +46,14 @@ public partial class SettingsPage : UserControl
     {
         _viewModel.SetFullscreenSuppression(false);
     }
+
+    private void MaximizedSuppressionToggle_Checked(object sender, RoutedEventArgs e)
+    {
+        _viewModel.SetMaximizedSuppression(true);
+    }
+
+    private void MaximizedSuppressionToggle_Unchecked(object sender, RoutedEventArgs e)
+    {
+        _viewModel.SetMaximizedSuppression(false);
+    }
 }

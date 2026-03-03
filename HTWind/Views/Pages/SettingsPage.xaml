@@ -178,6 +178,45 @@
         </Grid>
       </ui:Card>
 
+      <!-- Maximized Suppression -->
+      <ui:Card Margin="0,0,0,8"
+          Padding="16,12">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+
+          <ui:SymbolIcon
+            Symbol="WindowConsole20"
+            FontSize="20"
+            VerticalAlignment="Center"
+            Margin="0,0,14,0"/>
+
+          <StackPanel Grid.Column="1"
+              VerticalAlignment="Center">
+            <TextBlock
+              Text="{loc:Loc MainWindow_HideWidgetsOnMaximized}"
+              FontSize="14"
+              FontWeight="SemiBold"/>
+            <TextBlock
+              Text="{loc:Loc MainWindow_HideWidgetsOnMaximizedDescription}"
+              FontSize="12"
+              Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+              TextWrapping="Wrap"/>
+          </StackPanel>
+
+          <ui:ToggleSwitch
+            x:Name="MaximizedSuppressionToggle"
+            Grid.Column="2"
+            VerticalAlignment="Center"
+            IsChecked="{Binding IsMaximizedSuppressionEnabled, Mode=OneWay}"
+            Checked="MaximizedSuppressionToggle_Checked"
+            Unchecked="MaximizedSuppressionToggle_Unchecked"/>
+        </Grid>
+      </ui:Card>
+
       <!-- Widget Reset -->
       <ui:Card Margin="0,0,0,8"
           Padding="16,12">

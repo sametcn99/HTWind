@@ -79,6 +79,7 @@ public class WidgetManager : IWidgetManager, IDisposable
     private bool _isProcessingVisibleWindowQueue;
     private bool _isDisposed;
     private bool _isFullscreenSuppressionEnabled = true;
+    private bool _isMaximizedSuppressionEnabled;
 
     public WidgetManager(
         IWidgetWindowFactory windowFactory,
@@ -166,12 +167,29 @@ public class WidgetManager : IWidgetManager, IDisposable
         }
     }
 
+    public bool IsMaximizedSuppressionEnabled
+    {
+        get => _isMaximizedSuppressionEnabled;
+        set
+        {
+            if (_isMaximizedSuppressionEnabled == value)
+            {
+                return;
+            }
+
+            _isMaximizedSuppressionEnabled = value;
+            ReconcileRuntimeSuppressedWidgets();
+            ScheduleSave();
+        }
+    }
+
     public void LoadPersistedWidgets()
     {
         HasPersistedState = _stateRepository.HasStateFile();
 
         var snapshot = _stateRepository.Load();
         _isFullscreenSuppressionEnabled = snapshot.SuppressWidgetsOnFullscreen;
+        _isMaximizedSuppressionEnabled = snapshot.SuppressWidgetsOnMaximized;
         var states = snapshot.Widgets;
         if (states.Count == 0)
         {
@@ -364,7 +382,7 @@ public class WidgetManager : IWidgetManager, IDisposable
                 return;
             }
 
-            if (ShouldSuppressWidgetForActiveFullscreen(model))
+            if (ShouldSuppressWidgetForActiveWindow(model))
             {
                 _runtimeSuppressedWindowIds.Add(model.Id);
                 return;
@@ -388,7 +406,7 @@ public class WidgetManager : IWidgetManager, IDisposable
             return;
         }
 
-        if (ShouldSuppressWidgetForActiveFullscreen(model))
+        if (ShouldSuppressWidgetForActiveWindow(model))
         {
             _runtimeSuppressedWindowIds.Add(model.Id);
             _geometryService.CaptureGeometry(window, model);
@@ -665,7 +683,7 @@ public class WidgetManager : IWidgetManager, IDisposable
                     continue;
                 }
 
-                if (ShouldSuppressWidgetForActiveFullscreen(model))
+                if (ShouldSuppressWidgetForActiveWindow(model))
                 {
                     _runtimeSuppressedWindowIds.Add(model.Id);
                     continue;
@@ -735,7 +753,7 @@ public class WidgetManager : IWidgetManager, IDisposable
             return;
         }
 
-        var activeFullscreenMonitorDeviceName = GetActiveFullscreenMonitorDeviceName();
+        var activeSuppressionMonitorDeviceName = GetActiveSuppressionMonitorDeviceName();
 
         foreach (var model in Widgets)
         {
@@ -745,7 +763,7 @@ public class WidgetManager : IWidgetManager, IDisposable
                 continue;
             }
 
-            if (ShouldSuppressWidgetForMonitor(model, activeFullscreenMonitorDeviceName))
+            if (ShouldSuppressWidgetForMonitor(model, activeSuppressionMonitorDeviceName))
             {
                 SuppressWidgetWindowAtRuntime(model);
                 continue;
@@ -798,16 +816,16 @@ public class WidgetManager : IWidgetManager, IDisposable
         EnqueueVisibleWindowCreation(model, hasPersistedGeometry);
     }
 
-    private bool ShouldSuppressWidgetForActiveFullscreen(WidgetModel model)
+    private bool ShouldSuppressWidgetForActiveWindow(WidgetModel model)
     {
         ArgumentNullException.ThrowIfNull(model);
 
-        if (!IsFullscreenSuppressionEnabled)
+        if (!IsFullscreenSuppressionEnabled && !IsMaximizedSuppressionEnabled)
         {
             return false;
         }
 
-        return ShouldSuppressWidgetForMonitor(model, GetActiveFullscreenMonitorDeviceName());
+        return ShouldSuppressWidgetForMonitor(model, GetActiveSuppressionMonitorDeviceName());
     }
 
     private static bool ShouldSuppressWidgetForMonitor(
@@ -857,8 +875,13 @@ public class WidgetManager : IWidgetManager, IDisposable
         return recentPlacement?.MonitorDeviceName;
     }
 
-    private static string? GetActiveFullscreenMonitorDeviceName()
+    private string? GetActiveSuppressionMonitorDeviceName()
     {
+        if (!IsFullscreenSuppressionEnabled && !IsMaximizedSuppressionEnabled)
+        {
+            return null;
+        }
+
         var foregroundWindowHandle = GetForegroundWindow();
         if (foregroundWindowHandle == IntPtr.Zero)
         {
@@ -905,7 +928,17 @@ public class WidgetManager : IWidgetManager, IDisposable
             && Math.Abs(windowRect.Bottom - monitorInfo.RcMonitor.Bottom)
                 <= FullscreenBoundsTolerancePixels;
 
-        return isFullscreenWindow ? monitorInfo.SzDevice : null;
+        if (IsFullscreenSuppressionEnabled && isFullscreenWindow)
+        {
+            return monitorInfo.SzDevice;
+        }
+
+        if (IsMaximizedSuppressionEnabled && IsZoomed(foregroundWindowHandle))
+        {
+            return monitorInfo.SzDevice;
+        }
+
+        return null;
     }
 
     private static void NormalizePersistedGeometry(WidgetModel model)
@@ -1027,6 +1060,7 @@ public class WidgetManager : IWidgetManager, IDisposable
         var snapshot = new WidgetStateSnapshot
         {
             SuppressWidgetsOnFullscreen = IsFullscreenSuppressionEnabled,
+            SuppressWidgetsOnMaximized = IsMaximizedSuppressionEnabled,
             Widgets = Widgets
                 .Select(model => new WidgetStateRecord
                 {
@@ -1111,6 +1145,10 @@ public class WidgetManager : IWidgetManager, IDisposable
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool IsIconic(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool IsZoomed(IntPtr hWnd);
 
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]

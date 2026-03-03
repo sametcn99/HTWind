@@ -44,7 +44,8 @@ public sealed partial class WidgetStateRepository : IWidgetStateRepository
                 return new WidgetStateSnapshot
                 {
                     Widgets = legacyStates ?? [],
-                    SuppressWidgetsOnFullscreen = true
+                    SuppressWidgetsOnFullscreen = true,
+                    SuppressWidgetsOnMaximized = false
                 };
             }
 

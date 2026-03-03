@@ -209,6 +209,12 @@
   <data name="MainWindow_HideWidgetsOnFullscreenDescription" xml:space="preserve">
     <value>Temporarily close widgets only on the same display while another app is fullscreen, then restore them when fullscreen ends.</value>
   </data>
+  <data name="MainWindow_HideWidgetsOnMaximized" xml:space="preserve">
+    <value>Hide widgets on maximized apps</value>
+  </data>
+  <data name="MainWindow_HideWidgetsOnMaximizedDescription" xml:space="preserve">
+    <value>Temporarily close widgets only on the same display while another app is maximized, then restore them when it is not maximized.</value>
+  </data>
   <data name="MainWindow_ResetAllWidgets" xml:space="preserve">
     <value>Reset all widgets</value>
   </data>

@@ -721,6 +721,7 @@ function App() {
     { value: 'Hot Reload', label: 'Live widget preview while editing' },
     { value: 'WebView2', label: 'Native rendering stack' },
     { value: 'Open Source', label: 'GPL 3.0 licensed project' },
+    { value: 'Smart Suppression', label: 'Fullscreen and maximized display-aware hide modes', spanTwo: true },
     { value: 'Built-in Editor', label: 'Create and edit widgets in-app', spanTwo: true },
     { value: 'PowerShell API', label: 'Host-side automation bridge', spanTwo: true },
   ]
@@ -754,6 +755,11 @@ function App() {
       question: 'Does HTWind support PowerShell automation?',
       answer:
         'Yes. HTWind includes host-side APIs that can execute approved PowerShell commands, enabling practical automation workflows for diagnostics and controlled desktop actions.',
+    },
+    {
+      question: 'Can widgets auto-hide while I use fullscreen or maximized apps?',
+      answer:
+        'Yes. In Settings, you can enable fullscreen suppression and an optional separate maximized-app suppression mode. Both modes work per display and temporarily close widget windows without changing the saved widget visibility state.',
     },
     {
       question: 'Is HTWind open source?',
@@ -940,7 +946,8 @@ function App() {
             <Subtitle1 className={styles.featureTitle}>Windows 11 Native Feel</Subtitle1>
             <Body1 className={styles.featureDescription}>
               Designed for modern Windows workflows with tray behavior, pin-on-top controls, and state persistence
-              tuned for desktop productivity.
+              tuned for desktop productivity, including display-aware suppression options for fullscreen and
+              maximized foreground apps.
             </Body1>
           </Card>
         </section>
@@ -995,7 +1002,8 @@ function App() {
               The project is designed for users who want a lightweight but extensible desktop customization layer.
               With tray integration, pin-on-top window controls, state persistence, and template-based widgets,
               HTWind helps turn a standard Windows 11 workspace into a more actionable and information-rich
-              environment without requiring heavy desktop shell replacements.
+              environment without requiring heavy desktop shell replacements. Settings also include display-aware
+              suppression modes that temporarily close widget windows while other apps are fullscreen or maximized.
             </p>
 
             <div className={styles.screenshotsGrid}>

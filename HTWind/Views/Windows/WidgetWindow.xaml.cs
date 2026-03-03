@@ -41,6 +41,7 @@ public partial class WidgetWindow : Window
     private bool _hasWidgetsEnvironmentLease;
 
     private bool _isResizing;
+    private bool _isClosingOrClosed;
     private string? _pendingLivePreviewHtml;
     private bool _isLastNavigationLivePreview;
     private int _lastLivePreviewHash;
@@ -675,6 +676,8 @@ public partial class WidgetWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
+        _isClosingOrClosed = true;
+
         UnregisterFromSharedInteractionStateUpdates();
         Loaded -= WidgetWindow_Loaded;
         StateChanged -= WidgetWindow_StateChanged;
@@ -854,7 +857,7 @@ public partial class WidgetWindow : Window
             CoreWebView2WebMessageReceivedEventArgs e
     )
     {
-        if (webView.CoreWebView2 is null)
+        if (_isClosingOrClosed || sender is not CoreWebView2 coreWebView)
         {
             return;
         }
@@ -897,9 +900,25 @@ public partial class WidgetWindow : Window
         var json = JsonSerializer.Serialize(response, HostBridgeJsonOptions);
         var payloadBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
 
-        await webView.CoreWebView2.ExecuteScriptAsync(
+        if (_isClosingOrClosed)
+        {
+            return;
+        }
+
+        try
+        {
+            await coreWebView.ExecuteScriptAsync(
                 $"window.HTWind && window.HTWind.__resolveFromHost('{payloadBase64}');"
-        );
+            );
+        }
+        catch (ObjectDisposedException)
+        {
+            // Window/WebView can be disposed while an async host call is completing.
+        }
+        catch (InvalidOperationException)
+        {
+            // CoreWebView2 may be in teardown; ignore late responses.
+        }
     }
 
     private static string GetHostBridgeScript()
