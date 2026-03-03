@@ -1,21 +1,21 @@
 {
-  "name": "HTWind",
-  "short_name": "HTWind",
-  "description": "HTWind is a Windows desktop widget manager with HTML templates and PowerShell tooling.",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#0b1019",
-  "theme_color": "#0b1019",
-  "icons": [
-    {
-      "src": "/android-chrome-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/android-chrome-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+	"name": "HTWind",
+	"short_name": "HTWind",
+	"description": "HTWind is a Windows desktop widget manager with HTML templates and PowerShell tooling.",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#0b1019",
+	"theme_color": "#0b1019",
+	"icons": [
+		{
+			"src": "/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	]
 }

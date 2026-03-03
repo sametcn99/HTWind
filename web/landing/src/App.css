@@ -1,59 +1,59 @@
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 :root,
 html,
 body,
 #root {
-  min-height: 100%;
-  /* Windows 11 dark Mica-style background on root-level surfaces */
-  background:
-    radial-gradient(circle at 18% 8%, rgba(0, 120, 212, 0.22), transparent 48%),
-    radial-gradient(circle at 82% 12%, rgba(0, 60, 168, 0.14), transparent 44%),
-    radial-gradient(circle at 50% 96%, rgba(0, 20, 60, 0.28), transparent 50%),
-    linear-gradient(180deg, #111114 0%, #141418 55%, #101214 100%);
-  background-attachment: fixed;
+	min-height: 100%;
+	/* Windows 11 dark Mica-style background on root-level surfaces */
+	background:
+		radial-gradient(circle at 18% 8%, rgba(0, 120, 212, 0.22), transparent 48%),
+		radial-gradient(circle at 82% 12%, rgba(0, 60, 168, 0.14), transparent 44%),
+		radial-gradient(circle at 50% 96%, rgba(0, 20, 60, 0.28), transparent 50%),
+		linear-gradient(180deg, #111114 0%, #141418 55%, #101214 100%);
+	background-attachment: fixed;
 }
 
 body {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.956);
-  font-family: "Segoe UI Variable Text", "Manrope", "Segoe UI", sans-serif;
+	margin: 0;
+	color: rgba(255, 255, 255, 0.956);
+	font-family: "Segoe UI Variable Text", "Manrope", "Segoe UI", sans-serif;
 }
 
 main {
-  animation: reveal-up 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	animation: reveal-up 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 section {
-  animation: reveal-up 580ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	animation: reveal-up 580ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 header {
-  animation: reveal-down 460ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	animation: reveal-down 460ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes reveal-up {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+	from {
+		opacity: 0;
+		transform: translateY(16px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 @keyframes reveal-down {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+	from {
+		opacity: 0;
+		transform: translateY(-6px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }

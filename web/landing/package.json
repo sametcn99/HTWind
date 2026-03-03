@@ -1,33 +1,35 @@
 {
-  "name": "htwind-web",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@fluentui/react-components": "^9.73.0",
-    "@fluentui/react-icons": "^2.0.319",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "react-zoom-pan-pinch": "^3.7.0"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.39.3",
-    "@types/node": "^24.10.13",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react-swc": "^4.2.3",
-    "eslint": "^9.39.3",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-react-refresh": "^0.4.26",
-    "globals": "^16.5.0",
-    "typescript": "~5.9.3",
-    "typescript-eslint": "^8.56.1",
-    "vite": "^7.3.1"
-  }
+	"name": "htwind-web",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc -b && vite build",
+		"lint": "eslint .",
+		"preview": "vite preview",
+		"check": "tsc -b --noEmit && eslint . && biome check --write"
+	},
+	"dependencies": {
+		"@fluentui/react-components": "^9.73.1",
+		"@fluentui/react-icons": "^2.0.320",
+		"react": "^19.2.4",
+		"react-dom": "^19.2.4",
+		"react-zoom-pan-pinch": "^3.7.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.4.5",
+		"@eslint/js": "^10.0.1",
+		"@types/node": "^25.3.3",
+		"@types/react": "^19.2.14",
+		"@types/react-dom": "^19.2.3",
+		"@vitejs/plugin-react-swc": "^4.2.3",
+		"eslint": "^10.0.2",
+		"eslint-plugin-react-hooks": "^7.0.1",
+		"eslint-plugin-react-refresh": "^0.5.2",
+		"globals": "^17.4.0",
+		"typescript": "~5.9.3",
+		"typescript-eslint": "^8.56.1",
+		"vite": "^7.3.1"
+	}
 }

@@ -1,25 +1,27 @@
 :root {
-  font-family: "Segoe UI Variable Display", "Segoe UI", Bahnschrift, "Trebuchet MS", sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  background-color: #101214;
-  color-scheme: dark;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	font-family:
+		"Segoe UI Variable Display", "Segoe UI", Bahnschrift, "Trebuchet MS",
+		sans-serif;
+	line-height: 1.5;
+	font-weight: 400;
+	background-color: #101214;
+	color-scheme: dark;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 * {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 html,
 body,
 #root {
-  margin: 0;
-  width: 100%;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: #101214;
+	margin: 0;
+	width: 100%;
+	min-width: 320px;
+	min-height: 100vh;
+	background-color: #101214;
 }
