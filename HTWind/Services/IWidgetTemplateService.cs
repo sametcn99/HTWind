@@ -28,4 +28,6 @@ public enum BuiltInWidgetType
 public interface IWidgetTemplateService
 {
     string CreateTemplateFile(BuiltInWidgetType widgetType);
+
+    string CreateWidgetPackageSchemaFile();
 }

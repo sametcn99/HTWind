@@ -33,6 +33,9 @@ It also supports running PowerShell commands when you need quick system actions.
 
 - **Native PowerShell script execution support for system automation and quick tasks**
 - Desktop HTML widgets with lock/unlock interaction modes
+- Import widget packages through `htwind.widget.json`
+- Support for widgets with local assets such as CSS, JavaScript, images, and fonts
+- Support for multi-widget packages that install several widgets from one manifest
 - Built-in widget library (clock, weather, system tools, file helpers, and more)
 - **Widget built-in code editor with live preview (hot reload)**
 - Tray integration (show/hide app, background workflow)
@@ -106,6 +109,120 @@ If you are using the installed version of HTWind, you can uninstall it from **Wi
 
 You can build custom widgets using plain HTML/CSS/JavaScript.
 
+HTWind now supports three practical widget packaging levels:
+
+- A single HTML file for the fastest possible prototype
+- A widget folder with additional local assets such as CSS, JavaScript, images, or fonts
+- A manifest-driven package using `htwind.widget.json`, which can describe one widget or multiple widgets in one importable bundle
+
+### Widget Package Manifests
+
+Use `htwind.widget.json` when your widget is made of more than one file or when you want to distribute multiple widgets together.
+
+This package format is useful when you want to:
+
+- Keep your widget code split across `index.html`, `styles.css`, `app.js`, and other local assets
+- Ship several related widgets as one reusable desktop toolkit
+- Export a single managed widget from HTWind as a portable package
+- Export the current workspace as a manifest-based bundle for backup or team sharing
+
+HTWind includes a schema and an example package in the repository:
+
+- Schema: [HTWind/Templates/htwind.widget.schema.json](HTWind/Templates/htwind.widget.schema.json)
+- Example multi-widget package: [HTWind/Templates/examples/multi-widget-package/htwind.widget.json](HTWind/Templates/examples/multi-widget-package/htwind.widget.json)
+
+### Manifest Structure
+
+The manifest describes package metadata and a `widgets` array. Each widget entry points to a relative folder, an entry HTML file, and the additional asset files that belong to that widget.
+
+Typical fields:
+
+- `schemaVersion`: currently `1`
+- `name`: package name
+- `description`, `author`, `version`, `homepage`: optional package metadata
+- `widgets`: one or more widget entries
+
+Each widget entry includes:
+
+- `widgetId`: stable widget identifier inside the package
+- `name`: display-oriented widget name
+- `relativePath`: folder path relative to the manifest root
+- `entryFile`: the widget HTML entry point
+- `assets`: non-entry files that should travel with the widget
+
+Example:
+
+```json
+{
+  "$schema": "../../htwind.widget.schema.json",
+  "schemaVersion": 1,
+  "name": "multi-widget-package",
+  "description": "Example package that contains two widgets in a single manifest.",
+  "widgets": [
+    {
+      "widgetId": "status-board-widget",
+      "name": "status-board",
+      "relativePath": "widgets/status-board",
+      "entryFile": "index.html",
+      "assets": ["styles.css", "app.js"]
+    },
+    {
+      "widgetId": "focus-timer-widget",
+      "name": "focus-timer",
+      "relativePath": "widgets/focus-timer",
+      "entryFile": "index.html",
+      "assets": ["styles.css", "app.js"]
+    }
+  ]
+}
+```
+
+### Recommended Folder Layout
+
+For widgets that use multiple files, keep the manifest at the package root and place each widget in its own folder.
+
+```text
+my-widget-package/
+├─ htwind.widget.json
+└─ widgets/
+   ├─ status-board/
+   │  ├─ index.html
+   │  ├─ styles.css
+   │  └─ app.js
+   └─ focus-timer/
+      ├─ index.html
+      ├─ styles.css
+      └─ app.js
+```
+
+This structure keeps packages predictable, easy to validate, and easy to export or import again later.
+
+### Import and Export Workflow
+
+HTWind supports both creator and consumer workflows:
+
+- Import a standalone HTML file when you only need a simple single-file widget
+- Import `htwind.widget.json` when the widget depends on local assets or the package includes multiple widgets
+- Export a widget from the widget context menu to create a reusable package folder
+- Export the current workspace from Settings to create a package-oriented backup of your active widget setup
+
+When HTWind imports a manifest package, it copies the widget content into managed storage and preserves the package structure needed for the widget entry file and assets to work together.
+
+### When to Use Single Files vs Manifests
+
+Use a single HTML file when:
+
+- You are prototyping quickly
+- The widget is small and self-contained
+- You want the simplest sharing format possible
+
+Use `htwind.widget.json` when:
+
+- Your widget depends on local CSS or JavaScript files
+- You want to include images, icons, or other static assets
+- You need to share several widgets together
+- You want a package that is easier to evolve, validate, and re-export
+
 ### Generate Widgets With LLM Help
 
 If you want AI assistance while creating widgets, use the dedicated HTWind system prompt:
@@ -114,6 +231,8 @@ If you want AI assistance while creating widgets, use the dedicated HTWind syste
 - [HTWind Widget Generator Prompt (shared)](https://prompts.chat/prompts/cmm5broas0004li04ku12tp56_htwind-widget-creator)
 
 You can copy this prompt into your preferred LLM and ask it to generate HTWind-compatible widgets (including PowerShell bridge usage) as a single HTML file.
+
+For larger widgets, a good workflow is to start with a single-file prototype, then split the widget into `index.html`, `styles.css`, `app.js`, and other assets before adding a `htwind.widget.json` manifest for packaging and sharing.
 
 ### Host Bridge API
 

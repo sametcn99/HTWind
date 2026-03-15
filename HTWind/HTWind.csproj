@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <StartupObject>HTWind.Program</StartupObject>
-    <Version>0.1.8</Version>
+    <Version>0.2.0</Version>
     <ApplicationIcon>..\assets\favicon.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>HTWind</AssemblyName>
@@ -24,5 +24,6 @@
   <ItemGroup>
     <Resource Include="..\assets\favicon.ico" Link="Assets\favicon.ico" />
     <EmbeddedResource Include="Templates\**\*.html" />
+    <EmbeddedResource Include="Templates\**\*.json" />
   </ItemGroup>
 </Project>

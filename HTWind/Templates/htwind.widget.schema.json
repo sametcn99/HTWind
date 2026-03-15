@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://htwind.app/schemas/htwind.widget.schema.json",
+  "title": "HTWind Widget Package Manifest",
+  "description": "Schema for HTWind widget packages that can contain one or more widgets.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "name",
+    "widgets"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "homepage": {
+      "type": "string",
+      "format": "uri"
+    },
+    "createdUtc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "exportedUtc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requirements": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "dev": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "widgets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/widgetItem"
+      }
+    }
+  },
+  "$defs": {
+    "widgetItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "widgetId",
+        "name",
+        "relativePath",
+        "entryFile",
+        "assets"
+      ],
+      "properties": {
+        "widgetId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relativePath": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*\\.\\.)(?!.*[A-Za-z]:).+"
+        },
+        "entryFile": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*\\.\\.)(?!.*[A-Za-z]:).+\\.html?$"
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!/)(?!.*\\.\\.)(?!.*[A-Za-z]:).+"
+          }
+        }
+      }
+    }
+  }
+}

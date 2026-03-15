@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Status Board</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <section class="card">
+    <div class="eyebrow">Example Package</div>
+    <h1>Status Board</h1>
+    <div class="grid">
+      <article class="tile">
+        <div class="label">Services</div>
+        <div class="value ok" data-metric="services">12 OK</div>
+      </article>
+      <article class="tile">
+        <div class="label">Warnings</div>
+        <div class="value warn" data-metric="warnings">2</div>
+      </article>
+      <article class="tile">
+        <div class="label">Deployments</div>
+        <div class="value info" data-metric="deployments">5 queued</div>
+      </article>
+    </div>
+  </section>
+  <script src="app.js"></script>
+</body>
+</html>

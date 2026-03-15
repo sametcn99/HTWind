@@ -134,10 +134,10 @@
     <value>Updated date (oldest first)</value>
   </data>
   <data name="MainWindow_FileDialogFilter" xml:space="preserve">
-    <value>HTML Files (*.html;*.htm)|*.html;*.htm|All Files (*.*)|*.*</value>
+    <value>Widget Sources (*.html;*.htm;htwind.widget.json)|*.html;*.htm;htwind.widget.json|HTML Files (*.html;*.htm)|*.html;*.htm|Widget Manifests (htwind.widget.json)|htwind.widget.json|All Files (*.*)|*.*</value>
   </data>
   <data name="MainWindow_FileDialogTitle" xml:space="preserve">
-    <value>Select an HTML file for widget</value>
+    <value>Select widget HTML files or manifest files</value>
   </data>
 
   <data name="WidgetWindow_Title" xml:space="preserve">
@@ -340,6 +340,69 @@
   </data>
   <data name="MainWindow_CreateWithEditor" xml:space="preserve">
     <value>Create with editor</value>
+  </data>
+  <data name="MainWindow_ImportWidget" xml:space="preserve">
+    <value>Import widget</value>
+  </data>
+  <data name="MainWindow_ExportWidget" xml:space="preserve">
+    <value>Export widget</value>
+  </data>
+  <data name="MainWindow_ExportAllWidgets" xml:space="preserve">
+    <value>Export all widgets</value>
+  </data>
+  <data name="MainWindow_ExportAllWidgetsDescription" xml:space="preserve">
+    <value>Export the current widget workspace into a single package manifest and folder structure.</value>
+  </data>
+  <data name="MainWindow_ExportAllWidgetsButton" xml:space="preserve">
+    <value>Export workspace</value>
+  </data>
+  <data name="MainWindow_WidgetImportFileDialogFilter" xml:space="preserve">
+    <value>HTWind Widget Manifest (htwind.widget.json)|htwind.widget.json</value>
+  </data>
+  <data name="MainWindow_WidgetImportFileDialogTitle" xml:space="preserve">
+    <value>Select a widget manifest to import</value>
+  </data>
+  <data name="MainWindow_WidgetExportDirectoryDialogTitle" xml:space="preserve">
+    <value>Select the folder where the widget export should be created</value>
+  </data>
+  <data name="MainWindow_WidgetExportDirectoryDialogFilter" xml:space="preserve">
+    <value>Folders|.</value>
+  </data>
+  <data name="MainWindow_WidgetExportDirectoryDialogPlaceholder" xml:space="preserve">
+    <value>Select folder</value>
+  </data>
+  <data name="MainWindow_WidgetImportErrorTitle" xml:space="preserve">
+    <value>Widget Import Failed</value>
+  </data>
+  <data name="MainWindow_WidgetImportError" xml:space="preserve">
+    <value>The selected widget package could not be imported.</value>
+  </data>
+  <data name="MainWindow_WidgetImportErrorWithSource" xml:space="preserve">
+    <value>Failed to import widget source: {0}</value>
+  </data>
+  <data name="MainWindow_WidgetExportSuccessTitle" xml:space="preserve">
+    <value>Widget Exported</value>
+  </data>
+  <data name="MainWindow_WidgetExportSuccess" xml:space="preserve">
+    <value>Widget exported to: {0}</value>
+  </data>
+  <data name="MainWindow_WidgetExportErrorTitle" xml:space="preserve">
+    <value>Widget Export Failed</value>
+  </data>
+  <data name="MainWindow_WidgetExportError" xml:space="preserve">
+    <value>The selected widget could not be exported.</value>
+  </data>
+  <data name="MainWindow_WidgetExportErrorWithSource" xml:space="preserve">
+    <value>Failed to export widget: {0}</value>
+  </data>
+  <data name="MainWindow_WidgetExportWorkspaceError" xml:space="preserve">
+    <value>Failed to export the current widget workspace.</value>
+  </data>
+  <data name="MainWindow_WidgetExportAllEmpty" xml:space="preserve">
+    <value>There are no widgets to export.</value>
+  </data>
+  <data name="MainWindow_WidgetWorkspaceExportDefaultName" xml:space="preserve">
+    <value>htwind-workspace</value>
   </data>
   <data name="CreateWithEditorWindow_Title" xml:space="preserve">
     <value>Create Widget with Editor</value>

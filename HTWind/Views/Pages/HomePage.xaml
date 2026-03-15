@@ -323,6 +323,10 @@
                       Header="{loc:Loc MainWindow_Edit}"
                       Command="{Binding DataContext.EditWidgetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                       CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                    <MenuItem
+                      Header="{loc:Loc MainWindow_ExportWidget}"
+                      Command="{Binding DataContext.ExportWidgetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                     <Separator/>
                     <MenuItem
                       Header="{loc:Loc MainWindow_Remove}"

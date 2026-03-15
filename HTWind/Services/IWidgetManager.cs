@@ -13,6 +13,8 @@ public interface IWidgetManager
     void AddWidget(string filePath, bool isVisible);
     void CreateWidgetWithEditor(string fileName, bool isVisible, bool enableHotReload);
     void OpenEditor(WidgetModel model);
+    string ExportWidget(WidgetModel model, string destinationDirectory);
+    string ExportWidgets(IEnumerable<WidgetModel> models, string destinationDirectory, string exportName);
     void ApplyVisibility(WidgetModel model);
     void ApplyPinState(WidgetModel model);
     void ResetWidgetPosition(WidgetModel model);

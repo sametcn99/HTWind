@@ -222,7 +222,7 @@ public class WidgetManager : IWidgetManager, IDisposable
                     WidgetHeight = state.WidgetHeight,
                     MonitorDeviceName = state.MonitorDeviceName,
                     PreferredMonitorDeviceName = state.PreferredMonitorDeviceName,
-                    MonitorPlacements = (state.MonitorPlacements ?? [])
+                    MonitorPlacements = state.MonitorPlacements
                         .Where(placement => !string.IsNullOrWhiteSpace(placement.MonitorDeviceName))
                         .ToList()
                 };
@@ -254,20 +254,58 @@ public class WidgetManager : IWidgetManager, IDisposable
             throw new ArgumentException("File path cannot be null or empty.", nameof(filePath));
         }
 
-        var storedPath = _stateRepository.IsManagedWidgetPath(filePath)
-            ? filePath
-            : _stateRepository.CopyWidgetToManagedStorage(filePath);
-
-        AddWidgetFromManagedPath(storedPath, isVisible);
+        var managedReferences = _stateRepository.ImportWidgetSource(filePath);
+        foreach (var managedReference in managedReferences)
+        {
+            AddWidgetFromManagedReference(managedReference, isVisible);
+        }
     }
 
     public void CreateWidgetWithEditor(string fileName, bool isVisible, bool enableHotReload)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
 
-        var managedPath = _stateRepository.CreateManagedWidgetFile(fileName, DefaultNewWidgetTemplate);
-        var model = AddWidgetFromManagedPath(managedPath, isVisible);
+        var managedReference = _stateRepository.CreateManagedWidget(fileName, DefaultNewWidgetTemplate);
+        var model = AddWidgetFromManagedReference(managedReference, isVisible);
         OpenEditorCore(model, enableHotReload);
+    }
+
+    public string ExportWidget(WidgetModel model, string destinationDirectory)
+    {
+        ArgumentNullException.ThrowIfNull(model);
+        ArgumentException.ThrowIfNullOrWhiteSpace(destinationDirectory);
+
+        if (string.IsNullOrWhiteSpace(model.FilePath) || !File.Exists(model.FilePath))
+        {
+            throw new InvalidOperationException("The widget file could not be found for export.");
+        }
+
+        return _stateRepository.ExportWidgetToDirectory(model.FilePath, destinationDirectory);
+    }
+
+    public string ExportWidgets(
+        IEnumerable<WidgetModel> models,
+        string destinationDirectory,
+        string exportName
+    )
+    {
+        ArgumentNullException.ThrowIfNull(models);
+        ArgumentException.ThrowIfNullOrWhiteSpace(destinationDirectory);
+        ArgumentException.ThrowIfNullOrWhiteSpace(exportName);
+
+        var exportPaths = models
+            .Select(model => model?.FilePath)
+            .Where(filePath => !string.IsNullOrWhiteSpace(filePath) && File.Exists(filePath))
+            .Cast<string>()
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (exportPaths.Count == 0)
+        {
+            throw new InvalidOperationException("No exportable widgets were found.");
+        }
+
+        return _stateRepository.ExportWidgetsToDirectory(exportPaths, destinationDirectory, exportName);
     }
 
     public void OpenEditor(WidgetModel model)
@@ -276,14 +314,14 @@ public class WidgetManager : IWidgetManager, IDisposable
         OpenEditorCore(model, true);
     }
 
-    private WidgetModel AddWidgetFromManagedPath(string managedPath, bool isVisible)
+    private WidgetModel AddWidgetFromManagedReference(WidgetManagedReference managedReference, bool isVisible)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(managedPath);
+        ArgumentNullException.ThrowIfNull(managedReference);
 
         var model = new WidgetModel
         {
-            Name = Path.GetFileName(managedPath),
-            FilePath = managedPath,
+            Name = managedReference.WidgetName,
+            FilePath = managedReference.EntryFilePath,
             IsVisible = isVisible,
             IsLocked = false,
             IsPinned = false
@@ -307,7 +345,7 @@ public class WidgetManager : IWidgetManager, IDisposable
 
         if (string.IsNullOrWhiteSpace(model.FilePath) || !File.Exists(model.FilePath))
         {
-            MessageBox.Show(
+            System.Windows.MessageBox.Show(
                 LocalizationService.Get("EditorWindow_LoadError"),
                 LocalizationService.Get("EditorWindow_Title"),
                 MessageBoxButton.OK,
@@ -966,7 +1004,7 @@ public class WidgetManager : IWidgetManager, IDisposable
         }
     }
 
-    private void OnModelPropertyChanged(WidgetModel model, PropertyChangedEventArgs e)
+    private void OnModelPropertyChanged(WidgetModel _model, PropertyChangedEventArgs e)
     {
         if (_isRestoring)
         {
@@ -1099,7 +1137,7 @@ public class WidgetManager : IWidgetManager, IDisposable
     {
         WidgetGeometryService.InvalidateMonitorCache();
 
-        var dispatcher = Application.Current?.Dispatcher;
+        var dispatcher = System.Windows.Application.Current?.Dispatcher;
         if (dispatcher is null)
         {
             return;

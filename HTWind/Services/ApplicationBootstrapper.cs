@@ -82,6 +82,8 @@ public sealed class ApplicationBootstrapper : IApplicationBootstrapper
         {
             _widgetTemplateService.CreateTemplateFile(templateType);
         }
+
+        _widgetTemplateService.CreateWidgetPackageSchemaFile();
     }
 
     private void EnsureDefaultWidgets()

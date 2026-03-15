@@ -256,6 +256,46 @@
             Command="{Binding ResetAllWidgetsCommand}"/>
         </Grid>
       </ui:Card>
+
+      <!-- Workspace Export -->
+      <ui:Card Margin="0,0,0,8"
+          Padding="16,12">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+
+          <ui:SymbolIcon
+            Symbol="ArrowExport24"
+            FontSize="20"
+            VerticalAlignment="Center"
+            Margin="0,0,14,0"/>
+
+          <StackPanel Grid.Column="1"
+              VerticalAlignment="Center">
+            <TextBlock
+              Text="{loc:Loc MainWindow_ExportAllWidgets}"
+              FontSize="14"
+              FontWeight="SemiBold"/>
+            <TextBlock
+              Text="{loc:Loc MainWindow_ExportAllWidgetsDescription}"
+              FontSize="12"
+              Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+              TextWrapping="Wrap"/>
+          </StackPanel>
+
+          <ui:Button
+            Grid.Column="2"
+            VerticalAlignment="Center"
+            Content="{loc:Loc MainWindow_ExportAllWidgetsButton}"
+            Icon="{ui:SymbolIcon ArrowExport24}"
+            ToolTip="{loc:Loc MainWindow_ExportAllWidgetsButton}"
+            AutomationProperties.Name="{loc:Loc MainWindow_ExportAllWidgetsButton}"
+            Command="{Binding ExportAllWidgetsCommand}"/>
+        </Grid>
+      </ui:Card>
     </StackPanel>
   </ScrollViewer>
 </UserControl>

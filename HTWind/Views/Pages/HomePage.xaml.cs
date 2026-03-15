@@ -80,6 +80,7 @@ public partial class HomePage : UserControl
             return;
         }
 
+        menu.DataContext = DataContext;
         menu.PlacementTarget = target;
         menu.Placement = PlacementMode.Bottom;
         menu.IsOpen = true;

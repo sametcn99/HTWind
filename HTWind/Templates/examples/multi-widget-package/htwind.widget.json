@@ -1,0 +1,30 @@
+{
+  "$schema": "../../htwind.widget.schema.json",
+  "schemaVersion": 1,
+  "name": "multi-widget-package",
+  "description": "Example package that contains two widgets in a single manifest.",
+  "author": "HTWind",
+  "version": "1.0.0",
+  "widgets": [
+    {
+      "widgetId": "status-board-widget",
+      "name": "status-board",
+      "relativePath": "widgets/status-board",
+      "entryFile": "index.html",
+      "assets": [
+        "styles.css",
+        "app.js"
+      ]
+    },
+    {
+      "widgetId": "focus-timer-widget",
+      "name": "focus-timer",
+      "relativePath": "widgets/focus-timer",
+      "entryFile": "index.html",
+      "assets": [
+        "styles.css",
+        "app.js"
+      ]
+    }
+  ]
+}

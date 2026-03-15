@@ -6,6 +6,9 @@ namespace HTWind.Services;
 
 public class WidgetTemplateService : IWidgetTemplateService
 {
+    private const string WidgetPackageSchemaFileName = "htwind.widget.schema.json";
+    private const string WidgetPackageSchemaResourceName = "HTWind.Templates.htwind.widget.schema.json";
+
     private static readonly IReadOnlyDictionary<BuiltInWidgetType, string> EmbeddedTemplateMap =
         new Dictionary<BuiltInWidgetType, string>
         {
@@ -99,6 +102,20 @@ public class WidgetTemplateService : IWidgetTemplateService
         return path;
     }
 
+    public string CreateWidgetPackageSchemaFile()
+    {
+        Directory.CreateDirectory(_templateDirectory);
+
+        var path = Path.Combine(_templateDirectory, WidgetPackageSchemaFileName);
+        if (File.Exists(path))
+        {
+            return path;
+        }
+
+        File.WriteAllText(path, LoadEmbeddedTextResource(WidgetPackageSchemaResourceName), Encoding.UTF8);
+        return path;
+    }
+
     private static string LoadEmbeddedTemplate(BuiltInWidgetType widgetType)
     {
         if (!EmbeddedTemplateMap.TryGetValue(widgetType, out var resourceName))
@@ -106,6 +123,11 @@ public class WidgetTemplateService : IWidgetTemplateService
             throw new ArgumentOutOfRangeException(nameof(widgetType), widgetType, null);
         }
 
+        return LoadEmbeddedTextResource(resourceName);
+    }
+
+    private static string LoadEmbeddedTextResource(string resourceName)
+    {
         var assembly = Assembly.GetExecutingAssembly();
         using var stream = assembly.GetManifestResourceStream(resourceName) ?? throw new InvalidOperationException($"Template resource not found: {resourceName}");
         using var reader = new StreamReader(stream, Encoding.UTF8);

@@ -196,8 +196,23 @@ public sealed partial class WidgetPermissionStateService : IWidgetPermissionStat
 
     private static string BuildKey(string widgetFilePath, CoreWebView2PermissionKind permissionKind)
     {
+        var identityPath = ResolveIdentityPath(widgetFilePath);
+        return $"{identityPath}|{permissionKind}";
+    }
+
+    private static string ResolveIdentityPath(string widgetFilePath)
+    {
         var fullPath = Path.GetFullPath(widgetFilePath);
-        return $"{fullPath}|{permissionKind}";
+        var directoryPath = Path.GetDirectoryName(fullPath);
+        if (string.IsNullOrWhiteSpace(directoryPath))
+        {
+            return fullPath;
+        }
+
+        var manifestPath = Path.Combine(directoryPath, WidgetPackageConstants.ManifestFileName);
+        return File.Exists(manifestPath)
+            ? Path.GetFullPath(directoryPath)
+            : fullPath;
     }
 
     private sealed class PermissionDecisionRecord

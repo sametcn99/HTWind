@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 
 using HTWind.Commands;
@@ -28,11 +29,13 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         _developerModeService = developerModeService ?? throw new ArgumentNullException(nameof(developerModeService));
 
         AddWidgetCommand = new RelayCommand(_ => AddWidget());
+        ExportAllWidgetsCommand = new RelayCommand(_ => ExportAllWidgets());
         ChangeVisibilityCommand = new RelayCommand(model => ApplyVisibility(model as WidgetModel));
         ChangePinStateCommand = new RelayCommand(model => ApplyPinState(model as WidgetModel));
         ResetWidgetPositionCommand = new RelayCommand(model => ResetWidgetPosition(model as WidgetModel));
         ResetAllWidgetsCommand = new RelayCommand(_ => ResetAllWidgets());
         EditWidgetCommand = new RelayCommand(model => OpenEditor(model as WidgetModel));
+        ExportWidgetCommand = new RelayCommand(model => ExportWidget(model as WidgetModel));
         RemoveWidgetCommand = new RelayCommand(model => RemoveWidget(model as WidgetModel));
     }
 
@@ -102,7 +105,11 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
 
     public ICommand ChangePinStateCommand { get; }
 
+    public ICommand ExportAllWidgetsCommand { get; }
+
     public ICommand EditWidgetCommand { get; }
+
+    public ICommand ExportWidgetCommand { get; }
 
     public ICommand ResetWidgetPositionCommand { get; }
 
@@ -146,8 +153,68 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         {
             foreach (var filePath in filePaths)
             {
-                _widgetManager.AddWidget(filePath);
+                try
+                {
+                    _widgetManager.AddWidget(filePath);
+                }
+                catch (Exception ex)
+                {
+                    ShowDetailedError(
+                        Localization.LocalizationService.Get("MainWindow_WidgetImportErrorTitle"),
+                        string.Format(
+                            Localization.LocalizationService.Get("MainWindow_WidgetImportErrorWithSource"),
+                            filePath
+                        ),
+                        ex
+                    );
+                }
             }
+        }
+    }
+
+    private void ExportAllWidgets()
+    {
+        if (Widgets.Count == 0)
+        {
+            System.Windows.MessageBox.Show(
+                Localization.LocalizationService.Get("MainWindow_WidgetExportAllEmpty"),
+                Localization.LocalizationService.Get("MainWindow_WidgetExportErrorTitle"),
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
+            return;
+        }
+
+        if (!_fileDialogService.TryPickDirectory(out var directoryPath))
+        {
+            return;
+        }
+
+        try
+        {
+            var exportedPath = _widgetManager.ExportWidgets(
+                Widgets,
+                directoryPath,
+                Localization.LocalizationService.Get("MainWindow_WidgetWorkspaceExportDefaultName")
+            );
+
+            System.Windows.MessageBox.Show(
+                string.Format(
+                    Localization.LocalizationService.Get("MainWindow_WidgetExportSuccess"),
+                    exportedPath
+                ),
+                Localization.LocalizationService.Get("MainWindow_WidgetExportSuccessTitle"),
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
+        }
+        catch (Exception ex)
+        {
+            ShowDetailedError(
+                Localization.LocalizationService.Get("MainWindow_WidgetExportErrorTitle"),
+                Localization.LocalizationService.Get("MainWindow_WidgetExportWorkspaceError"),
+                ex
+            );
         }
     }
 
@@ -199,6 +266,77 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         }
 
         _widgetManager.RemoveWidget(model);
+    }
+
+    private void ExportWidget(WidgetModel? model)
+    {
+        if (model is null)
+        {
+            return;
+        }
+
+        if (!_fileDialogService.TryPickDirectory(out var directoryPath))
+        {
+            return;
+        }
+
+        try
+        {
+            var exportedPath = _widgetManager.ExportWidget(model, directoryPath);
+            System.Windows.MessageBox.Show(
+                string.Format(
+                    Localization.LocalizationService.Get("MainWindow_WidgetExportSuccess"),
+                    exportedPath
+                ),
+                Localization.LocalizationService.Get("MainWindow_WidgetExportSuccessTitle"),
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
+        }
+        catch (Exception ex)
+        {
+            ShowDetailedError(
+                Localization.LocalizationService.Get("MainWindow_WidgetExportErrorTitle"),
+                string.Format(
+                    Localization.LocalizationService.Get("MainWindow_WidgetExportErrorWithSource"),
+                    model.DisplayName ?? model.Name ?? string.Empty
+                ),
+                ex
+            );
+        }
+    }
+
+    private static void ShowDetailedError(string title, string summary, Exception exception)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(title);
+        ArgumentException.ThrowIfNullOrWhiteSpace(summary);
+        ArgumentNullException.ThrowIfNull(exception);
+
+        var detailLines = new List<string>();
+        var currentException = exception;
+        while (currentException is not null)
+        {
+            if (!string.IsNullOrWhiteSpace(currentException.Message))
+            {
+                detailLines.Add(currentException.Message.Trim());
+            }
+
+            currentException = currentException.InnerException;
+        }
+
+        var detailText = string.Join(
+            Environment.NewLine,
+            detailLines.Distinct(StringComparer.Ordinal)
+        );
+
+        System.Windows.MessageBox.Show(
+            string.IsNullOrWhiteSpace(detailText)
+                ? summary
+                : $"{summary}{Environment.NewLine}{Environment.NewLine}{detailText}",
+            title,
+            MessageBoxButton.OK,
+            MessageBoxImage.Warning
+        );
     }
 
     private void ResetAllWidgets()
