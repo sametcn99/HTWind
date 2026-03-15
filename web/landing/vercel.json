@@ -1,11 +1,7 @@
 {
 	"rewrites": [
 		{
-			"source": "/(en|tr|hi|zh|de|fr|ru|ar|ja|es|pt|it|ko|id|vi|nl|pl|uk)",
-			"destination": "/index.html"
-		},
-		{
-			"source": "/(en|tr|hi|zh|de|fr|ru|ar|ja|es|pt|it|ko|id|vi|nl|pl|uk)/:path*",
+			"source": "/((?!.*\\.).*)",
 			"destination": "/index.html"
 		}
 	]
