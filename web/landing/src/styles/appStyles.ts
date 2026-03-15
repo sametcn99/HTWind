@@ -440,6 +440,26 @@ export const useAppStyles = makeStyles({
 			transform: "translateY(-2px)",
 		},
 	},
+	featureCardSpanThree: {
+		backgroundColor: surfaceRaised,
+		...shorthands.border("1px", "solid", borderSubtle),
+		...shorthands.borderRadius("22px"),
+		...shorthands.padding("22px"),
+		display: "grid",
+		rowGap: "12px",
+		transition: `transform ${transition}, border-color ${transition}, background-color ${transition}`,
+		[tablet]: {
+			gridColumn: "1 / -1",
+		},
+		[desktop]: {
+			gridColumn: "span 3",
+		},
+		":hover": {
+			backgroundColor: "rgba(22, 29, 41, 0.86)",
+			border: "1px solid rgba(255, 255, 255, 0.12)",
+			transform: "translateY(-2px)",
+		},
+	},
 	cardIcon: {
 		width: "44px",
 		height: "44px",

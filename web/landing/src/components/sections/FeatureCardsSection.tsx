@@ -31,8 +31,13 @@ export function FeatureCardsSection() {
 				</h2>
 				<p className={styles.sectionLead}>{messages.sections.features.lead}</p>
 				<div className={styles.contentGrid}>
-					{messages.content.featureCards.map((item) => (
-						<Card key={item.title} className={styles.card}>
+					{messages.content.featureCards.map((item, index) => (
+						<Card
+							key={item.title}
+							className={
+								index === 2 ? styles.featureCardSpanThree : styles.card
+							}
+						>
 							<div className={styles.cardIcon}>
 								{renderIcon(item.icon as FeatureCardItem["icon"])}
 							</div>
