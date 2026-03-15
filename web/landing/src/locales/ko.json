@@ -1,0 +1,356 @@
+{
+	"meta": {
+		"locale": "ko",
+		"ogLocale": "ko_KR"
+	},
+	"seo": {
+		"title": "HTWind | Windows 데스크톱 위젯 호스트",
+		"description": "HTWind는 HTML 위젯, 매니페스트 패키지 및 안전한 PowerShell 통합을 지원하는 오픈 소스 Windows 데스크톱 위젯 호스트입니다.",
+		"openGraphTitle": "HTWind | Windows 데스크톱 위젯 호스트",
+		"openGraphDescription": "HTML 위젯과 패키지로 더 깔끔한 Windows 데스크톱 환경을 구축하세요.",
+		"twitterTitle": "HTWind | Windows 데스크톱 위젯 호스트",
+		"twitterDescription": "HTML 위젯, 패키지 지원, PowerShell 통합을 제공하는 오픈 소스 Windows 위젯 플랫폼.",
+		"imageAlt": "Windows에서 위젯이 실행 중인 HTWind 바탕 화면 스크린샷",
+		"jsonLdDescription": "HTWind는 Windows 데스크톱을 위한 사용자 정의형 HTML 기반 위젯 호스트 앱입니다."
+	},
+	"languageSelector": {
+		"label": "언어",
+		"ariaLabel": "페이지 언어 선택",
+		"options": {
+			"en": "English",
+			"tr": "Türkçe",
+			"hi": "हिन्दी",
+			"zh": "中文",
+			"de": "Deutsch",
+			"fr": "Français",
+			"ru": "Русский",
+			"ar": "العربية",
+			"ja": "日本語",
+			"es": "Español",
+			"pt": "Português",
+			"it": "Italiano",
+			"ko": "한국어",
+			"id": "Bahasa Indonesia",
+			"vi": "Tiếng Việt",
+			"nl": "Nederlands",
+			"pl": "Polski",
+			"uk": "Українська"
+		}
+	},
+	"banner": {
+		"text": "HTML 위젯, 패키지 가져오기, PowerShell 도구를 위한 오픈 소스 Windows 바탕 화면 플랫폼"
+	},
+	"hero": {
+		"eyebrow": "Windows 네이티브 데스크톱 위젯 호스트",
+		"heading": "HTML 위젯으로 나만의 깔끔한 데스크톱 만들기",
+		"description": "HTWind는 데스크톱에서 항상 작동하는 HTML 위젯과 패키지를 실행하고 제어된 PowerShell 동작을 네이티브 환경에서 사용하게 해주는 호스트입니다.",
+		"includedLabel": "기본 포함",
+		"proofPoints": [
+			"WebView2로 렌더링되는 HTML, CSS 및 JavaScript 위젯",
+			"단일 매니페스트로 다중 위젯과 로컬 리소스를 지원하는 패키지",
+			"데스크톱 워크플로우를 보조하는 안전한 PowerShell 명령어 지원"
+		],
+		"githubButton": "GitHub에서 보기",
+		"releaseNotesButton": "업데이트 기록",
+		"communityNotice": "가장 권장되는 설치 방법은 인스톨러입니다. 수동 관리를 위한 무설치 버전을 제공하며 Microsoft Store에서도 다운로드 가능합니다.",
+		"releaseCard": {
+			"title": "최신 릴리스",
+			"loadingLabel": "불러오는 중...",
+			"channels": [
+				{
+					"name": "인스톨러 (Installer)",
+					"description": "Windows 시스템 설정에 가장 알맞은 권장 버전."
+				},
+				{
+					"name": "무설치 ZIP",
+					"description": "폴더로만 관리하고 싶을 때 사용하는 포터블 버전."
+				},
+				{
+					"name": "Microsoft Store",
+					"description": "자동 업데이트 및 관리 환경에 적합한 스토어 앱."
+				}
+			],
+			"storeAriaLabel": "Microsoft Store에서 다운로드",
+			"storeImageAlt": "Microsoft Store 배지",
+			"communityPrefix": "위젯을 공유해보세요:",
+			"communityGithubLabel": "GitHub 토론",
+			"communityConnector": "그리고",
+			"communityRedditLabel": "Reddit",
+			"communitySuffix": "."
+		}
+	},
+	"downloadMenu": {
+		"loading": "다운로드 확인 중...",
+		"empty": "다운로드 항목이 없습니다",
+		"choose": "항목 선택 ({count})",
+		"title": "권장 다운로드: 인스톨러",
+		"hint": "원활한 사용을 위해 인스톨러를 권장합니다. 포터블과 패키지도 지원합니다.",
+		"ariaLabel": "최신 릴리스 에셋",
+		"descriptions": {
+			"installer": "대부분의 사용자에게 권장되는 설정 파일",
+			"portable": "직접 압축을 해제해 사용하는 포터블 압축 파일",
+			"package": "자동화 등 배포를 위한 Windows 패키지 형식",
+			"other": "기타 파일"
+		},
+		"unknownSize": "알 수 없는 크기"
+	},
+	"release": {
+		"loadingLatest": "최신 버전 불러오는 중...",
+		"unavailable": "릴리스 정보 없음",
+		"checkFeed": "원격 저장소에서 업데이트를 확인해주세요",
+		"publishedOn": "게시일: {date}",
+		"unknownDate": "알 수 없는 날짜"
+	},
+	"sections": {
+		"highlights": {
+			"heading": "안정적인 생산성을 위한 HTWind",
+			"lead": "단순한 예제 뷰어가 아닌, 일상적으로 사용할 수 있도록 네이티브 기능을 갖춘 툴 클라이언트입니다.",
+			"ariaLabel": "주요 장점"
+		},
+		"overview": {
+			"heading": "데스크톱 화면 미리보기",
+			"screenshotHint": "이미지를 열면 크게 확대할 수 있습니다.",
+			"viewLarger": "크게 보기 {alt}"
+		},
+		"features": {
+			"heading": "주요 기능 안내",
+			"lead": "HTWind는 웹 개발의 유연함에 Windows 앱의 안정성을 입힌 실용적인 위젯 호스트 툴 체인을 제공합니다."
+		},
+		"widgets": {
+			"heading": "기본 제공 위젯에서 시작하여 직접 만들기",
+			"lead": "시계, 진단, 빠른 액션을 돕는 기본 위젯들이 내장되어 있습니다. 이를 변형해 자신만의 패키지를 구축해보세요.",
+			"documentationPrefix": "자세한 설정 방법은",
+			"documentationLinkLabel": "공식 문서",
+			"documentationSuffix": "를 확인하세요.",
+			"promptPrefix": "AI의 도움을 받고 싶다면",
+			"promptLabel": "HTWind 위젯 제너레이터 프롬프트",
+			"promptConnector": "나",
+			"sharedPromptLabel": "공유된 프롬프트",
+			"promptSuffix": "를 이용해 쉽게 소스 코드를 생성하세요."
+		},
+		"packages": {
+			"heading": "단일 매니페스트로 구성되는 세트 패키지",
+			"flowHeading": "패키지 가져오기 흐름",
+			"schemaPrefix": "기본",
+			"schemaLabel": "스키마 파일",
+			"schemaConnector": "이나 구조가 구성된",
+			"exampleLabel": "다중 위젯 예제",
+			"schemaSuffix": "를 통해 하나의 폴더에 다양한 리소스를 묶어 관리하는 법을 확인하세요."
+		},
+		"useCases": {
+			"heading": "주로 사용되는 워크플로우",
+			"lead": "HTWind는 백그라운드 모니터링, 가벼운 대시보드 운영 등 생산성 도구로 가장 적합합니다."
+		},
+		"community": {
+			"heading": "공유하고, 피드백을 얻으세요",
+			"lead": "자신만의 위젯을 커뮤니티에 공개하여 함께 더 나은 바탕화면을 만들 수 있습니다.",
+			"visitPrefix": "",
+			"githubLinkLabel": "GitHub Discussions",
+			"visitConnector": "및",
+			"redditLinkLabel": "r/HTWind 레딧 커뮤니티",
+			"visitSuffix": "에 방문해보세요."
+		},
+		"faq": {
+			"heading": "자주 묻는 질문 (FAQ)",
+			"lead": "HTWind에 대해 알아야 할 필수적인 내용들입니다."
+		},
+		"support": {
+			"heading": "개발자 지원",
+			"lead": "도움이 되었다면 프로젝트 유지를 위한 후원을 고려해 주세요.",
+			"button": "지원 페이지 열기"
+		}
+	},
+	"footer": {
+		"github": "GitHub",
+		"releases": "다운로드",
+		"discussions": "커뮤니티 (Discussions)"
+	},
+	"lightbox": {
+		"close": "닫기"
+	},
+	"errors": {
+		"missingRoot": "root ID를 가진 요소를 찾을 수 없습니다."
+	},
+	"content": {
+		"widgets": [
+			{
+				"id": "clock",
+				"label": "시계"
+			},
+			{
+				"id": "weather",
+				"label": "날씨"
+			},
+			{
+				"id": "network-tools",
+				"label": "네트워크"
+			},
+			{
+				"id": "process-manager",
+				"label": "프로세스"
+			},
+			{
+				"id": "clipboard-studio",
+				"label": "클립보드"
+			},
+			{
+				"id": "file-explorer",
+				"label": "탐색기"
+			},
+			{
+				"id": "dns-lookup",
+				"label": "DNS 조회"
+			},
+			{
+				"id": "powershell-console",
+				"label": "PowerShell"
+			}
+		],
+		"highlights": [
+			{
+				"value": "20+",
+				"label": "기본 제공 템플릿 위젯"
+			},
+			{
+				"value": "Hot Reload",
+				"label": "내장 편집기를 통한 실시간 수정"
+			},
+			{
+				"value": "WebView2",
+				"label": "네이티브급 속도와 메모리 캐싱"
+			},
+			{
+				"value": "Open Source",
+				"label": "GPL 3.0 퍼블릭 라이선스 오픈 소스"
+			},
+			{
+				"value": "스마트 숨김",
+				"label": "전체 화면 앱이나 게임 실행 시 자동으로 위젯을 숨기는 기능",
+				"spanTwo": true
+			},
+			{
+				"value": "내장형 텍스트 에디터",
+				"label": "프로그램 내에서 직접 HTML 코드를 수정 및 저장",
+				"spanTwo": true
+			},
+			{
+				"value": "매니페스트 구조화",
+				"label": "CSS, JS 리소스를 하나의 파일로 합치지 않고 폴더째 묶어서 배포",
+				"spanTwo": true
+			},
+			{
+				"value": "PowerShell 연동",
+				"label": "호스트 API를 경유하여 네이티브 수준의 시스템 스크립트 실행",
+				"spanTwo": true
+			}
+		],
+		"featureCards": [
+			{
+				"title": "HTML 웹을 모니터로",
+				"description": "HTML, CSS, JS만 다룰 수 있다면 어떤 디자인으로든 나만의 툴 패널을 만들 수 있습니다.",
+				"icon": "html"
+			},
+			{
+				"title": "강력한 PowerShell 플러그인",
+				"description": "위젯 내 버튼에서 호스트 프로세스로 메시지를 보내, 안전하게 관리되는 PowerShell 스크립트 동작을 발동시킵니다.",
+				"icon": "powershell"
+			},
+			{
+				"title": "Windows에 완벽히 동화된 뷰",
+				"description": "시스템 트레이, 항상 위 표시 및 개별 위젯 상태 저장 기능으로 위화감 없이 바탕화면에 녹아듭니다.",
+				"icon": "windows"
+			}
+		],
+		"workflowUseCases": [
+			"집중 근무 중 시간에 알람, 타이머 및 뽀모도로 위젯을 구동하세요.",
+			"소프트웨어 개발 중 도커나 웹 서버의 포트 상태를 추적하는 화면을 올리세요.",
+			"마우스 클릭만으로 매일 아침의 반복적인 폴더 열기, 시스템 정리를 스크립트화 하세요.",
+			"사내 관리자 대시보드 위젯을 패키징해 다른 동료들에게 바로 배포하세요.",
+			"API 모니터링 정보를 작은 창으로 꾸며 서브 모니터 구석에 배치하세요."
+		],
+		"widgetPackageParagraphs": [
+			"HTWind는 JSON 방식 매니페스트 관리를 채용해, 더 이상 무겁고 보기 어려운 단일 HTML 파일 코딩에 얽맬 필요가 없습니다.",
+			"하나의 매니페스트(htwind.widget.json) 밑에 여러 위젯의 경로를 선언하여 대시보드 한 세트를 한방에 로딩시킬 수 있습니다.",
+			"Import / Export 역시 이 구조 덕택에 쉽게 버튼 한 번이면 압축되어 이동 가능해집니다."
+		],
+		"widgetPackageCapabilities": [
+			{
+				"title": "자체 에셋 지원 시스템",
+				"description": "웹 서버 없이 로컬 이미지와 외장 폰트 파일을 그대로 링크해 쓸 수 있도록 로컬 서버 경로를 포워딩해줍니다."
+			},
+			{
+				"title": "다중 구조 패키지",
+				"description": "시계, 날씨, 캘린더를 각각 따로 만들고 한 패키지로 병합하여 유통하세요."
+			},
+			{
+				"title": "자동형 스키마 구조화",
+				"description": "추가 파일, 엔트리 포인트 등을 정해진 표준 포맷 작성법만으로 지정 가능합니다."
+			},
+			{
+				"title": "쉬운 백업과 복구",
+				"description": "완성된 위젯은 우클릭 내보내기 한 번으로 어디에서든 재사용할 수 있는 포맷이 됩니다."
+			}
+		],
+		"widgetPackageSteps": [
+			"메인 루트 경로에 htwind.widget.json 정의 파일을 하나 위치시킵니다.",
+			"하위 디렉토리들에 세부 위젯들의 html을 담아줍니다.",
+			"매니페스트에 사용할 외부 정적 에셋 경로들을 리스트업 해줍니다.",
+			"이 폴더나 압축 파일을 HTWind 패키지 가져오기 메뉴를 통해 등록하세요."
+		],
+		"communitySharingSteps": [
+			"Reddit이나 GitHub 게시판을 통해 당신의 생산적인 데스크톱을 뽐내세요.",
+			"새로운 위젯을 소개할 때는 어떤 업무 흐름에서 영감을 받았는지 설명하면 좋습니다.",
+			"스크립트에 권한이 필요할 경우, 사용 절차 가이드를 필히 안내해 주세요.",
+			"주기적인 개선 사항을 커뮤니티 업데이트 노트로 남겨 소통해 보세요."
+		],
+		"faqItems": [
+			{
+				"question": "HTWind가 정확히 무엇인가요?",
+				"answer": "Windows 바탕화면 위에 사용자가 직접 프로그래밍한 HTML/웹 뷰 위젯을 띄우고, 관리하고 모니터링해주는 독립 프로그램입니다."
+			},
+			{
+				"question": "내 위젯을 직접 제작하려면 무엇을 알아야 하나요?",
+				"answer": "웹 브라우저에서 동작하는 단순 HTML 기초 지식만 있으면 됩니다."
+			},
+			{
+				"question": "htwind.widget.json 파일은 어떤 구실을 합니까?",
+				"answer": "위젯의 이름, 아이디, 초기 로딩 크기 및 사용되는 세부 HTML 경로들을 정리해 호스트에게 알려주는 역할을 합니다.",
+				"spanTwoColumns": true
+			},
+			{
+				"question": "PowerShell 연동을 사용하면 무엇이 좋습니까?",
+				"answer": "단순 웹 열람을 넘어, 로컬 PC 내부의 하드웨어 모니터링, 프로세스 종료 등 백그라운드 조작을 웹 인터페이스로 직접 통제하게 해줍니다."
+			},
+			{
+				"question": "게임 중에도 화면에 계속 표시되나요?",
+				"answer": "설정에서 전체 화면이나 최대화된 앱 실행 시 위젯을 안 보이게끔 자동 숨기는 스마트 모드를 켤 수 있습니다."
+			},
+			{
+				"question": "프로젝트가 오픈 소스인가요?",
+				"answer": "네, 핵심 엔진부터 인터페이스 컨트롤 모두 GPL 3.0 소스로 제공되어 있습니다."
+			},
+			{
+				"question": "컨트리뷰션이 가능한가요?",
+				"answer": "버그 제보부터 구조 개선, 번역 추가 및 위젯 템플릿 커밋 등 모든 기여를 환영합니다."
+			}
+		],
+		"overviewParagraphs": [
+			"Windows 개발의 강력함 위에 유연함이 결합된 WebView2 엔진 기반으로, 가벼우면서도 제한 없는 인터페이스가 구현됩니다.",
+			"마치 오랫동안 기다렸던 모던 윈도우용 진화형 가젯 환경을 경험할 수 있도록 지속 업데이트 되고 있습니다."
+		],
+		"overviewScreenshots": [
+			{
+				"src": "/app_screenshots/page_home.png",
+				"alt": "HTWind 위젯 보관소 화면"
+			},
+			{
+				"src": "/app_screenshots/page_settings.png",
+				"alt": "HTWind 사용자화 설정 화면"
+			},
+			{
+				"src": "/app_screenshots/page_about.png",
+				"alt": "HTWind 프로그램 기본 정보 화면"
+			}
+		]
+	}
+}

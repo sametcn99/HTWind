@@ -1,0 +1,322 @@
+{
+	"meta": {
+		"locale": "id",
+		"ogLocale": "id_ID"
+	},
+	"seo": {
+		"title": "HTWind | Platform Widget Desktop Windows",
+		"description": "HTWind adalah host widget desktop sumber terbuka untuk Windows yang mendukung widget HTML, paket berbasis manifes, dan alat PowerShell terkontrol.",
+		"openGraphTitle": "HTWind | Platform Widget Desktop Windows",
+		"openGraphDescription": "Bangun desktop Windows yang lebih bersih dengan widget HTML, paket impor, dan kontrol alur kerja bernuansa bawaan sistem.",
+		"twitterTitle": "HTWind | Host Widget Desktop Windows",
+		"twitterDescription": "Host widget Windows sumber terbuka dengan widget HTML, paket manifes, dan integrasi PowerShell.",
+		"imageAlt": "Tangkapan layar desktop HTWind dengan widget di Windows",
+		"jsonLdDescription": "HTWind adalah platform widget berbasis HTML yang dapat disesuaikan untuk desktop Windows."
+	},
+	"languageSelector": {
+		"label": "Bahasa",
+		"ariaLabel": "Pilih bahasa halaman",
+		"options": {
+			"en": "English",
+			"tr": "Türkçe",
+			"hi": "हिन्दी",
+			"zh": "中文",
+			"de": "Deutsch",
+			"fr": "Français",
+			"ru": "Русский",
+			"ar": "العربية",
+			"ja": "日本語",
+			"es": "Español",
+			"pt": "Português",
+			"it": "Italiano",
+			"ko": "한국어",
+			"id": "Bahasa Indonesia",
+			"vi": "Tiếng Việt",
+			"nl": "Nederlands",
+			"pl": "Polski",
+			"uk": "Українська"
+		}
+	},
+	"banner": {
+		"text": "Host widget Windows sumber terbuka untuk widget HTML, paket impor, dan alat PowerShell terkontrol"
+	},
+	"hero": {
+		"eyebrow": "Platform widget desktop bawaan Windows",
+		"heading": "Bangun desktop Windows yang lebih bersih dengan widget HTML",
+		"description": "HTWind memberi Anda host yang dipoles untuk widget HTML, impor paket, alat desktop yang selalu menyala, dan tindakan PowerShell terkontrol tanpa meninggalkan alur kerja asli Windows.",
+		"includedLabel": "Termasuk",
+		"proofPoints": [
+			"Widget HTML, CSS, dan JavaScript dirender dengan WebView2",
+			"Paket berbasis manifes untuk pengaturan yang didukung aset dan multi-widget",
+			"Tindakan PowerShell terkontrol untuk diagnostik dan alur kerja desktop"
+		],
+		"githubButton": "Lihat di GitHub",
+		"releaseNotesButton": "Catatan rilis",
+		"communityNotice": "Penginstal adalah jalur yang disarankan untuk sebagian besar pengguna. ZIP portabel dan pengiriman Microsoft Store tetap tersedia saat Anda memerlukan model penerapan yang berbeda.",
+		"releaseCard": {
+			"title": "Rilis terbaru",
+			"loadingLabel": "Memuat",
+			"channels": [
+				{
+					"name": "Installer",
+					"description": "Disarankan untuk pengaturan Windows yang paling bersih."
+				},
+				{
+					"name": "ZIP Portabel",
+					"description": "Simpan salinan mandiri untuk penerapan manual."
+				},
+				{
+					"name": "Microsoft Store",
+					"description": "Sangat cocok untuk instalasi terkelola dan pembaruan cepat."
+				}
+			],
+			"storeAriaLabel": "Dapatkan dari Microsoft Store",
+			"storeImageAlt": "Dapatkan dari Microsoft Store",
+			"communityPrefix": "Bagikan widget di",
+			"communityGithubLabel": "Diskusi GitHub",
+			"communityConnector": "dan",
+			"communityRedditLabel": "Reddit",
+			"communitySuffix": "."
+		}
+	},
+	"downloadMenu": {
+		"loading": "Memeriksa unduhan...",
+		"empty": "Tidak ada unduhan yang tersedia",
+		"choose": "Pilih unduhan ({count})",
+		"title": "Disarankan: installer terlebih dahulu",
+		"hint": "Gunakan installer untuk pengaturan yang paling lancar. Format portabel dan paket tetap tersedia di bawah ini.",
+		"ariaLabel": "Unduhan aset rilis terbaru",
+		"descriptions": {
+			"installer": "Installer disarankan untuk sebagian besar pengaturan Windows",
+			"portable": "Paket portabel untuk ekstraksi manual",
+			"package": "Format paket Windows untuk instalasi terkelola",
+			"other": "Aset rilis tambahan"
+		},
+		"unknownSize": "Ukuran tidak diketahui"
+	},
+	"release": {
+		"loadingLatest": "Memuat rilis terbaru...",
+		"unavailable": "Info rilis tidak tersedia",
+		"checkFeed": "Periksa umpan rilis untuk pembaruan",
+		"publishedOn": "Diterbitkan {date}",
+		"unknownDate": "Tanggal rilis tidak diketahui"
+	},
+	"sections": {
+		"highlights": {
+			"heading": "Mengapa HTWind terasa siap produksi",
+			"lead": "Platform ini dibuat untuk penggunaan desktop sehari-hari, bukan sekadar demo singkat. Kemampuan ini membuat alur kerja terasa andal di Windows.",
+			"ariaLabel": "Sorotan proyek"
+		},
+		"overview": {
+			"heading": "Lihat pengalaman desktop sebelum Anda menginstal",
+			"screenshotHint": "Buka tangkapan layar apa pun untuk pratinjau yang lebih besar yang dapat diperbesar.",
+			"viewLarger": "Lihat versi lebih besar {alt}"
+		},
+		"features": {
+			"heading": "Kemampuan inti produk",
+			"lead": "HTWind menggabungkan shell bernuansa bawaan dengan rantai alat praktis untuk membangun, mengemas, dan menjalankan widget desktop."
+		},
+		"widgets": {
+			"heading": "Mulai dari widget bawaan, lalu sesuaikan",
+			"lead": "HTWind hadir dengan titik awal yang praktis untuk jam, diagnostik, alat file, dan tindakan cepat. Anda dapat menyimpannya apa adanya atau mengembangkannya menjadi paket yang lebih kaya dengan aset lokal.",
+			"documentationPrefix": "Untuk detail lengkap, periksa",
+			"documentationLinkLabel": "dokumentasi repositori",
+			"documentationSuffix": ".",
+			"promptPrefix": "Ingin menghasilkan widget dengan bantuan LLM? Mulai dengan",
+			"promptLabel": "Prompt Generator Widget HTWind",
+			"promptConnector": "atau",
+			"sharedPromptLabel": "versi perintah (prompts.chat) bersama",
+			"promptSuffix": "untuk menghasilkan widget yang kompatibel dengan HTWind secara cepat, lalu mengembangkannya menjadi paket berbasis sumber daya atau multi-widget saat alur kerja berkembang."
+		},
+		"packages": {
+			"heading": "Paket manifes untuk beberapa widget dan aset lokal",
+			"flowHeading": "Aliran paket khas",
+			"schemaPrefix": "Mulai dari",
+			"schemaLabel": "file skema",
+			"schemaConnector": "untuk kontrak manifes, atau periksa",
+			"exampleLabel": "paket contoh multi-widget",
+			"schemaSuffix": "untuk melihat bagaimana HTWind mendeklarasikan beberapa folder widget di dalam satu bundel yang dapat diimpor."
+		},
+		"useCases": {
+			"heading": "Alur kerja HTWind umum",
+			"lead": "Contoh-contoh ini menunjukkan di mana HTWind paling cocok: produktivitas desktop yang ringan, pemantauan teknis, dan peralatan internal yang dapat diulang."
+		},
+		"community": {
+			"heading": "Bagikan widget, pelajari pola, dan dapatkan umpan balik",
+			"lead": "HTWind tumbuh paling baik ketika widget dibagikan dengan tangkapan layar yang jelas, catatan pengaturan, dan konteks alur kerja yang nyata. Diskusi dan Reddit adalah tempat utama untuk menerbitkan rilis, membandingkan ide, dan mendapatkan umpan balik praktis dari pengguna lain.",
+			"visitPrefix": "Kunjungi",
+			"githubLinkLabel": "Diskusi GitHub HTWind",
+			"visitConnector": "dan",
+			"redditLinkLabel": "r/HTWind di Reddit",
+			"visitSuffix": "untuk menerbitkan widget, meminta fitur, melaporkan masalah, dan membagikan pengaturan desktop."
+		},
+		"faq": {
+			"heading": "FAQ HTWind",
+			"lead": "Jawaban cepat tentang instalasi, penyesuaian, pengemasan, dan dukungan otomatisasi."
+		},
+		"support": {
+			"heading": "Dukung pengembang",
+			"lead": "Jika HTWind meningkatkan alur kerja harian Anda, dukungan langsung membantu menjaga agar proyek tetap terpelihara, terdokumentasi, dan dirilis.",
+			"button": "Buka halaman dukungan"
+		}
+	},
+	"footer": {
+		"github": "Kode di GitHub",
+		"releases": "Rilis Aplikasi",
+		"discussions": "Forum Diskusi"
+	},
+	"lightbox": {
+		"close": "Tutup (Esc)"
+	},
+	"errors": {
+		"missingRoot": "Elemen root sistem dengan id 'root' tidak ditemukan."
+	},
+	"content": {
+		"widgets": [
+			{ "id": "clock", "label": "jam" },
+			{ "id": "weather", "label": "cuaca" },
+			{ "id": "network-tools", "label": "jaringan" },
+			{ "id": "process-manager", "label": "proses" },
+			{ "id": "clipboard-studio", "label": "papan klip" },
+			{ "id": "file-explorer", "label": "berkas" },
+			{ "id": "dns-lookup", "label": "pencarian dns" },
+			{ "id": "powershell-console", "label": "konsol powershell" }
+		],
+		"highlights": [
+			{ "value": "20+", "label": "Templat bawaan untuk memulai" },
+			{
+				"value": "Muat Ulang Panas",
+				"label": "Pratinjau langsung saat mengedit widget"
+			},
+			{ "value": "WebView2", "label": "Tumpukan rendering Windows asli" },
+			{ "value": "Sumber Terbuka", "label": "Proyek berlisensi GPL 3.0" },
+			{
+				"value": "Penyembunyian Cerdas",
+				"label": "Mode sembunyikan sesuai mode untuk aplikasi layar penuh",
+				"spanTwo": true
+			},
+			{
+				"value": "Editor Bawaan",
+				"label": "Buat dan edit widget langsung di dalam aplikasi",
+				"spanTwo": true
+			},
+			{
+				"value": "Paket Manifes",
+				"label": "Kirim bundel berbasis aset atau multi-widget dengan satu file manifes",
+				"spanTwo": true
+			},
+			{
+				"value": "API PowerShell",
+				"label": "Jembatan otomatisasi sisi host",
+				"spanTwo": true
+			}
+		],
+		"featureCards": [
+			{
+				"title": "Widget HTML di Desktop",
+				"description": "Bangun widget desktop dengan HTML, CSS, dan JavaScript, lalu jalankan di host bernuansa Windows dengan dukungan file tunggal atau bundel manifes.",
+				"icon": "html"
+			},
+			{
+				"title": "Integrasi PowerShell",
+				"description": "Jalankan perintah PowerShell khusus secara langsung melalui antarmuka JS. Dirancang untuk otomatisasi tanpa keamanan yang longgar.",
+				"icon": "powershell"
+			},
+			{
+				"title": "Pengalaman Windows Premium",
+				"description": "Terintegrasi baik dengan penempatan tray, sembunyikan saat bermain game (mode layar penuh), dan menyimpan lokasi widget per monitor.",
+				"icon": "windows"
+			}
+		],
+		"workflowUseCases": [
+			"Awasi selalu lalu lintas jaringan dan log keamanan selama bekerja di server.",
+			"Gunakan hitung mundur teknik Pomodoro di satu sisi monitor tanpa terhalang tab browser.",
+			"Integrasikan perintah rutinitas sistem Anda dengan antarmuka yang sangat indah namun ringan.",
+			"Rancang papan metrik untuk tim TI yang menyatukan laporan dari berbagai ujung cloud.",
+			"Ekspor satu tata letak rapi bersama dengan semua kode dalam satu zip untuk rekan karyawan."
+		],
+		"widgetPackageParagraphs": [
+			"HTWind mendukung pembuatan dan pemuatan paket berbasis manifes (htwind.widget.json), tidak lagi membatasi antarmuka dalam 1 file tunggal.",
+			"Susun secara bebas folder gambar, font lokal, library JavaScript, dan file CSS kompleks untuk pengalaman UI sesungguhnya.",
+			"Distribusi sama mudahnya: klik Bagikan pada aplikasi dan bagikan file ke PC lain agar terpasang secara utuh dan terpusat (plug-and-play)."
+		],
+		"widgetPackageCapabilities": [
+			{
+				"title": "Kekayaan Sumber Daya Lokal",
+				"description": "Tidak butuh jaringan, simpan seluruh gambar ikonik maupun data json mandiri."
+			},
+			{
+				"title": "Widget Berkelompok",
+				"description": "Kirim paket yang dapat menjalankan sistem komplit seperti bar utilitas di kiri dan status jam di kanan secara bersamaan."
+			},
+			{
+				"title": "Kemudahan Validasi",
+				"description": "Gunakan integrasi dengan Editor JSON Visual Studio Code sebagai paduan yang terpercaya."
+			},
+			{
+				"title": "Mudah Diekspor",
+				"description": "Tanpa zip manual, ekspor rilis bundel resmi melalui satu sentuhan jari di GUI."
+			}
+		],
+		"widgetPackageSteps": [
+			"Buat root paket dengan file htwind.widget.json agar terdeteksi.",
+			"Setel metadata umum dan atur daftar direktori HTML yang berjalan independen satu sama lain.",
+			"Impor langsung ke HTWind dan atur posisi setiap layar sesuka hati Anda."
+		],
+		"communitySharingSteps": [
+			"Banyak yang menunggu inspirasi baru: tampilkan kreasi antarmuka yang mempesona di Reddit dan Github.",
+			"Jelaskan latar belakang kode Anda supaya para modifikator dapat ikut mencoba dan memperbaikinya.",
+			"Beritahu juga hal teknis spesifik seperti syarat PowerShell administrator.",
+			"Unggah versi (Releases) paket yang sudah ada agar selalu diperbarui seiring berjalannya waktu."
+		],
+		"faqItems": [
+			{
+				"question": "Apa itu HTWind?",
+				"answer": "Aplikasi open-source untuk membangun perangkat mini tanpa border di atas desktop Windows yang ditulis dengan web (HTML, CSS, JS)."
+			},
+			{
+				"question": "Bagaimana mesin rendernya bekerja?",
+				"answer": "Sepenuhnya didukung oleh arsitektur internal bawaan Windows, yaity WebView2 Chromium yang sangat stabil dan ringan (digunakan oleh banyak program modern)."
+			},
+			{
+				"question": "Kenapa butuh manifes?",
+				"answer": "Agar tidak kehilangan konteks folder: semua gambar yang bergantung pada HTML akan tersambung tanpa error path relatif file (htwind.widget.json memecahkannya).",
+				"spanTwoColumns": true
+			},
+			{
+				"question": "Pernah bermain game layar penuh dengan widget menutupi visual?",
+				"answer": "Kami mengerti masalah itu. Cukup centang 'Nonaktifkan jika ada jendela penuh' pada panel pengaturan untuk menyembunyikannya sementara."
+			},
+			{
+				"question": "Apakah ini menyedot tenaga PC?",
+				"answer": "Konsumsinya disatukan dalam RAM shared pool dari browser. Sangat minimalis, biasanya berada di angka satuan atau belasan Megabyte saja per fungsi."
+			},
+			{
+				"question": "Bagaimana menjalankan kode sistem tingkat tinggi?",
+				"answer": "Terdapat HTWind bridge khusus di fungsi JS dimana ia menghubungkan panggilan skrip PS1 dengan persetujuan aman dari aplikasi induk C#."
+			},
+			{
+				"question": "Bisa untuk instalasi perusahaan?",
+				"answer": "Tentu. Lisensi terbuka mendukung pendistribusian luas. Pakailah Installer Microsoft Store agar mudah dimanajemen dari pusat tanpa merubah regedit sama sekali."
+			}
+		],
+		"overviewParagraphs": [
+			"HTWind memotong batas klasik aplikasi Win32 masa lampau, membawakan kustomisasi tanpa batas bahasa internet terkini.",
+			"Kembangkan dan distribusikan utilitas rahasia atau sekadar pengukur ramalan cuaca idaman: tidak ada aturan mengekang, cukup muat di desktop."
+		],
+		"overviewScreenshots": [
+			{
+				"src": "/app_screenshots/page_home.png",
+				"alt": "Halaman Utama Manajemen"
+			},
+			{
+				"src": "/app_screenshots/page_settings.png",
+				"alt": "Menu Preferensi Global"
+			},
+			{
+				"src": "/app_screenshots/page_about.png",
+				"alt": "Tentang Developer & Pembaruan"
+			}
+		]
+	}
+}

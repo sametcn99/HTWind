@@ -1,23 +1,31 @@
-export function formatReleaseDate(isoDate: string): string {
+export function formatReleaseDate(
+	isoDate: string,
+	locale: string,
+	unknownLabel: string,
+): string {
 	const date = new Date(isoDate);
 	if (Number.isNaN(date.getTime())) {
-		return "Unknown release date";
+		return unknownLabel;
 	}
 
-	return new Intl.DateTimeFormat("en-US", {
+	return new Intl.DateTimeFormat(locale, {
 		year: "numeric",
 		month: "short",
 		day: "2-digit",
 	}).format(date);
 }
 
-export function formatFileSize(bytes: number): string {
+export function formatFileSize(
+	bytes: number,
+	locale: string,
+	unknownLabel: string,
+): string {
 	if (!Number.isFinite(bytes) || bytes < 0) {
-		return "Unknown size";
+		return unknownLabel;
 	}
 
 	if (bytes < 1024) {
-		return `${bytes} B`;
+		return `${new Intl.NumberFormat(locale).format(bytes)} B`;
 	}
 
 	const units = ["KB", "MB", "GB"];
@@ -29,5 +37,10 @@ export function formatFileSize(bytes: number): string {
 		unitIndex += 1;
 	}
 
-	return `${value.toFixed(value >= 100 ? 0 : 1)} ${units[unitIndex]}`;
+	const formattedValue = new Intl.NumberFormat(locale, {
+		maximumFractionDigits: value >= 100 ? 0 : 1,
+		minimumFractionDigits: value >= 100 ? 0 : 1,
+	}).format(value);
+
+	return `${formattedValue} ${units[unitIndex]}`;
 }

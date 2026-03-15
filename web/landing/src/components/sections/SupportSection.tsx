@@ -1,26 +1,29 @@
-import { Body1, Card, Link } from "@fluentui/react-components";
+import { Button, Card } from "@fluentui/react-components";
 import { SUPPORT_URL } from "../../config/constants";
+import { useLocale } from "../../i18n/LocaleContext";
 import { useAppStyles } from "../../styles/appStyles";
 
 export function SupportSection() {
 	const styles = useAppStyles();
+	const { messages } = useLocale();
 
 	return (
 		<section aria-labelledby="support-developer-heading">
 			<Card className={styles.longFormSection}>
 				<h2 id="support-developer-heading" className={styles.sectionHeading}>
-					Support the developer
+					{messages.sections.support.heading}
 				</h2>
-				<p className={styles.sectionLead}>
-					You can support sustainable development of HTWind and help the project
-					continue to grow by visiting the support page.
-				</p>
-				<Body1>
-					Support link:{" "}
-					<Link href={SUPPORT_URL} target="_blank" rel="noreferrer">
-						sametcc.me/support
-					</Link>
-				</Body1>
+				<p className={styles.sectionLead}>{messages.sections.support.lead}</p>
+				<Button
+					as="a"
+					href={SUPPORT_URL}
+					target="_blank"
+					rel="noreferrer"
+					className={styles.ghostButton}
+					size="large"
+				>
+					{messages.sections.support.button}
+				</Button>
 			</Card>
 		</section>
 	);

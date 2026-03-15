@@ -9,12 +9,23 @@ html,
 body,
 #root {
 	min-height: 100%;
-	/* Windows 11 dark Mica-style background on root-level surfaces */
 	background:
-		radial-gradient(circle at 18% 8%, rgba(0, 120, 212, 0.22), transparent 48%),
-		radial-gradient(circle at 82% 12%, rgba(0, 60, 168, 0.14), transparent 44%),
-		radial-gradient(circle at 50% 96%, rgba(0, 20, 60, 0.28), transparent 50%),
-		linear-gradient(180deg, #111114 0%, #141418 55%, #101214 100%);
+		radial-gradient(
+			circle at 12% 12%,
+			rgba(43, 110, 214, 0.24),
+			transparent 34%
+		),
+		radial-gradient(
+			circle at 82% 18%,
+			rgba(68, 123, 238, 0.16),
+			transparent 32%
+		),
+		radial-gradient(
+			circle at 50% 104%,
+			rgba(26, 59, 120, 0.38),
+			transparent 40%
+		),
+		linear-gradient(180deg, #0a0f16 0%, #0d121a 45%, #090d13 100%);
 	background-attachment: fixed;
 }
 
@@ -24,16 +35,57 @@ body {
 	font-family: "Segoe UI Variable Text", "Manrope", "Segoe UI", sans-serif;
 }
 
+body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	background:
+		linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+	background-size: 120px 120px;
+	opacity: 0.45;
+	-webkit-mask-image: linear-gradient(
+		180deg,
+		rgba(0, 0, 0, 0.55),
+		transparent 82%
+	);
+	mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 82%);
+}
+
+button,
+a {
+	transition:
+		background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+		border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+		color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+		transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+		box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+a {
+	text-underline-offset: 0.2em;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+	outline: 2px solid rgba(120, 183, 255, 0.9);
+	outline-offset: 2px;
+}
+
 main {
-	animation: reveal-up 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	animation: reveal-up 540ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 section {
-	animation: reveal-up 580ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	animation: reveal-up 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 header {
-	animation: reveal-down 460ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	animation: reveal-down 440ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes reveal-up {

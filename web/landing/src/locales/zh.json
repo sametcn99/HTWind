@@ -1,0 +1,356 @@
+{
+	"meta": {
+		"locale": "zh",
+		"ogLocale": "zh_CN"
+	},
+	"seo": {
+		"title": "HTWind | Windows 桌面小组件宿主",
+		"description": "HTWind 是一个开源的 Windows 桌面小组件宿主，支持 HTML 小组件、manifest 包和受控的 PowerShell 工具。",
+		"openGraphTitle": "HTWind | Windows 桌面小组件宿主",
+		"openGraphDescription": "通过 HTML 小组件、包导入和接近原生的工作流控制，打造更整洁的 Windows 桌面。",
+		"twitterTitle": "HTWind | Windows 桌面小组件宿主",
+		"twitterDescription": "开源 Windows 小组件宿主，支持 HTML 小组件、manifest 包和 PowerShell 集成。",
+		"imageAlt": "Windows 上带有小组件的 HTWind 桌面截图",
+		"jsonLdDescription": "HTWind 是一个适用于 Windows 桌面的可定制 HTML 小组件宿主。"
+	},
+	"languageSelector": {
+		"label": "语言",
+		"ariaLabel": "选择页面语言",
+		"options": {
+			"en": "English",
+			"tr": "Türkçe",
+			"hi": "हिन्दी",
+			"zh": "中文",
+			"de": "Deutsch",
+			"fr": "Français",
+			"ru": "Русский",
+			"ar": "العربية",
+			"ja": "日本語",
+			"es": "Español",
+			"pt": "Português",
+			"it": "Italiano",
+			"ko": "한국어",
+			"id": "Bahasa Indonesia",
+			"vi": "Tiếng Việt",
+			"nl": "Nederlands",
+			"pl": "Polski",
+			"uk": "Українська"
+		}
+	},
+	"banner": {
+		"text": "适用于 HTML 小组件、包导入和受控 PowerShell 工具的开源 Windows 小组件宿主"
+	},
+	"hero": {
+		"eyebrow": "原生风格的 Windows 桌面小组件平台",
+		"heading": "用 HTML 小组件打造更整洁的 Windows 桌面",
+		"description": "HTWind 为 HTML 小组件、包导入、常驻桌面工具和受控的 PowerShell 操作提供了一个精致的宿主环境，让你无需离开原生 Windows 工作流。",
+		"includedLabel": "内置",
+		"proofPoints": [
+			"通过 WebView2 渲染的 HTML、CSS 和 JavaScript 小组件",
+			"支持资源型和多小组件场景的 manifest 包",
+			"用于诊断和桌面工作流的受控 PowerShell 操作"
+		],
+		"githubButton": "在 GitHub 查看",
+		"releaseNotesButton": "发行说明",
+		"communityNotice": "对大多数用户来说，安装程序是推荐方式。当你需要不同的部署模式时，便携 ZIP 和 Microsoft Store 版本仍然可用。",
+		"releaseCard": {
+			"title": "最新版本",
+			"loadingLabel": "加载中",
+			"channels": [
+				{
+					"name": "安装程序",
+					"description": "最适合获得整洁的 Windows 安装体验。"
+				},
+				{
+					"name": "便携 ZIP",
+					"description": "适合手动部署的自包含副本。"
+				},
+				{
+					"name": "Microsoft Store",
+					"description": "适合受管安装和快速更新。"
+				}
+			],
+			"storeAriaLabel": "从 Microsoft Store 获取",
+			"storeImageAlt": "从 Microsoft Store 获取",
+			"communityPrefix": "在这里分享小组件：",
+			"communityGithubLabel": "GitHub Discussions",
+			"communityConnector": "和",
+			"communityRedditLabel": "Reddit",
+			"communitySuffix": "。"
+		}
+	},
+	"downloadMenu": {
+		"loading": "正在检查下载项...",
+		"empty": "暂无可用下载",
+		"choose": "选择下载项（{count}）",
+		"title": "推荐：优先使用安装程序",
+		"hint": "为了获得最顺畅的安装体验，请优先使用安装程序。便携和包格式仍会显示在下方。",
+		"ariaLabel": "最新版本资源下载",
+		"descriptions": {
+			"installer": "适用于大多数 Windows 环境的推荐安装程序",
+			"portable": "适合手动解压的便携包",
+			"package": "适合受管安装的 Windows 包格式",
+			"other": "其他版本资源"
+		},
+		"unknownSize": "大小未知"
+	},
+	"release": {
+		"loadingLatest": "正在加载最新版本...",
+		"unavailable": "无法获取版本信息",
+		"checkFeed": "请查看版本发布流以获取更新",
+		"publishedOn": "发布于 {date}",
+		"unknownDate": "发布日期未知"
+	},
+	"sections": {
+		"highlights": {
+			"heading": "为什么 HTWind 具备生产可用的感觉",
+			"lead": "这个平台不是为了快速演示而做，而是为日常桌面使用而构建。这些能力让整个工作流在 Windows 上更可靠。",
+			"ariaLabel": "项目亮点"
+		},
+		"overview": {
+			"heading": "安装之前先看看桌面体验",
+			"screenshotHint": "点击任意截图可查看更大的可缩放预览。",
+			"viewLarger": "查看更大图：{alt}"
+		},
+		"features": {
+			"heading": "核心产品能力",
+			"lead": "HTWind 将接近原生的外壳体验与构建、打包和运行桌面小组件的实用工具链结合在一起。"
+		},
+		"widgets": {
+			"heading": "从内置小组件开始，再逐步定制",
+			"lead": "HTWind 提供了适用于时钟、诊断、文件工具和快捷操作的实用起点。你可以直接使用，也可以将它们扩展为带本地资源的更丰富包。",
+			"documentationPrefix": "完整细节请查看",
+			"documentationLinkLabel": "仓库文档",
+			"documentationSuffix": "。",
+			"promptPrefix": "想借助 LLM 生成小组件吗？可以先从",
+			"promptLabel": "HTWind Widget Generator Prompt",
+			"promptConnector": "或",
+			"sharedPromptLabel": "共享的 prompts.chat 版本",
+			"promptSuffix": "开始，快速生成兼容 HTWind 的小组件，然后在工作流扩大时再扩展为资源型或多小组件包。"
+		},
+		"packages": {
+			"heading": "支持多个小组件和本地资源的 manifest 包",
+			"flowHeading": "典型打包流程",
+			"schemaPrefix": "可以先从",
+			"schemaLabel": "schema 文件",
+			"schemaConnector": "了解 manifest 契约，或者查看",
+			"exampleLabel": "多小组件示例包",
+			"schemaSuffix": "，了解 HTWind 如何在一个可导入包内声明多个小组件文件夹。"
+		},
+		"useCases": {
+			"heading": "常见的 HTWind 工作流",
+			"lead": "这些示例展示了 HTWind 最适合的场景：轻量级桌面效率、技术监控以及可复用的内部工具。"
+		},
+		"community": {
+			"heading": "分享小组件、学习模式并获得反馈",
+			"lead": "当小组件配合清晰的截图、安装说明和真实工作流背景一起分享时，HTWind 才能发展得更好。Discussions 和 Reddit 是发布版本、比较思路以及获得其他用户实际反馈的主要地方。",
+			"visitPrefix": "访问",
+			"githubLinkLabel": "HTWind GitHub Discussions",
+			"visitConnector": "和",
+			"redditLinkLabel": "Reddit 上的 r/HTWind",
+			"visitSuffix": "，以发布小组件、提出功能请求、报告问题并分享桌面配置。"
+		},
+		"faq": {
+			"heading": "HTWind 常见问题",
+			"lead": "关于安装、定制、打包和自动化支持的快速解答。"
+		},
+		"support": {
+			"heading": "支持开发者",
+			"lead": "如果 HTWind 改善了你的日常工作流，直接支持将帮助项目持续维护、编写文档并稳定发布。",
+			"button": "打开支持页面"
+		}
+	},
+	"footer": {
+		"github": "GitHub",
+		"releases": "版本发布",
+		"discussions": "Discussions"
+	},
+	"lightbox": {
+		"close": "关闭"
+	},
+	"errors": {
+		"missingRoot": "未找到 id 为 'root' 的根元素。"
+	},
+	"content": {
+		"widgets": [
+			{
+				"id": "clock",
+				"label": "clock"
+			},
+			{
+				"id": "weather",
+				"label": "weather"
+			},
+			{
+				"id": "network-tools",
+				"label": "network-tools"
+			},
+			{
+				"id": "process-manager",
+				"label": "process-manager"
+			},
+			{
+				"id": "clipboard-studio",
+				"label": "clipboard-studio"
+			},
+			{
+				"id": "file-explorer",
+				"label": "file-explorer"
+			},
+			{
+				"id": "dns-lookup",
+				"label": "dns-lookup"
+			},
+			{
+				"id": "powershell-console",
+				"label": "powershell-console"
+			}
+		],
+		"highlights": [
+			{
+				"value": "20+",
+				"label": "内置模板"
+			},
+			{
+				"value": "Hot Reload",
+				"label": "编辑小组件时实时预览"
+			},
+			{
+				"value": "WebView2",
+				"label": "原生 Windows 渲染栈"
+			},
+			{
+				"value": "开源",
+				"label": "采用 GPL 3.0 许可证"
+			},
+			{
+				"value": "智能抑制",
+				"label": "针对全屏和最大化应用的显示感知隐藏模式",
+				"spanTwo": true
+			},
+			{
+				"value": "内置编辑器",
+				"label": "在应用内创建和编辑小组件",
+				"spanTwo": true
+			},
+			{
+				"value": "Manifest 包",
+				"label": "通过一个 manifest 交付资源型或多小组件包",
+				"spanTwo": true
+			},
+			{
+				"value": "PowerShell API",
+				"label": "宿主侧自动化桥接",
+				"spanTwo": true
+			}
+		],
+		"featureCards": [
+			{
+				"title": "桌面 HTML 小组件",
+				"description": "使用 HTML、CSS 和 JavaScript 构建桌面小组件，然后在接近原生体验的 Windows 宿主中运行，支持单文件和打包文件夹。",
+				"icon": "html"
+			},
+			{
+				"title": "PowerShell 集成",
+				"description": "通过宿主 API 运行经过批准的 PowerShell 操作用于诊断、自动化和系统任务，同时避免把小组件层变成不安全的 shell。",
+				"icon": "powershell"
+			},
+			{
+				"title": "原生 Windows 体验",
+				"description": "通过托盘行为、置顶控制、状态持久化以及针对全屏或最大化应用的显示感知抑制，与现代 Windows 工作流保持一致。",
+				"icon": "windows"
+			}
+		],
+		"workflowUseCases": [
+			"在专注工作时保持时钟、天气、计时器和快捷操作始终可见。",
+			"在开发或支持工作中运行网络检查、DNS 查询和进程监控小组件。",
+			"使用受控的 PowerShell 操作执行诊断和重复的系统任务。",
+			"构建内部 HTML 小组件，将团队特定的运营工具暴露到桌面上。",
+			"将仪表盘、计时器和状态面板打包为一个 manifest，让团队一步导入完整设置。"
+		],
+		"widgetPackageParagraphs": [
+			"HTWind 通过 htwind.widget.json 支持基于 manifest 的小组件包，因此一个小组件不再局限于单个 HTML 文件。你可以在一个明确的 manifest 下交付包含 CSS、JavaScript、图片、字体和其他本地资源的完整文件夹。",
+			"同一种格式还可以在一次导入中描述多个小组件，这使它非常适合精选组合、内部工具包以及需要一起安装的可复用桌面方案。",
+			"导入和导出依然简单：导入独立 HTML 小组件、导入 manifest 包、导出单个已管理小组件，或导出整个工作区用于分享和备份。"
+		],
+		"widgetPackageCapabilities": [
+			{
+				"title": "资源型小组件",
+				"description": "无需把所有内容压成一个文件，可以连同 CSS、JavaScript、图片、字体和其他本地资源一起打包小组件。"
+			},
+			{
+				"title": "一个包多个小组件",
+				"description": "在一个 manifest 中描述多个小组件文件夹，让 HTWind 一次导入完整仪表盘或工具包。"
+			},
+			{
+				"title": "Schema 引导的结构",
+				"description": "使用附带的 schema 和示例包作为参考，保持相对路径、入口文件和资源声明的一致性。"
+			},
+			{
+				"title": "即插即用的导入导出",
+				"description": "无需手工重新打包，就能从开发进入分享：直接导入 manifest、导出单个小组件，或导出整个工作区。"
+			}
+		],
+		"widgetPackageSteps": [
+			"在顶层创建一个包含 htwind.widget.json 的包根目录。",
+			"添加一个或多个小组件文件夹，并通过相对路径把每个小组件条目指向其 HTML 文件。",
+			"列出每个小组件的非入口资源，以确保包结构明确且可移植。",
+			"将 manifest 导入 HTWind，或者导出现有小组件或工作区以生成可复用的包布局。"
+		],
+		"communitySharingSteps": [
+			"在 GitHub Discussions 中分享小组件版本，并在 HTWind Reddit 社区中展示它们。",
+			"附上简短摘要、截图以及你的小组件改善的主要 Windows 工作流。",
+			"包含安装说明、所需权限以及任何宿主 API 或 PowerShell 细节。",
+			"发布更新说明，让用户可以跟踪版本、修复和功能变化。"
+		],
+		"faqItems": [
+			{
+				"question": "HTWind 用来做什么？",
+				"answer": "HTWind 在 Windows 上管理和显示基于 HTML 的桌面小组件，让你在工作时更容易持续看到诊断信息、快捷方式和有用的系统上下文。"
+			},
+			{
+				"question": "我可以构建自己的小组件吗？",
+				"answer": "可以。你可以使用 HTML、CSS 和 JavaScript 创建自定义小组件，然后把它们打包为单文件、资源型文件夹，或包含一个或多个小组件的 manifest 包。"
+			},
+			{
+				"question": "htwind.widget.json 有什么作用？",
+				"answer": "htwind.widget.json 是小组件包 manifest。它定义包元数据和一个或多个小组件，包括每个小组件的相对文件夹、入口 HTML 文件以及声明的资源。",
+				"spanTwoColumns": true
+			},
+			{
+				"question": "HTWind 支持 PowerShell 自动化吗？",
+				"answer": "支持。HTWind 包含宿主侧 API，可以执行经过批准的 PowerShell 命令，用于诊断和受控的桌面操作。"
+			},
+			{
+				"question": "当我使用全屏或最大化应用时，小组件会自动隐藏吗？",
+				"answer": "会。在设置中你可以启用全屏抑制以及单独的最大化应用抑制模式。两者都按显示器工作，并会在不改变保存的可见状态的情况下临时关闭小组件窗口。"
+			},
+			{
+				"question": "HTWind 是开源的吗？",
+				"answer": "是的。HTWind 以 GPL 3.0 许可证发布在 GitHub 上，适用于个人使用、实验和社区驱动改进。"
+			},
+			{
+				"question": "欢迎贡献吗？",
+				"answer": "欢迎。你可以提交 issue、在 Discussions 分享想法，并为小组件、模板、文档和核心应用改进提交 pull request。"
+			}
+		],
+		"overviewParagraphs": [
+			"HTWind 将原生 Windows 行为与灵活的 Web 内容结合起来。HTML 小组件通过 WebView2 渲染，因此可以轻松构建在工作时保持可见的桌面工具。",
+			"这个应用面向希望拥有轻量但可扩展小组件层的用户：托盘集成、置顶控制、状态持久化、打包小组件以及显示感知抑制，都能帮助把普通 Windows 桌面变成更有用的工作空间。"
+		],
+		"overviewScreenshots": [
+			{
+				"src": "/app_screenshots/page_home.png",
+				"alt": "HTWind 首页 - 小组件库"
+			},
+			{
+				"src": "/app_screenshots/page_settings.png",
+				"alt": "HTWind 设置 - 自定义"
+			},
+			{
+				"src": "/app_screenshots/page_about.png",
+				"alt": "HTWind 关于 - 版本信息"
+			}
+		]
+	}
+}

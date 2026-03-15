@@ -1,6 +1,7 @@
 import { Card, mergeClasses } from "@fluentui/react-components";
-import { overviewParagraphs, overviewScreenshots } from "../../config/content";
 import type { ScreenshotItem } from "../../config/types";
+import { interpolate } from "../../i18n/interpolate";
+import { useLocale } from "../../i18n/LocaleContext";
 import { useAppStyles } from "../../styles/appStyles";
 
 type OverviewSectionProps = {
@@ -9,21 +10,25 @@ type OverviewSectionProps = {
 
 export function OverviewSection({ onSelectImage }: OverviewSectionProps) {
 	const styles = useAppStyles();
+	const { messages } = useLocale();
 
 	return (
 		<section aria-labelledby="htwind-overview-heading">
 			<Card className={styles.longFormSection}>
 				<h2 id="htwind-overview-heading" className={styles.sectionHeading}>
-					Desktop widget manager for Windows productivity
+					{messages.sections.overview.heading}
 				</h2>
-				{overviewParagraphs.map((paragraph) => (
+				{messages.content.overviewParagraphs.map((paragraph) => (
 					<p key={paragraph} className={styles.sectionLead}>
 						{paragraph}
 					</p>
 				))}
+				<p className={styles.screenshotMeta}>
+					{messages.sections.overview.screenshotHint}
+				</p>
 
 				<div className={styles.screenshotsGrid}>
-					{overviewScreenshots.map((screenshot) => (
+					{messages.content.overviewScreenshots.map((screenshot) => (
 						<button
 							type="button"
 							key={screenshot.src}
@@ -33,7 +38,9 @@ export function OverviewSection({ onSelectImage }: OverviewSectionProps) {
 								styles.clickableScreenshot,
 							)}
 							onClick={() => onSelectImage(screenshot)}
-							aria-label={`View larger ${screenshot.alt}`}
+							aria-label={interpolate(messages.sections.overview.viewLarger, {
+								alt: screenshot.alt,
+							})}
 						>
 							<img
 								src={screenshot.src}

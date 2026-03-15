@@ -1,0 +1,356 @@
+{
+	"meta": {
+		"locale": "es",
+		"ogLocale": "es_ES"
+	},
+	"seo": {
+		"title": "HTWind | Host de widgets de escritorio para Windows",
+		"description": "HTWind es un host de widgets de escritorio de código abierto para Windows con widgets HTML, paquetes de manifiesto y herramientas de PowerShell controladas.",
+		"openGraphTitle": "HTWind | Host de widgets de escritorio para Windows",
+		"openGraphDescription": "Construye un escritorio de Windows más limpio con widgets HTML, importaciones de paquetes y controles de flujo de trabajo nativos.",
+		"twitterTitle": "HTWind | Host de widgets de escritorio para Windows",
+		"twitterDescription": "Host de widgets de Windows de código abierto con widgets HTML, paquetes de manifiesto e integración con PowerShell.",
+		"imageAlt": "Captura de pantalla del escritorio de HTWind con widgets en Windows",
+		"jsonLdDescription": "HTWind es un host de widgets personalizable basado en HTML para escritorios de Windows."
+	},
+	"languageSelector": {
+		"label": "Idioma",
+		"ariaLabel": "Seleccionar idioma de la página",
+		"options": {
+			"en": "English",
+			"tr": "Türkçe",
+			"hi": "हिन्दी",
+			"zh": "中文",
+			"de": "Deutsch",
+			"fr": "Français",
+			"ru": "Русский",
+			"ar": "العربية",
+			"ja": "日本語",
+			"es": "Español",
+			"pt": "Português",
+			"it": "Italiano",
+			"ko": "한국어",
+			"id": "Bahasa Indonesia",
+			"vi": "Tiếng Việt",
+			"nl": "Nederlands",
+			"pl": "Polski",
+			"uk": "Українська"
+		}
+	},
+	"banner": {
+		"text": "Host de widgets de código abierto para Windows para widgets HTML, paquetes y herramientas de PowerShell"
+	},
+	"hero": {
+		"eyebrow": "Plataforma de widgets de escritorio nativa de Windows",
+		"heading": "Construye un escritorio de Windows más limpio con widgets HTML",
+		"description": "HTWind te ofrece un host pulido para widgets HTML, importaciones de paquetes, herramientas de escritorio siempre activas y acciones de PowerShell sin salir de un flujo de trabajo nativo de Windows.",
+		"includedLabel": "Incluido",
+		"proofPoints": [
+			"Widgets en HTML, CSS y JavaScript renderizados con WebView2",
+			"Paquetes basados en manifiestos para configuraciones múltiples y con assets",
+			"Acciones de PowerShell controladas para diagnósticos y automatización"
+		],
+		"githubButton": "Ver en GitHub",
+		"releaseNotesButton": "Notas de la versión",
+		"communityNotice": "El instalador es la opción recomendada para la mayoría. La extracción manual (ZIP) y la tienda de Microsoft están disponibles para otros métodos de implementación.",
+		"releaseCard": {
+			"title": "Última versión",
+			"loadingLabel": "Cargando",
+			"channels": [
+				{
+					"name": "Instalador",
+					"description": "Recomendado para la configuración de Windows más limpia."
+				},
+				{
+					"name": "ZIP Portátil",
+					"description": "Mantén una copia independiente para implementación manual."
+				},
+				{
+					"name": "Microsoft Store",
+					"description": "Ideal para instalaciones administradas y actualizaciones rápidas."
+				}
+			],
+			"storeAriaLabel": "Consíguelo en la Microsoft Store",
+			"storeImageAlt": "Consíguelo en la Microsoft Store",
+			"communityPrefix": "Comparte widgets en",
+			"communityGithubLabel": "GitHub Discussions",
+			"communityConnector": "y",
+			"communityRedditLabel": "Reddit",
+			"communitySuffix": "."
+		}
+	},
+	"downloadMenu": {
+		"loading": "Comprobando descargas...",
+		"empty": "No hay descargas disponibles",
+		"choose": "Elige una descarga ({count})",
+		"title": "Recomendado: el instalador primero",
+		"hint": "Usa el instalador para la mejor configuración. Los formatos portátil y de paquete continúan disponibles a continuación.",
+		"ariaLabel": "Últimas descargas disponibles",
+		"descriptions": {
+			"installer": "Instalador recomendado para la mayoría de las configuraciones de Windows",
+			"portable": "Paquete portátil para extracción manual",
+			"package": "Formato de paquete de Windows para instalaciones administradas",
+			"other": "Recurso de lanzamiento adicional"
+		},
+		"unknownSize": "Tamaño desconocido"
+	},
+	"release": {
+		"loadingLatest": "Cargando la última versión...",
+		"unavailable": "Información de la versión no disponible",
+		"checkFeed": "Comprueba el feed de lanzamientos para actualizaciones",
+		"publishedOn": "Publicado el {date}",
+		"unknownDate": "Fecha de lanzamiento desconocida"
+	},
+	"sections": {
+		"highlights": {
+			"heading": "Por qué HTWind está listo para producción",
+			"lead": "La plataforma está construida para el uso diario del escritorio, no solo para demostraciones. Estas características hacen que el flujo de trabajo se sienta confiable en Windows.",
+			"ariaLabel": "Puntos destacados del proyecto"
+		},
+		"overview": {
+			"heading": "Mira la experiencia de escritorio antes de instalar",
+			"screenshotHint": "Abre cualquier captura de pantalla para una vista previa más grande.",
+			"viewLarger": "Ver más grande {alt}"
+		},
+		"features": {
+			"heading": "Características principales",
+			"lead": "HTWind combina un entorno nativo con herramientas prácticas para crear, empaquetar y ejecutar widgets de escritorio."
+		},
+		"widgets": {
+			"heading": "Empieza con widgets integrados y personalízalos",
+			"lead": "HTWind incluye puntos de inicio prácticos para relojes, diagnósticos, gestión de archivos y acciones rápidas. Puedes mantenerlos como están o evolucionarlos hacia paquetes enriquecidos.",
+			"documentationPrefix": "Para más detalles, consulta la",
+			"documentationLinkLabel": "documentación del repositorio",
+			"documentationSuffix": ".",
+			"promptPrefix": "¿Quieres generar widgets con ayuda de LLM? Comienza con el",
+			"promptLabel": "Prompt Generador de Widgets para HTWind",
+			"promptConnector": "o la",
+			"sharedPromptLabel": "versión compartida de prompts.chat",
+			"promptSuffix": "para crear widgets compatibles de manera rápida."
+		},
+		"packages": {
+			"heading": "Paquetes para múltiples widgets y archivos locales",
+			"flowHeading": "Flujo típico de un paquete",
+			"schemaPrefix": "Comienza desde el",
+			"schemaLabel": "archivo de esquema",
+			"schemaConnector": "para el contrato del manifiesto, o inspecciona el",
+			"exampleLabel": "paquete de ejemplo multi-widget",
+			"schemaSuffix": "para ver cómo declarar varios widgets en un solo paquete."
+		},
+		"useCases": {
+			"heading": "Casos de uso comunes de HTWind",
+			"lead": "Estos ejemplos muestran dónde HTWind encaja mejor: productividad de escritorio ligera, monitoreo técnico y herramientas internas."
+		},
+		"community": {
+			"heading": "Comparte widgets, aprende patrones y obtén feedback",
+			"lead": "HTWind crece mejor cuando se comparten widgets con capturas de pantalla claras y contexto real de flujo de trabajo.",
+			"visitPrefix": "Visita",
+			"githubLinkLabel": "Discusiones en GitHub de HTWind",
+			"visitConnector": "y",
+			"redditLinkLabel": "r/HTWind en Reddit",
+			"visitSuffix": "para publicar widgets, solicitar características y compartir configuraciones."
+		},
+		"faq": {
+			"heading": "Preguntas Frecuentes de HTWind",
+			"lead": "Respuestas rápidas sobre instalación, personalización, empaquetado y soporte de automatización."
+		},
+		"support": {
+			"heading": "Apoya al desarrollador",
+			"lead": "Si HTWind mejora tu flujo de trabajo diario, tu apoyo directo ayuda a mantener el proyecto actualizado y documentado.",
+			"button": "Abrir página de soporte"
+		}
+	},
+	"footer": {
+		"github": "GitHub",
+		"releases": "Versiones",
+		"discussions": "Discusiones"
+	},
+	"lightbox": {
+		"close": "Cerrar"
+	},
+	"errors": {
+		"missingRoot": "Elemento raíz con id 'root' no encontrado."
+	},
+	"content": {
+		"widgets": [
+			{
+				"id": "clock",
+				"label": "reloj"
+			},
+			{
+				"id": "weather",
+				"label": "clima"
+			},
+			{
+				"id": "network-tools",
+				"label": "herramientas-red"
+			},
+			{
+				"id": "process-manager",
+				"label": "gestor-procesos"
+			},
+			{
+				"id": "clipboard-studio",
+				"label": "portapapeles"
+			},
+			{
+				"id": "file-explorer",
+				"label": "explorador-archivos"
+			},
+			{
+				"id": "dns-lookup",
+				"label": "búsqueda-dns"
+			},
+			{
+				"id": "powershell-console",
+				"label": "consola-powershell"
+			}
+		],
+		"highlights": [
+			{
+				"value": "20+",
+				"label": "Plantillas integradas"
+			},
+			{
+				"value": "Recarga Activa",
+				"label": "Vista previa en vivo al editar widgets"
+			},
+			{
+				"value": "WebView2",
+				"label": "Renderizado nativo de Windows"
+			},
+			{
+				"value": "Código Abierto",
+				"label": "Proyecto bajo licencia GPL 3.0"
+			},
+			{
+				"value": "Ocultación Inteligente",
+				"label": "Modos de ocultación conscientes de la pantalla para aplicaciones a pantalla completa",
+				"spanTwo": true
+			},
+			{
+				"value": "Editor Integrado",
+				"label": "Crea y edita widgets dentro de la aplicación",
+				"spanTwo": true
+			},
+			{
+				"value": "Paquetes de Manifiesto",
+				"label": "Envía contenedores multi-widget con un solo manifiesto",
+				"spanTwo": true
+			},
+			{
+				"value": "API de PowerShell",
+				"label": "Puente de automatización del lado del host",
+				"spanTwo": true
+			}
+		],
+		"featureCards": [
+			{
+				"title": "Widgets HTML en el Escritorio",
+				"description": "Construye widgets de escritorio con HTML, CSS y JavaScript, luego ejecútalos en un host de Windows nativo con soporte para archivos únicos y empaquetados.",
+				"icon": "html"
+			},
+			{
+				"title": "Integración con PowerShell",
+				"description": "Ejecuta acciones aprobadas a través de las APIs del host para diagnósticos y automatización, sin convertir la capa de widgets en un entorno inseguro.",
+				"icon": "powershell"
+			},
+			{
+				"title": "Sensación Nativa de Windows",
+				"description": "Mantente alineado con los flujos de trabajo de Windows: comportamiento en bandeja, controles de fijación superior, retención del estado y supresión de widgets al usar pantalla completa.",
+				"icon": "windows"
+			}
+		],
+		"workflowUseCases": [
+			"Mantén relojes, clima, temporizadores y acciones rápidas visibles.",
+			"Realiza comprobaciones de red, búsquedas de DNS y monitoriza procesos.",
+			"Usa acciones de PowerShell controladas para tareas repetitivas del sistema.",
+			"Construye herramientas internas específicas para el equipo en el escritorio.",
+			"Empaqueta dashboards enteros en un solo manifiesto para su fácil importación."
+		],
+		"widgetPackageParagraphs": [
+			"HTWind soporta paquetes basados en manifiestos usando htwind.widget.json, permitiendo adjuntar assets locales y organizar todo en una sola carpeta.",
+			"El mismo formato permite describir varios widgets en una importación, ideal para crear entornos listos para instalarse en grupo.",
+			"Puedes importar widgets HTML independientes, instalar paquetes o exportar todo tu entorno para compartir y hacer copias de seguridad."
+		],
+		"widgetPackageCapabilities": [
+			{
+				"title": "Widgets respaldados por assets",
+				"description": "Empaqueta CSS, JavaScript, imágenes, y fuentes en lugar de poner todo en un solo archivo."
+			},
+			{
+				"title": "Múltiples widgets en un paquete",
+				"description": "Describe varios directorios de widgets en un manifiesto para importar todo a la vez."
+			},
+			{
+				"title": "Estructura basada en esquemas",
+				"description": "Utiliza el esquema incluido para mantener la consistencia en rutas relativas y archivos de entrada."
+			},
+			{
+				"title": "Listo para importar y exportar",
+				"description": "Pasa del desarrollo al entorno de usuario importando manifiestos y exportando con un clic."
+			}
+		],
+		"widgetPackageSteps": [
+			"Crea una carpeta raíz con htwind.widget.json en el nivel principal.",
+			"Añade directorios de widgets y apunta a cada entrada de forma relativa.",
+			"Enumera cualquier asset auxiliar que tu widget necesite para mantenerse portátil.",
+			"Importa el manifiesto en HTWind o expórtalo para compartir."
+		],
+		"communitySharingSteps": [
+			"Comparte lanzamientos de widgets en las discusiones de GitHub o en el grupo de Reddit de HTWind.",
+			"Agrega capturas de pantalla atractivas y el tipo de flujos que mejora tu widget.",
+			"Explica qué permisos o detalles de API requiere.",
+			"Publica notas sobre correcciones y actualizaciones para que la comunidad pueda seguirlas."
+		],
+		"faqItems": [
+			{
+				"question": "¿Para qué se utiliza HTWind?",
+				"answer": "HTWind maneja y muestra widgets HTML en el escritorio de Windows para diagnóstico, acciones rápidas e información en tiempo real mientras trabajas."
+			},
+			{
+				"question": "¿Puedo construir mis propios widgets?",
+				"answer": "Sí, usando HTML, CSS, y JS. Puedes tener archivos únicos, o paquetes más grandes y estructurados con manifiesto."
+			},
+			{
+				"question": "¿Qué es htwind.widget.json?",
+				"answer": "Es el archivo de manifiesto del paquete. Permite declarar metadata, entradas relativas y assets para uno o más widgets encapsulados.",
+				"spanTwoColumns": true
+			},
+			{
+				"question": "¿Soporta HTWind automatización por PowerShell?",
+				"answer": "Sí, a través de APIs de host autorizadas que puedes llamar desde el widget."
+			},
+			{
+				"question": "¿Pueden ocultarse los widgets con aplicaciones en pantalla completa?",
+				"answer": "Sí, en la Configuración puedes activar modos que los ocultan cuando otras aplicaciones se maximizan."
+			},
+			{
+				"question": "¿HTWind es de código abierto?",
+				"answer": "Sí, bajo la licencia GPL 3.0 en GitHub."
+			},
+			{
+				"question": "¿Puedo contribuir al proyecto?",
+				"answer": "¡Claro! Puedes abrir incidencias, sugerir cambios o enviar pull requests."
+			}
+		],
+		"overviewParagraphs": [
+			"HTWind combina la experiencia nativa de Windows con la agilidad de los widgets web en WebView2, permitiéndote tener siempre a la vista tus herramientas.",
+			"Desde el ícono en bandeja hasta la ocultación reactiva y persistencia del estado, HTWind busca convertir tu escritorio tradicional de Windows en un espacio de trabajo productivo y personalizado."
+		],
+		"overviewScreenshots": [
+			{
+				"src": "/app_screenshots/page_home.png",
+				"alt": "Inicio de HTWind - Biblioteca de widgets"
+			},
+			{
+				"src": "/app_screenshots/page_settings.png",
+				"alt": "Ajustes de HTWind - Personalización"
+			},
+			{
+				"src": "/app_screenshots/page_about.png",
+				"alt": "Acerca de HTWind - Información de versión"
+			}
+		]
+	}
+}

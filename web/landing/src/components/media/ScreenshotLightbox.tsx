@@ -13,6 +13,7 @@ import {
 	TransformWrapper,
 } from "react-zoom-pan-pinch";
 import type { ScreenshotItem } from "../../config/types";
+import { useLocale } from "../../i18n/LocaleContext";
 import { useAppStyles } from "../../styles/appStyles";
 
 type ScreenshotLightboxProps = {
@@ -25,6 +26,7 @@ export function ScreenshotLightbox({
 	onClose,
 }: ScreenshotLightboxProps) {
 	const styles = useAppStyles();
+	const { messages } = useLocale();
 	const lightboxTransformRef = useRef<ReactZoomPanPinchRef | null>(null);
 
 	return (
@@ -40,7 +42,7 @@ export function ScreenshotLightbox({
 							icon={<Dismiss24Regular />}
 							className={styles.closeButton}
 							onClick={onClose}
-							aria-label="Close"
+							aria-label={messages.lightbox.close}
 						/>
 						{selectedImage && (
 							<TransformWrapper

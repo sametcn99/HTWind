@@ -1,0 +1,325 @@
+{
+	"meta": {
+		"locale": "nl",
+		"ogLocale": "nl_NL"
+	},
+	"seo": {
+		"title": "HTWind | Windows Desktop Widget Host",
+		"description": "HTWind is een open-source Windows desktop widget host voor HTML widgets, manifest pakketten en gecontroleerde PowerShell-integratie.",
+		"openGraphTitle": "HTWind | Windows Desktop Widget Host",
+		"openGraphDescription": "Bouw een schonere Windows desktop met HTML widgets, pakket-imports en native Windows workflows.",
+		"twitterTitle": "HTWind | Windows Desktop Widget Host",
+		"twitterDescription": "Open-source Windows widget host met HTML widgets, manifest pakketten en PowerShell integratie.",
+		"imageAlt": "HTWind desktop screenshot met widgets in Windows",
+		"jsonLdDescription": "HTWind is een aanpasbaar op HTML gebaseerd widget platform voor Windows desktops."
+	},
+	"languageSelector": {
+		"label": "Taal",
+		"ariaLabel": "Selecteer paginataal",
+		"options": {
+			"en": "English",
+			"tr": "Türkçe",
+			"hi": "हिन्दी",
+			"zh": "中文",
+			"de": "Deutsch",
+			"fr": "Français",
+			"ru": "Русский",
+			"ar": "العربية",
+			"ja": "日本語",
+			"es": "Español",
+			"pt": "Português",
+			"it": "Italiano",
+			"ko": "한국어",
+			"id": "Bahasa Indonesia",
+			"vi": "Tiếng Việt",
+			"nl": "Nederlands",
+			"pl": "Polski",
+			"uk": "Українська"
+		}
+	},
+	"banner": {
+		"text": "Open-source Windows widget host voor HTML widgets, manifest pakketten en PowerShell tools"
+	},
+	"hero": {
+		"eyebrow": "Native desktop widget platform",
+		"heading": "Bouw een schonere Windows desktop met HTML-widgets",
+		"description": "HTWind biedt je een gepolijste host voor HTML-widgets, geïmporteerde pakketten, altijd zichtbare desktop-tools en gecontroleerde PowerShell-acties, zonder je vertrouwde Windows-omgeving te verlaten.",
+		"includedLabel": "Inbegrepen",
+		"proofPoints": [
+			"HTML, CSS en JavaScript-widgets gerenderd met WebView2",
+			"Pakketten op basis van manifesten voor geïntegreerde multi-widget opstellingen",
+			"Gecontroleerde PowerShell-acties voor diagnostiek en automatisering"
+		],
+		"githubButton": "Bekijk op GitHub",
+		"releaseNotesButton": "Release-opmerkingen",
+		"communityNotice": "De installer is de meest aanbevolen optie voor de meeste gebruikers. Portable ZIP en Microsoft Store downloads zijn beschikbaar voor andere implementatiemodellen.",
+		"releaseCard": {
+			"title": "Laatste uitgave",
+			"loadingLabel": "Laden",
+			"channels": [
+				{
+					"name": "Installer",
+					"description": "Aanbevolen voor de schoonste Windows-installatie."
+				},
+				{
+					"name": "Portable ZIP",
+					"description": "Onafhankelijke kopie voor handmatige installatie."
+				},
+				{
+					"name": "Microsoft Store",
+					"description": "Handig voor beheerde installaties en snelle updates."
+				}
+			],
+			"storeAriaLabel": "Downloaden in de Microsoft Store",
+			"storeImageAlt": "Download in de Microsoft Store",
+			"communityPrefix": "Deel widgets in",
+			"communityGithubLabel": "GitHub Discussions",
+			"communityConnector": "en",
+			"communityRedditLabel": "Reddit",
+			"communitySuffix": "."
+		}
+	},
+	"downloadMenu": {
+		"loading": "Downloads controleren...",
+		"empty": "Geen downloads beschikbaar",
+		"choose": "Kies een download ({count})",
+		"title": "Aanbevolen: installer eerst",
+		"hint": "Gebruik de installer voor de eenvoudigste installatie. Portable en verpakte formaten blijven hieronder beschikbaar.",
+		"ariaLabel": "Nieuwste downloads en releases",
+		"descriptions": {
+			"installer": "Aanbevolen setup voor alle versies van Windows",
+			"portable": "Portable pakket om handmatig uit te pakken",
+			"package": "Windows MS-pakketformaat voor beheerders",
+			"other": "Overige bestanden"
+		},
+		"unknownSize": "Onbekende bestandsgrootte"
+	},
+	"release": {
+		"loadingLatest": "Laatste versie laden...",
+		"unavailable": "Release-informatie niet beschikbaar",
+		"checkFeed": "Bekijk de nieuwsoverzicht",
+		"publishedOn": "Gepubliceerd {date}",
+		"unknownDate": "Onbekende publicatiedatum"
+	},
+	"sections": {
+		"highlights": {
+			"heading": "Waarom HTWind direct bruikbaar is",
+			"lead": "Dit platform is ontworpen voor dagelijks bureaugebruik, niet alleen voor een snelle demo. Deze functionaliteiten maken de workflow betrouwbaar op Windows.",
+			"ariaLabel": "Belangrijkste projectkenmerken"
+		},
+		"overview": {
+			"heading": "Bekijk hoe uw desktop eruit kan zien",
+			"screenshotHint": "Klik op de galerij voor een uitvergrote schermafbeelding.",
+			"viewLarger": "Bekijk groter: {alt}"
+		},
+		"features": {
+			"heading": "Fundamentele kernfuncties",
+			"lead": "HTWind mixt een Windows-native benadering met praktische webtools om je gadgets en widgets direct te ontwikkelen."
+		},
+		"widgets": {
+			"heading": "Begin eenvoudig en pas vrij aan",
+			"lead": "We bieden klokken, netwerkanalyse, procesweergaves en basisinformatie. Verander het HTML/CSS-script om er een gepersonaliseerde dashboard-tool van te maken.",
+			"documentationPrefix": "Voor volledige uitleg, bezoek de",
+			"documentationLinkLabel": "hoofddocumentatie",
+			"documentationSuffix": ".",
+			"promptPrefix": "Widgets sneller creëren via AI/LLM? Bestudeer deze",
+			"promptLabel": "Ingebouwde Generator Prompt",
+			"promptConnector": "of ga direct naar de",
+			"sharedPromptLabel": "gedeelde community versie",
+			"promptSuffix": "om actieve widgets te bouwen die direct renderen."
+		},
+		"packages": {
+			"heading": "Widgets verpakken via manifest-bestanden",
+			"flowHeading": "Hoe de structuur in elkaar zit",
+			"schemaPrefix": "Lees aandachtig het",
+			"schemaLabel": "schema bestand",
+			"schemaConnector": "om het JSON in te zien, of onderzoek onze",
+			"exampleLabel": "voorbeeld layout",
+			"schemaSuffix": "waarbij meerdere items aan dezelfde bundel worden toegevoegd."
+		},
+		"useCases": {
+			"heading": "Gemeenschappelijke testomgevingen",
+			"lead": "Deze concepten helpen je inzien waar HTWind nuttiger is dan traditionele native apps of logge programma's."
+		},
+		"community": {
+			"heading": "Delen en ontwikkelen als een team",
+			"lead": "HTWind bloeit het hardst als fans screenshots en scripts delen voor de nieuwste configuraties.",
+			"visitPrefix": "Breng een bezoek aan de",
+			"githubLinkLabel": "GitHub Overleg",
+			"visitConnector": "en kijk ook eens op",
+			"redditLinkLabel": "de Reddit-groep",
+			"visitSuffix": "om suggesties en bugreports succesvol in te voeren."
+		},
+		"faq": {
+			"heading": "Veelgestelde Vragen",
+			"lead": "Snelle oplossingen omtrent compatibiliteit, verpakken van zips en het gebruik van C# interacties."
+		},
+		"support": {
+			"heading": "Steun de ontwikkelaar",
+			"lead": "Als je merkt dat onze interface je kostbare tijd scheelt gedurende je werk, stel ik jouw steun op prijs voor serverkosten en documentatie.",
+			"button": "Kies je donatiemethode"
+		}
+	},
+	"footer": {
+		"github": "Source op GitHub",
+		"releases": "Downloadpagina",
+		"discussions": "Discussies"
+	},
+	"lightbox": {
+		"close": "Venster sluiten"
+	},
+	"errors": {
+		"missingRoot": "Element met de root klasse id mist in het systeem."
+	},
+	"content": {
+		"widgets": [
+			{ "id": "clock", "label": "klok" },
+			{ "id": "weather", "label": "weerbericht" },
+			{ "id": "network-tools", "label": "netwerken" },
+			{ "id": "process-manager", "label": "taakbeheer" },
+			{ "id": "clipboard-studio", "label": "klembord" },
+			{ "id": "file-explorer", "label": "bestanden" },
+			{ "id": "dns-lookup", "label": "dns pingen" },
+			{ "id": "powershell-console", "label": "terminal console" }
+		],
+		"highlights": [
+			{ "value": "20+", "label": "Standaard demo pakketten" },
+			{ "value": "Hot Reload", "label": "Test veranderingen in real-time" },
+			{
+				"value": "WebView2 Codec",
+				"label": "Gemaakt op robuuste Microsoft modules"
+			},
+			{
+				"value": "Software Libre",
+				"label": "Via GPL v3 open-source regelgeving"
+			},
+			{
+				"value": "Onzichtbare Modus",
+				"label": "Maakt vensters transparant als je aan het gamen bent",
+				"spanTwo": true
+			},
+			{
+				"value": "Snelle Editor",
+				"label": "Wijzigen rechtstreeks vanaf je hostomgeving",
+				"spanTwo": true
+			},
+			{
+				"value": "Complexe Assets",
+				"label": "Sla duizenden icoontjes lokaal op via mappen zonder cloud host",
+				"spanTwo": true
+			},
+			{
+				"value": "PowerShell Command",
+				"label": "Commando's uitvoeren via beveiligde JS verbindingen",
+				"spanTwo": true
+			}
+		],
+		"featureCards": [
+			{
+				"title": "Breng HTML naar je Beeldscherm",
+				"description": "Programmeur vriendelijk in HTML en CSS. HTWind verwijdert de browser vensterranden en vertoont je elementen naadloos in beeld.",
+				"icon": "html"
+			},
+			{
+				"title": "Verlengde Systeem Rechten",
+				"description": "Via de geavanceerde PowerShell bridge implementatie kan de host C# de acties toestaan die vereist zijn voor je admin tools.",
+				"icon": "powershell"
+			},
+			{
+				"title": "Flexibele Windows Formaten",
+				"description": "Elastische instellingen onthouden coördinaten en voorkomen overlap; zet dingen vast aan schermen en herstel na slaapstand.",
+				"icon": "windows"
+			}
+		],
+		"workflowUseCases": [
+			"Stel een uptime tracker over je command line interface op een apart beeldscherm.",
+			"Focus taken regelaar zoals Pomodoro-timers voor studenten en programmeurs.",
+			"Begeleid het luisteren van audio applicaties visueel middels eigen geanimeerde CSS scripts.",
+			"Groei je bedrijf aan IT-diagnostiek via makkelijk uit te breiden web weergaves.",
+			"Zend via een export de meest productieve bureaublad lay-out van medewerkers om deze intern toe te passen."
+		],
+		"widgetPackageParagraphs": [
+			"HTWind gebruikt één htwind.json-document zodat de applicatie kan weten welk script, plaatje of CSS er van belang is voor opstarten.",
+			"Maak een map waarin geen externe cloud image-URL's thuishoren en zorg ervoor dat uw installatie in offline omgevingen altijd doorelkaarblijft gaan.",
+			"Klaar? In de gebruikersinterface kies je 'Import package' en dit platform genereert en toont je gecoördineerde bestanden vlekkeloos."
+		],
+		"widgetPackageCapabilities": [
+			{
+				"title": "Volledig Downloadbaar",
+				"description": "Maak eigen ZIP pakketten van actuele functionaliteit direct offline beschikbaar."
+			},
+			{
+				"title": "Meerdere Applets Modus",
+				"description": "Maak met uw zelf ontworpen configuratie verschillende dashboard componenten mogelijk via code."
+			},
+			{
+				"title": "Automatische Schemachecks",
+				"description": "Als je het aan een codebewerker toevoegt, ontdek je structurele weglatingen van variabelen."
+			},
+			{
+				"title": "Exporteer met een klik",
+				"description": "Voorkom dubbel mapwerk met het geavanceerde exporteren uit de actieve applicatie UI."
+			}
+		],
+		"widgetPackageSteps": [
+			"Plaats de htwind app map met alle resources inclusief htwind.widget.json in een root container.",
+			"Codeer het object pad voor waar uw startscherm '.index.html' opent.",
+			"Exporteer dit pakket overal via email, verplaatst bestanden in de setup om ze permanent goed op pad te positioneren."
+		],
+		"communitySharingSteps": [
+			"Creëer op Reddit een nieuw topic met plaatjes of GIF.",
+			"Bewijs door middel van instructies of en waarom een handeling speciale admin power vraagt.",
+			"Lever er een betekenisvol doel bij. Hoeveel uur tijd win of bespaar jij?",
+			"Toon dank en update log lijsten voor betere documentaties."
+		],
+		"faqItems": [
+			{
+				"question": "Is het systeem volledig openbaar en gratis?",
+				"answer": "Absoluut. Het draait op GitHub als GPL project zonder verborgen abonnementen."
+			},
+			{
+				"question": "Met welk instrument worden de overlays getoond?",
+				"answer": "Door inzet van C# .Net met WPF die de Chrome WebView2 motor integreert op de achtergrond van het bureaublad."
+			},
+			{
+				"question": "Wat moet ik in het manifest opschrijven?",
+				"answer": "Gegevens van de auteur, pad naar HTML-instellingen en toestemming om via het .json-netwerk toegang te ontgrendelen.",
+				"spanTwoColumns": true
+			},
+			{
+				"question": "Hoe onderdruk ik de app als ik game?",
+				"answer": "Voor fullscreen-applicaties bestaat de functie 'Supress for Fullscreen' mode die widgets slim in de taskbar verstopt totdat u terug bent op uw normale werkplek."
+			},
+			{
+				"question": "Is het niet een RAM vreter?",
+				"answer": "Zolang u CSS-intensiteit in de hand houdt bedraagt het net als een stille browser-tab bijna helemaal geen capaciteit om op te renderen."
+			},
+			{
+				"question": "Helpt HTWind me met powershell scripts?",
+				"answer": "We leggen een veilige api structuur in de host (C# kant) waarvan uw applicatie resultaten door js requests kan halen, na gebruikers authorisatie."
+			},
+			{
+				"question": "Opstarten zonder moeite?",
+				"answer": "Ja. Binnen algemene applicatie parameters herstel je met System Startup alle schermen in volgorde en identieke monitorposities terug."
+			}
+		],
+		"overviewParagraphs": [
+			"De ontbrekende verbinding tussen naadloos, simpel vormdelen vanuit moderne UI-theorie en echte native desktop efficiëntie.",
+			"Hierbij verlicht het alledaagse IT rompslomp door actuele elementen visueel paraat aan het uiteinde van je werk te presenteren."
+		],
+		"overviewScreenshots": [
+			{
+				"src": "/app_screenshots/page_home.png",
+				"alt": "Bekijk widget instellingen"
+			},
+			{
+				"src": "/app_screenshots/page_settings.png",
+				"alt": "Wijzigingsomgeving en controle"
+			},
+			{
+				"src": "/app_screenshots/page_about.png",
+				"alt": "Informatie en Ontwikkelaar pagina"
+			}
+		]
+	}
+}

@@ -1,10 +1,20 @@
 :root {
+	--page-bg: #090d13;
+	--surface-1: rgba(10, 14, 20, 0.78);
+	--surface-2: rgba(18, 24, 34, 0.82);
+	--surface-3: rgba(255, 255, 255, 0.05);
+	--border-subtle: rgba(255, 255, 255, 0.08);
+	--border-strong: rgba(112, 178, 255, 0.28);
+	--text-primary: rgba(255, 255, 255, 0.96);
+	--text-secondary: rgba(222, 231, 241, 0.74);
+	--text-tertiary: rgba(203, 216, 228, 0.56);
+	--accent: #5ea8ff;
 	font-family:
 		"Segoe UI Variable Display", "Segoe UI", Bahnschrift, "Trebuchet MS",
 		sans-serif;
 	line-height: 1.5;
 	font-weight: 400;
-	background-color: #101214;
+	background-color: var(--page-bg);
 	color-scheme: dark;
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
@@ -23,5 +33,5 @@ body,
 	width: 100%;
 	min-width: 320px;
 	min-height: 100vh;
-	background-color: #101214;
+	background-color: var(--page-bg);
 }

@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { LATEST_RELEASE_API_URL } from "../config/constants";
 import type { GitHubRelease } from "../config/types";
+import { interpolate } from "../i18n/interpolate";
+import { INTL_LOCALE_MAP, type LocaleCode } from "../i18n/locales";
+import type { LocaleMessages } from "../i18n/types";
 import { formatReleaseDate } from "../lib/formatters";
 import { readCachedRelease, writeCachedRelease } from "../lib/storage";
 
-export function useLatestRelease() {
+export function useLatestRelease(locale: LocaleCode, messages: LocaleMessages) {
 	const [latestRelease, setLatestRelease] = useState<GitHubRelease | null>(
 		null,
 	);
@@ -59,23 +62,40 @@ export function useLatestRelease() {
 
 	const releaseText = useMemo(() => {
 		if (isLoadingRelease) {
-			return "Loading latest release...";
+			return messages.release.loadingLatest;
 		}
 
 		if (!latestRelease?.tag_name) {
-			return "Release info unavailable";
+			return messages.release.unavailable;
 		}
 
 		return latestRelease.tag_name;
-	}, [isLoadingRelease, latestRelease]);
+	}, [
+		isLoadingRelease,
+		latestRelease,
+		messages.release.loadingLatest,
+		messages.release.unavailable,
+	]);
 
 	const releaseDate = useMemo(() => {
 		if (!latestRelease?.published_at) {
-			return "Check release feed for updates";
+			return messages.release.checkFeed;
 		}
 
-		return `Published ${formatReleaseDate(latestRelease.published_at)}`;
-	}, [latestRelease]);
+		return interpolate(messages.release.publishedOn, {
+			date: formatReleaseDate(
+				latestRelease.published_at,
+				INTL_LOCALE_MAP[locale],
+				messages.release.unknownDate,
+			),
+		});
+	}, [
+		latestRelease,
+		locale,
+		messages.release.checkFeed,
+		messages.release.publishedOn,
+		messages.release.unknownDate,
+	]);
 
 	const latestAssets = useMemo(() => {
 		if (!latestRelease?.assets?.length) {

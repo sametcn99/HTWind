@@ -1,0 +1,356 @@
+{
+	"meta": {
+		"locale": "fr",
+		"ogLocale": "fr_FR"
+	},
+	"seo": {
+		"title": "HTWind | Hôte de widgets de bureau sous Windows",
+		"description": "HTWind est un hôte de widgets de bureau open source pour Windows, prenant en charge les widgets HTML, les paquets manifestes et les outils PowerShell contrôlés.",
+		"openGraphTitle": "HTWind | Hôte de widgets de bureau sous Windows",
+		"openGraphDescription": "Construisez un bureau Windows plus propre avec des widgets HTML, des paquets importables et des contrôles de workflows natifs.",
+		"twitterTitle": "HTWind | Hôte de widgets de bureau sous Windows",
+		"twitterDescription": "Hôte de widgets Windows open source avec widgets HTML, paquets manifestes et intégration PowerShell.",
+		"imageAlt": "Capture d'écran du bureau HTWind avec des widgets sur Windows",
+		"jsonLdDescription": "HTWind est un hôte de widgets HTML personnalisable pour les bureaux Windows."
+	},
+	"languageSelector": {
+		"label": "Langue",
+		"ariaLabel": "Sélectionner la langue de la page",
+		"options": {
+			"en": "English",
+			"tr": "Türkçe",
+			"hi": "हिन्दी",
+			"zh": "中文",
+			"de": "Deutsch",
+			"fr": "Français",
+			"ru": "Русский",
+			"ar": "العربية",
+			"ja": "日本語",
+			"es": "Español",
+			"pt": "Português",
+			"it": "Italiano",
+			"ko": "한국어",
+			"id": "Bahasa Indonesia",
+			"vi": "Tiếng Việt",
+			"nl": "Nederlands",
+			"pl": "Polski",
+			"uk": "Українська"
+		}
+	},
+	"banner": {
+		"text": "Hôte de widgets open source sur Windows pour les outils HTML, PowerShell et packages."
+	},
+	"hero": {
+		"eyebrow": "Plateforme de widgets de bureau native sous Windows",
+		"heading": "Construisez un bureau plus propre à l'aide de widgets HTML",
+		"description": "HTWind offre un hôte esthétique pour les widgets HTML, les imports de paquets, les outils d'interface et des actions de PowerShell contrôlées sans jamais quitter le flux de travail natif de Windows.",
+		"includedLabel": "Inclus",
+		"proofPoints": [
+			"Création en HTML, CSS, JavaScript et rendu natif par WebView2",
+			"Paquets par manifestes pour intégrer de multiples ressources locales",
+			"Exécution contrôlée des actions PowerShell pour l'automatisation"
+		],
+		"githubButton": "Voir sur GitHub",
+		"releaseNotesButton": "Notes de version",
+		"communityNotice": "L'installeur est l'approche recommandée par défaut. Les formats ZIP portables et le Microsoft Store restent à votre disposition pour le déploiement.",
+		"releaseCard": {
+			"title": "Dernière version",
+			"loadingLabel": "Chargement...",
+			"channels": [
+				{
+					"name": "Programme d'installation",
+					"description": "Recommandé pour une installation parfaite."
+				},
+				{
+					"name": "Portable ZIP",
+					"description": "Idéal pour une exécution en mode manuel, sans droits admin."
+				},
+				{
+					"name": "Microsoft Store",
+					"description": "Adapté aux mises à jour rapides des environnements gérés."
+				}
+			],
+			"storeAriaLabel": "L'obtenir sur Microsoft Store",
+			"storeImageAlt": "Microsoft Store",
+			"communityPrefix": "Partagez sur",
+			"communityGithubLabel": "GitHub Discussions",
+			"communityConnector": "et",
+			"communityRedditLabel": "Reddit",
+			"communitySuffix": "."
+		}
+	},
+	"downloadMenu": {
+		"loading": "Vérification en cours...",
+		"empty": "Aucun téléchargement",
+		"choose": "Choisir une archive ({count})",
+		"title": "Recommandé : Exécutable (*.exe)",
+		"hint": "Installez en mode natif. Des archives autonomes sont plus bas.",
+		"ariaLabel": "Ressources à télécharger",
+		"descriptions": {
+			"installer": "Installation Windows traditionnelle",
+			"portable": "Dossier autonome à décompresser",
+			"package": "Environnement géré MSIX",
+			"other": "Divers fichiers"
+		},
+		"unknownSize": "Poids ignoré"
+	},
+	"release": {
+		"loadingLatest": "Recherche de la version...",
+		"unavailable": "Informations illisibles",
+		"checkFeed": "Surveillez les logs Git",
+		"publishedOn": "Publié le {date}",
+		"unknownDate": "Non dévoilé"
+	},
+	"sections": {
+		"highlights": {
+			"heading": "Un outil de bureau orienté productivité",
+			"lead": "L'application fonctionne pour que les passionnés puissent façonner quotidiennement leur interface informatique sans ralentissements.",
+			"ariaLabel": "Résumé du projet"
+		},
+		"overview": {
+			"heading": "Aperçus du tableau de bord",
+			"screenshotHint": "Cliquez pour agrandir.",
+			"viewLarger": "Agrandir l'image {alt}"
+		},
+		"features": {
+			"heading": "Un ensemble de capacités fondamentales",
+			"lead": "Une base minimaliste avec tout l'outillage pour la personnalisation des widgets."
+		},
+		"widgets": {
+			"heading": "Basez-vous sur l'existant, puis modulez",
+			"lead": "L'installation vient avec chrono, données en direct et autres utilitaires prêts à être redessinés.",
+			"documentationPrefix": "Plus d'instructions sur le",
+			"documentationLinkLabel": "dépôt officiel",
+			"documentationSuffix": ".",
+			"promptPrefix": "Générez avec l'Intelligence Artificielle en utilisant le",
+			"promptLabel": "Prompt de génération Web HTWind",
+			"promptConnector": "voire sa",
+			"sharedPromptLabel": "version raccourcie",
+			"promptSuffix": "pour accélérer la cadence."
+		},
+		"packages": {
+			"heading": "Importez multiples configurations d'un coup",
+			"flowHeading": "Organigramme classique",
+			"schemaPrefix": "Vous pouvez observer le",
+			"schemaLabel": "schéma JSON",
+			"schemaConnector": "ou vérifier",
+			"exampleLabel": "le répertoire factice",
+			"schemaSuffix": "pour y voir plus clair."
+		},
+		"useCases": {
+			"heading": "Dans quels cas s'en servir ?",
+			"lead": "Idéal pour concevoir un dashboard privé ou l'utiliser comme centre technique en local."
+		},
+		"community": {
+			"heading": "Partage de savoir et créations collaboratives",
+			"lead": "Tout développeur peut diffuser ses créations pour enrichir l'écosystème.",
+			"visitPrefix": "Rejoignez",
+			"githubLinkLabel": "Discussions HTWind",
+			"visitConnector": "et",
+			"redditLinkLabel": "le Subreddit dédié",
+			"visitSuffix": "pour y proposer vos améliorations."
+		},
+		"faq": {
+			"heading": "Foires Aux Questions",
+			"lead": "Obtenez des indices rapides aux blocages courants."
+		},
+		"support": {
+			"heading": "Permettre le développement continu",
+			"lead": "En cas de bénéfice notable grâce au logiciel, votre mécénat donne vie aux prochaines mises à jour.",
+			"button": "Agir et Soutenir"
+		}
+	},
+	"footer": {
+		"github": "Code Source",
+		"releases": "Installateurs",
+		"discussions": "FAQ / Débats"
+	},
+	"lightbox": {
+		"close": "Quit"
+	},
+	"errors": {
+		"missingRoot": "Échec de lecture base 'root'."
+	},
+	"content": {
+		"widgets": [
+			{
+				"id": "clock",
+				"label": "montre"
+			},
+			{
+				"id": "weather",
+				"label": "climat"
+			},
+			{
+				"id": "network-tools",
+				"label": "réseau"
+			},
+			{
+				"id": "process-manager",
+				"label": "ressources"
+			},
+			{
+				"id": "clipboard-studio",
+				"label": "presse-papiers"
+			},
+			{
+				"id": "file-explorer",
+				"label": "fichiers"
+			},
+			{
+				"id": "dns-lookup",
+				"label": "requêtes"
+			},
+			{
+				"id": "powershell-console",
+				"label": "shell"
+			}
+		],
+		"highlights": [
+			{
+				"value": "20+",
+				"label": "Blocs par défaut installés"
+			},
+			{
+				"value": "Instantané",
+				"label": "Sauvegardez l'HTML, il s'actualise au vol"
+			},
+			{
+				"value": "WebView2",
+				"label": "La puissance Chromium au profit de l'App"
+			},
+			{
+				"value": "GPLv3",
+				"label": "Licence libératrice pour codeurs"
+			},
+			{
+				"value": "Masquage Auto",
+				"label": "Disparition si vous lancez un film HD",
+				"spanTwo": true
+			},
+			{
+				"value": "Editeur Interne",
+				"label": "Modifications simples dans HTWind",
+				"spanTwo": true
+			},
+			{
+				"value": "Dossiers Emballés",
+				"label": "Fichiers zip transformés en UI locales",
+				"spanTwo": true
+			},
+			{
+				"value": "Système Intégré",
+				"label": "PowerShell contrôlé via JavaScript",
+				"spanTwo": true
+			}
+		],
+		"featureCards": [
+			{
+				"title": "Création Web Indépendante",
+				"description": "Liez HTML/CSS/JS pour animer vos propres métriques de bureaux sans barrières.",
+				"icon": "html"
+			},
+			{
+				"title": "Puissance du Shell Microsoft",
+				"description": "Commandez des redémarrages de répertoires ou analysez vos disques depuis des accès limités et sécurisants.",
+				"icon": "powershell"
+			},
+			{
+				"title": "L'interface respecte l'OS",
+				"description": "L'exécutable retient comment vous organisez votre écran de travail en préservant son écosystème WinUI.",
+				"icon": "windows"
+			}
+		],
+		"workflowUseCases": [
+			"Concentration optimisée avec petits agendas clairs et utiles.",
+			"Tutoriels ou bloc-notes maintenus accrochés verticalement.",
+			"Script d'extinction quotidienne et maintenance à la demande.",
+			"Création de portails locaux de la flotte d'un bureau IT.",
+			"Partage d'un setup de streaming vidéo pour des configurations homogènes."
+		],
+		"widgetPackageParagraphs": [
+			"Fini l'ancien concept d'injecter tous le code CSS et Image en texte base64 dans un long document incompréhensible.",
+			"Ouvrez un dossier, posez un htwind.widget.json et vous avez à présent un véritable mini site.",
+			"Exportez ensuite le tout d'un simple clic pour un collègue sous la même version."
+		],
+		"widgetPackageCapabilities": [
+			{
+				"title": "Support des Assets",
+				"description": "Accès fluide aux images et polices de caractères du dossier sans CDN lourd."
+			},
+			{
+				"title": "Multi-Instances Groupées",
+				"description": "Récoltez divers services connectés en appelant une unique source centrale."
+			},
+			{
+				"title": "Aides à la frappe",
+				"description": "Le langage valide par JSON schéma vos écrits dans l'IDE pour éviter tout plantage systémique."
+			},
+			{
+				"title": "Facile à partager",
+				"description": "Une extension zippée que tout utilisateur HTWind peut aspirer en quelques clics."
+			}
+		],
+		"widgetPackageSteps": [
+			"Faites une boîte vide sur Windows.",
+			"Glissez les divers composants web nécessaires avec un manifest lié.",
+			"Veillez aux chemins internes via système relatif.",
+			"Faites un Drag & Drop sur l'écusson HTWind."
+		],
+		"communitySharingSteps": [
+			"Infiltrez Reddit pour poster vos nouvelles configurations visuelles.",
+			"Agrémentez par des copies d'écran claires du système en marche.",
+			"Précisez la documentation pour le côté script au PowerShell.",
+			"Ajoutez des logs pour les potentiels mises à niveau."
+		],
+		"faqItems": [
+			{
+				"question": "A quoi sert exactement HTWind ?",
+				"answer": "À permettre de placer des extensions Web comme programmes minuscules affichés 24/7 sur PC."
+			},
+			{
+				"question": "Puis-je développer une animation vidéo web ?",
+				"answer": "Oui, si un navigateur Edge est capable, l'appli en tirera les mêmes vertus."
+			},
+			{
+				"question": "Comment le rendu sans bordures marche ?",
+				"answer": "L'UI C# hôte annule la bordure habituelle et met les fonds transparents en exergue.",
+				"spanTwoColumns": true
+			},
+			{
+				"question": "Est-ce sécurisé la gestion des scripts admin ?",
+				"answer": "Les Widgets requièrent toujours un appui humain confirmant l'exécution."
+			},
+			{
+				"question": "L'interface peut-elle ne pas déranger les autres fenêtres ?",
+				"answer": "Absolument, des sondes natives surveillent vos actions de plein-écran."
+			},
+			{
+				"question": "Puis-je altérer HTWind par moi-même ?",
+				"answer": "Oui via Fork sur la branche Github ou requêtes de modifications Pull Request."
+			},
+			{
+				"question": "Combien de dossiers peuvent être importés en simultané ?",
+				"answer": "Théoriquement le nombre géré est virtuellement sans limitation technique brutale de l'environnement."
+			}
+		],
+		"overviewParagraphs": [
+			"Un environnement de codage accessible avec WebView2, couplé à la performance de la compilation WPF et .Net.",
+			"Faites de grandes choses et facilitez la rétention visuelle de ces actions avec HTWind."
+		],
+		"overviewScreenshots": [
+			{
+				"src": "/app_screenshots/page_home.png",
+				"alt": "Dossiers d'interface"
+			},
+			{
+				"src": "/app_screenshots/page_settings.png",
+				"alt": "Tableau système des Réglages"
+			},
+			{
+				"src": "/app_screenshots/page_about.png",
+				"alt": "Versionnage et Moteurs de licence"
+			}
+		]
+	}
+}

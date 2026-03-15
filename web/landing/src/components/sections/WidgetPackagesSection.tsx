@@ -3,15 +3,12 @@ import {
 	WIDGET_PACKAGE_EXAMPLE_URL,
 	WIDGET_PACKAGE_SCHEMA_URL,
 } from "../../config/constants";
-import {
-	widgetPackageCapabilities,
-	widgetPackageParagraphs,
-	widgetPackageSteps,
-} from "../../config/content";
+import { useLocale } from "../../i18n/LocaleContext";
 import { useAppStyles } from "../../styles/appStyles";
 
 export function WidgetPackagesSection() {
 	const styles = useAppStyles();
+	const { messages } = useLocale();
 
 	return (
 		<section aria-labelledby="htwind-widget-packages-heading">
@@ -20,16 +17,16 @@ export function WidgetPackagesSection() {
 					id="htwind-widget-packages-heading"
 					className={styles.sectionHeading}
 				>
-					Manifest packages for multiple widgets and local assets
+					{messages.sections.packages.heading}
 				</h2>
-				{widgetPackageParagraphs.map((paragraph) => (
+				{messages.content.widgetPackageParagraphs.map((paragraph) => (
 					<p key={paragraph} className={styles.sectionLead}>
 						{paragraph}
 					</p>
 				))}
 
 				<div className={styles.twoColumnContentGrid}>
-					{widgetPackageCapabilities.map((item) => (
+					{messages.content.widgetPackageCapabilities.map((item) => (
 						<Card key={item.title} className={styles.card}>
 							<Subtitle1 className={styles.featureTitle}>
 								{item.title}
@@ -43,34 +40,33 @@ export function WidgetPackagesSection() {
 
 				<div>
 					<Subtitle1 className={styles.featureTitle}>
-						Typical package flow
+						{messages.sections.packages.flowHeading}
 					</Subtitle1>
 					<ul className={styles.bulletList}>
-						{widgetPackageSteps.map((step) => (
+						{messages.content.widgetPackageSteps.map((step) => (
 							<li key={step}>{step}</li>
 						))}
 					</ul>
 				</div>
 
 				<Body1 className={styles.featureDescription}>
-					Start from the{" "}
+					{messages.sections.packages.schemaPrefix}{" "}
 					<Link
 						href={WIDGET_PACKAGE_SCHEMA_URL}
 						target="_blank"
 						rel="noreferrer"
 					>
-						schema file
+						{messages.sections.packages.schemaLabel}
 					</Link>{" "}
-					for the manifest contract, or inspect the{" "}
+					{messages.sections.packages.schemaConnector}{" "}
 					<Link
 						href={WIDGET_PACKAGE_EXAMPLE_URL}
 						target="_blank"
 						rel="noreferrer"
 					>
-						multi-widget example package
+						{messages.sections.packages.exampleLabel}
 					</Link>{" "}
-					to see how HTWind declares multiple widget folders in a single
-					importable bundle.
+					{messages.sections.packages.schemaSuffix}
 				</Body1>
 			</Card>
 		</section>

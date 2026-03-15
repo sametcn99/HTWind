@@ -1,64 +1,61 @@
-import { Badge, Body1, Card, Link, Title1 } from "@fluentui/react-components";
+import { Badge, Body1, Card, Link } from "@fluentui/react-components";
 import {
 	GITHUB_REPOSITORY_URL,
 	WIDGET_PROMPT_SHARED_URL,
 	WIDGET_PROMPT_URL,
 } from "../../config/constants";
-import { widgets } from "../../config/content";
+import { useLocale } from "../../i18n/LocaleContext";
 import { useAppStyles } from "../../styles/appStyles";
 
 export function BuiltInWidgetsSection() {
 	const styles = useAppStyles();
+	const { messages } = useLocale();
 
 	return (
-		<section>
+		<section aria-labelledby="built-in-widgets-heading">
 			<Card className={styles.widgetsCard}>
-				<Title1>Built-in widgets</Title1>
-				<Body1 className={styles.featureDescription}>
-					HTWind ships with practical templates for system insight, media
-					controls, file operations, and quick actions. You can also package
-					custom widgets with local assets or group multiple widgets together
-					through the manifest-based package format.
-				</Body1>
+				<h2 id="built-in-widgets-heading" className={styles.sectionHeading}>
+					{messages.sections.widgets.heading}
+				</h2>
+				<p className={styles.sectionLead}>{messages.sections.widgets.lead}</p>
 				<div className={styles.widgetList}>
-					{widgets.map((widget) => (
+					{messages.content.widgets.map((widget) => (
 						<Badge
-							key={widget}
+							key={widget.id}
 							size="large"
 							appearance="tint"
 							color="informative"
+							className={styles.widgetBadge}
 						>
-							{widget}
+							{widget.label}
 						</Badge>
 					))}
 				</div>
-				<Body1>
-					For complete details, check the{" "}
+				<Body1 className={styles.featureDescription}>
+					{messages.sections.widgets.documentationPrefix}{" "}
 					<Link
 						href={`${GITHUB_REPOSITORY_URL}#built-in-widgets`}
 						target="_blank"
 						rel="noreferrer"
 					>
-						repository documentation
+						{messages.sections.widgets.documentationLinkLabel}
 					</Link>
-					.
+					{messages.sections.widgets.documentationSuffix}
 				</Body1>
 				<Body1 className={styles.featureDescription}>
-					Want to generate HTWind widgets with LLM assistance? Use the{" "}
+					{messages.sections.widgets.promptPrefix}{" "}
 					<Link href={WIDGET_PROMPT_URL} target="_blank" rel="noreferrer">
-						HTWind Widget Generator Prompt
+						{messages.sections.widgets.promptLabel}
 					</Link>{" "}
-					or the{" "}
+					{messages.sections.widgets.promptConnector}{" "}
 					<Link
 						href={WIDGET_PROMPT_SHARED_URL}
 						target="_blank"
 						rel="noreferrer"
 					>
-						shared prompts.chat version
+						{messages.sections.widgets.sharedPromptLabel}
 					</Link>{" "}
-					to produce HTWind-compatible single-file widgets first, then evolve
-					them into asset-backed or multi-widget packages when the project
-					grows.
+					{messages.sections.widgets.promptSuffix}
 				</Body1>
 			</Card>
 		</section>

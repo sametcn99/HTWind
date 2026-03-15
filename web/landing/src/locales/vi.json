@@ -1,0 +1,328 @@
+{
+	"meta": {
+		"locale": "vi",
+		"ogLocale": "vi_VN"
+	},
+	"seo": {
+		"title": "HTWind | Nền tảng Widget trên Desktop Windows",
+		"description": "HTWind là máy chủ widget desktop mã nguồn mở cho Windows giúp render HTML widget, đóng gói bản phân phối và kiểm soát PowerShell.",
+		"openGraphTitle": "HTWind | Nền tảng Widget mạnh mẽ trên Windows",
+		"openGraphDescription": "Tùy biến màn hình Windows trở nên gọn gàng và hữu ích hơn với widget HTML, các file manifest và lệnh tự động hóa gốc.",
+		"twitterTitle": "HTWind | Nền tảng Widget cho Desktop Windows",
+		"twitterDescription": "Nền tảng widget Windows mã nguồn mở với HTML, CSS và tích hợp PowerShell linh hoạt.",
+		"imageAlt": "Ảnh chụp màn hình phần mềm HTWind trên giao diện Windows",
+		"jsonLdDescription": "HTWind là một nền tảng widget HTML có thể tùy chỉnh tốt dành riêng cho máy tính Windows."
+	},
+	"languageSelector": {
+		"label": "Ngôn ngữ",
+		"ariaLabel": "Chọn ngôn ngữ hiển thị",
+		"options": {
+			"en": "English",
+			"tr": "Türkçe",
+			"hi": "हिन्दी",
+			"zh": "中文",
+			"de": "Deutsch",
+			"fr": "Français",
+			"ru": "Русский",
+			"ar": "العربية",
+			"ja": "日本語",
+			"es": "Español",
+			"pt": "Português",
+			"it": "Italiano",
+			"ko": "한국어",
+			"id": "Bahasa Indonesia",
+			"vi": "Tiếng Việt",
+			"nl": "Nederlands",
+			"pl": "Polski",
+			"uk": "Українська"
+		}
+	},
+	"banner": {
+		"text": "Nền tảng Widget gốc trên Windows hỗ trợ HTML, gói Manifest và các chức năng PowerShell tự động"
+	},
+	"hero": {
+		"eyebrow": "Máy chủ Widget Desktop hệ điều hành Windows",
+		"heading": "Xây dựng trải nghiệm Desktop Windows thông minh bằng Widget HTML",
+		"description": "HTWind cung cấp cho bạn một trình quản lý widget HTML chuyên nghiệp, với hỗ trợ gói (package), các công cụ hữu ích luôn bật và khả năng điều khiển PowerShell an toàn.",
+		"includedLabel": "Bao gồm chức năng",
+		"proofPoints": [
+			"Render widget trên nền tảng WebView2 tốc độ cao cho HTML, CSS, JavaScript",
+			"Các gói package dựa trên tập tin manifest cho phép nhóm file hình ảnh và thư mục",
+			"Hỗ trợ giao thức PowerShell nội bộ giải quyết bài toán truy xuất hệ thống"
+		],
+		"githubButton": "Xem dự án trên GitHub",
+		"releaseNotesButton": "Ghi chú cập nhật",
+		"communityNotice": "Tệp Cài đặt (Installer) là định dạng chuẩn được khuyến nghị cho mọi người. File zip portable và bản Microsoft Store cũng có mặt bên dưới tùy nhu cầu.",
+		"releaseCard": {
+			"title": "Phiên bản phát hành mới nhất",
+			"loadingLabel": "Đang tải",
+			"channels": [
+				{
+					"name": "Trình Cài Đặt (Installer)",
+					"description": "Khuyến nghị cho cài đặt đầy đủ và tích hợp sâu."
+				},
+				{
+					"name": "Bản ZIP Nhỏ Gọn",
+					"description": "Giữ mọi thứ gói gọn không cần qua hệ thống cài đặt."
+				},
+				{
+					"name": "Microsoft Store",
+					"description": "Thích hợp cho phân phối an toàn và cập nhật tự động."
+				}
+			],
+			"storeAriaLabel": "Lấy tiện ích từ Microsoft Store",
+			"storeImageAlt": "Tải từ Microsoft Store",
+			"communityPrefix": "Hãy chia sẻ tác phẩm của bạn ở",
+			"communityGithubLabel": "GitHub Discussions",
+			"communityConnector": "hoặc",
+			"communityRedditLabel": "Reddit",
+			"communitySuffix": "."
+		}
+	},
+	"downloadMenu": {
+		"loading": "Đang lấy link tài nguyên...",
+		"empty": "Không có tệp phát hành",
+		"choose": "Chọn bản cài ({count})",
+		"title": "Nên dùng: File Installer (EXE)",
+		"hint": "Lời khuyên là dùng bộ cài file EXE. Định dạng nén và các bản MSIX đều tải dưới này.",
+		"ariaLabel": "Danh sách link tải Asset",
+		"descriptions": {
+			"installer": "Trình khởi tạo được kiểm chứng nhiều nhất",
+			"portable": "Bộ phần mềm bung nén trực tiếp",
+			"package": "Bộ đóng gói hiện đại cho Windows 10/11",
+			"other": "Asset phiên bản mở rộng"
+		},
+		"unknownSize": "Chưa rõ dung lượng"
+	},
+	"release": {
+		"loadingLatest": "Tìm nạp thông tin phiên bản...",
+		"unavailable": "Vô hiệu hóa thông tin",
+		"checkFeed": "Kiểm tra danh sách bản phân phối",
+		"publishedOn": "Đăng tải {date}",
+		"unknownDate": "Không xác định"
+	},
+	"sections": {
+		"highlights": {
+			"heading": "Được xây dựng cho tính tin cậy tuyệt đối",
+			"lead": "Khác với các ứng dụng màn hình làm kiểng, HTWind là môi trường làm việc lâu dài trên hệ điều hành. Tính kết dính với hệ thống làm nền định dạng này đáng tín nhiệm.",
+			"ariaLabel": "Sơ lược các tính năng nổi bật"
+		},
+		"overview": {
+			"heading": "Xem thiết kế trước khi download cài đặt",
+			"screenshotHint": "Bấm vào ảnh bất kì để xem chế độ nét cao và đầy đủ kích thước.",
+			"viewLarger": "Mở to hơn: {alt}"
+		},
+		"features": {
+			"heading": "Tiềm năng thực tế",
+			"lead": "Từ các ngôn ngữ web thân quen, bạn sẽ nắm trọn mọi khía cạnh tuỳ biến desktop windows."
+		},
+		"widgets": {
+			"heading": "Từ bộ khung mặc định, sáng tạo thứ bạn cần",
+			"lead": "Đã có sẵn trình quản lý RAM, thời tiết, biểu đồ cổng mạng làm mẫu. Hãy tự bóc tách mã nguồn và sửa giao diện thành phong cách riêng bạn.",
+			"documentationPrefix": "Mời xem thêm bài hướng dẫn hoàn thiện tại",
+			"documentationLinkLabel": "Kho lưu trữ tài liệu hệ thống",
+			"documentationSuffix": ".",
+			"promptPrefix": "Bạn muốn trợ lý trí tuệ nhân tạo (LLM) hỗ trợ? Dùng",
+			"promptLabel": "HTWind Prompt Mẫu",
+			"promptConnector": "hoặc",
+			"sharedPromptLabel": "Phiên bản chia sẻ online",
+			"promptSuffix": "để gen code dán thẳng vào trình biên tập một cách vô cùng nhanh chóng."
+		},
+		"packages": {
+			"heading": "Tính thống nhất ở gói tin qua file Manifest",
+			"flowHeading": "Luồng dữ liệu gói cước",
+			"schemaPrefix": "Tham chiếu cấu trúc từ",
+			"schemaLabel": "định nghĩa schema json",
+			"schemaConnector": "hoặc trải nghiệm",
+			"exampleLabel": "gói đính kèm 3 widget làm ví dụ",
+			"schemaSuffix": "để mường tượng cách HTWind gom tất cả folder giao diện vào một hệ điều hành nhỏ."
+		},
+		"useCases": {
+			"heading": "Được dùng mạnh mẽ nhất khi nào?",
+			"lead": "Sức mạnh thực nằm ở quy trình tự động, xem dashboard, check api, hay điều tốc thông báo máy trạm liên tục."
+		},
+		"community": {
+			"heading": "Nơi khoe thành tựu và giao lưu sửa lỗi",
+			"lead": "Nhờ mã nguồn mở, bạn dễ tải giao diện của người khác về dùng y hệt mà không tốn công biên dịch mã.",
+			"visitPrefix": "Khám phá ngay",
+			"githubLinkLabel": "Thảo luận của GitHub HTWind",
+			"visitConnector": "và diễn đàn",
+			"redditLinkLabel": "r/HTWind tren Reddit",
+			"visitSuffix": "để đăng bài tham gia báo lỗi hoặc đóng góp ý tưởng phát triển."
+		},
+		"faq": {
+			"heading": "Hỏi đáp xoay quanh phần mềm",
+			"lead": "Các vấn đề cài đặt ẩn sau, quyền thực thi nâng cao, và kỹ thuật giao diện cơ bản."
+		},
+		"support": {
+			"heading": "Đóng góp phát triển lâu dài",
+			"lead": "Nếu việc giám sát kỹ thuật mỗi ngày trở nên hứng thú, mong bạn duy trì nguồn quyên góp để mở khoá các tính năng phức tạp hơn.",
+			"button": "Cổng đóng góp ngân sách"
+		}
+	},
+	"footer": {
+		"github": "Nguồn Mở GitHub",
+		"releases": "Tải Phát Hành",
+		"discussions": "Khu Thảo Luận"
+	},
+	"lightbox": {
+		"close": "Thoát (Escape)"
+	},
+	"errors": {
+		"missingRoot": "Cảnh báo truy xuất: Không dò thấy React root trên thẻ HTML."
+	},
+	"content": {
+		"widgets": [
+			{ "id": "clock", "label": "đồng hồ" },
+			{ "id": "weather", "label": "thời tiết" },
+			{ "id": "network-tools", "label": "thông số mạng" },
+			{ "id": "process-manager", "label": "quản lý ứng dụng" },
+			{ "id": "clipboard-studio", "label": "khay nhớ tạm" },
+			{ "id": "file-explorer", "label": "trình xem file" },
+			{ "id": "dns-lookup", "label": "địa chỉ dns" },
+			{ "id": "powershell-console", "label": "trạm điều khiển" }
+		],
+		"highlights": [
+			{ "value": "20+", "label": "Các tập tin demo ban đầu" },
+			{
+				"value": "Làm mới mã tự động",
+				"label": "Tái hiển thị widget ngay sau khi bạn gõ Control+S để Save mã HTML."
+			},
+			{
+				"value": "WebView2 Codec",
+				"label": "Chuẩn thư viện Windows kết xuất sắc nét"
+			},
+			{
+				"value": "Phi lợi nhuận",
+				"label": "Giấy phép công khai toàn bộ dự án"
+			},
+			{
+				"value": "Chế độ tránh làm phiền",
+				"label": "Đóng gói toàn bộ các widget lúc đang bốc hỏa chiến game.",
+				"spanTwo": true
+			},
+			{
+				"value": "Phần sửa cục bộ",
+				"label": "Sửa mọi loại CSS ngay trên dashboard của file chạy.",
+				"spanTwo": true
+			},
+			{
+				"value": "Tiệt trùng tệp ảnh",
+				"label": "Tái sử dụng file media qua cơ chế module an toàn.",
+				"spanTwo": true
+			},
+			{
+				"value": "Thông dịch máy trạm",
+				"label": "Trả giá trị về hệ thống thông qua PowerShell không bị đánh cắp.",
+				"spanTwo": true
+			}
+		],
+		"featureCards": [
+			{
+				"title": "Chuyển Đổi HTML Tới Tận Desktop",
+				"description": "Lập trình widget đơn giản bằng HTML, CSS, JavaScript và loại bỏ viền của Chrome thành những khung giao diện xuyên thấu 100%.",
+				"icon": "html"
+			},
+			{
+				"title": "Song Hành Cùng Terminal",
+				"description": "Gọi lệnh CMD hoặc PowerShell không qua app trung gian. Nhận kết quả trực tiếp từ Javascript để trả ra giao diện dashboard quản lý VPS.",
+				"icon": "powershell"
+			},
+			{
+				"title": "API Desktop Cốt Lõi",
+				"description": "Sử dụng đầy đủ sự tiện lợi từ thuộc tính nhớ màn hình đa luồng, làm khung Always On Top, và cơ cấu tiết kiệm RAM khi idle.",
+				"icon": "windows"
+			}
+		],
+		"workflowUseCases": [
+			"Theo dõi lượng băng thông server nội bộ luôn nằm góc phải bên trên.",
+			"Ghim thẻ To-Do list (việc cần làm) dạng thẻ xuyên thấu khi bạn bận tập trung gõ mã.",
+			"Thực hiện đo thời gian khởi tạo hoặc phân tích lệnh qua bảng hiển thị chuyên dụng.",
+			"Bọc trọn 8 ứng dụng giám sát hệ thống dành cho nhân viên IT cấp dưới.",
+			"Chia sẻ bản template layout tuyệt đẹp kèm toàn bộ hiệu ứng CSS ra ngoài file nén."
+		],
+		"widgetPackageParagraphs": [
+			"Sự kết hợp hoàn hảo nhờ file htwind.widget.json. Đây là nơi bạn định nghĩa xem những mã HTML nào phải dùng hình ảnh nào và kích cỡ mặc định bao nhiêu.",
+			"Không còn tình trạng lạc mất biểu tượng SVG hay phải host file JS ở web thứ ba nữa, tất cả mọi thứ có thể dùng trong local storage 100%.",
+			"Tính chất Package có tính đóng: import file ở PC khác lập tức bung ra đầy đủ môi trường hoàn chỉnh."
+		],
+		"widgetPackageCapabilities": [
+			{
+				"title": "Nguồn Offline Cục Bộ",
+				"description": "Mọi file định dạng phông chữ, ảnh GIF đều bảo tồn tuyệt đối."
+			},
+			{
+				"title": "Bộ Multi-Widget",
+				"description": "Giống với launcher app điện thoại, 1 bộ Theme có thể tuỳ biến ra 5 tiện ích hiển thị độc lập cùng lúc."
+			},
+			{
+				"title": "An Toàn Trong Mọi Dấu Hiệu",
+				"description": "Bắt lỗi sai tham số ngay khi soạn JSON nhờ schema tiêu chuẩn."
+			},
+			{
+				"title": "Hệ Thống Rút Xuất",
+				"description": "Nút Export hỗ trợ xuất widget dạng nén .htwd để dễ dàng phân tán trên diễn đàn."
+			}
+		],
+		"widgetPackageSteps": [
+			"Lập thư mục hệ thống trống và để tệp cấu hình htwind.json vào đó.",
+			"Liên kết các đường dẫn code .HTML như index, app, config về đó.",
+			"Mở thư mục lên kéo nén và gửi vô giao diện Add Manager của ứng dụng."
+		],
+		"communitySharingSteps": [
+			"Vào mục GitHub hay Forum để show 1 bức ảnh ứng dụng sau tùy biến.",
+			"Trình bày chi tiết lý do và cách phần mềm này khiến việc của bạn tốt hơn.",
+			"Cảnh báo nếu lệnh PowerShell từ bạn cần sự cho phép Admin từ OS.",
+			"Nâng lên thành Ver. 1 hay 2 nếu có chỉnh lý quan trọng."
+		],
+		"faqItems": [
+			{
+				"question": "Dự án này làm gì?",
+				"answer": "Giúp dân nghiệp dư và chuyên nghiệp tự tạo các ứng dụng nổi tự do dạng Mini-App trực tiếp trên hệ màn hình từ C# WPF."
+			},
+			{
+				"question": "Tính năng WebView dùng có hao bộ nhớ không?",
+				"answer": "Tất nhiên là không đáng kể so với mở trình duyệt riêng, engine nhúng thẳng trong lõi C# Core của framework cực kì nhẹ."
+			},
+			{
+				"question": "Cần học ngôn ngữ gì trước?",
+				"answer": "Không cần gì ngoài căn bản Javascript và thiết kế giao diện bằng CSS flexbox là đủ.",
+				"spanTwoColumns": true
+			},
+			{
+				"question": "Khi muốn ẩn widget lúc làm việc quan trọng?",
+				"answer": "Ngầm hiểu rằng máy bạn có thể đang bật các thể loại game bắn súng hoặc xem phim, nó sẽ có tính năng Hide When Fullscreen."
+			},
+			{
+				"question": "Nếu file có virus qua PS1?",
+				"answer": "Đây là lý thuyết vì sao Sandbox luôn hỏi phép bảo mật khi lần đầu widget kích hoạt. Đành rằng bạn không cho, mã đó sẽ câm nín hoàn toàn."
+			},
+			{
+				"question": "Làm thế nào cho nó khởi tạo cùng Windows?",
+				"answer": "Gắn tick Option Boot alongside Windows là các giá trị thẻ tọa độ sẽ tự phục hồi."
+			},
+			{
+				"question": "Tôi muốn giúp phân nhánh dự án thì sao?",
+				"answer": "Tuyệt đối khuyến khích pull request nâng cấp thêm các UI React mới cho bảng thiết lập quản lý chung."
+			}
+		],
+		"overviewParagraphs": [
+			"Rút ngắn khoảng cách xa xỉ của nền lập trình desktop truyền thống với trải nghiệm làm web phong thái thiết kế mở.",
+			"Tính linh động về cài đặt và sự ổn định cao độ khi cắm máy sẽ thay đổi cách bạn tương tác thông tin hằng ngày."
+		],
+		"overviewScreenshots": [
+			{
+				"src": "/app_screenshots/page_home.png",
+				"alt": "Giao diện chọn Widget tải sẵn"
+			},
+			{
+				"src": "/app_screenshots/page_settings.png",
+				"alt": "Khu vực tính năng quyền hệ thống"
+			},
+			{
+				"src": "/app_screenshots/page_about.png",
+				"alt": "Hệ tham chiếu mã nguồn Github"
+			}
+		]
+	}
+}

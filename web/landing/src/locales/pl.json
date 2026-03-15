@@ -1,0 +1,355 @@
+{
+	"meta": {
+		"locale": "pl",
+		"ogLocale": "pl_PL"
+	},
+	"seo": {
+		"title": "HTWind | Platforma Widżetów dla Pulpitu Windows",
+		"description": "HTWind to środowisko Open Source dla systemu Windows, które obsługuje widżety HTML, pakiety i interakcje PowerShell na pulpitach użytkowników.",
+		"openGraphTitle": "HTWind | Platforma do zarządzania widżetami w Windows",
+		"openGraphDescription": "Uporządkuj swój pulpit w Windows wykorzystując zaawansowane widżety oparte o HTML, manifesty i natywne komendy.",
+		"twitterTitle": "HTWind | Spersonalizowane Widżety dla Windows",
+		"twitterDescription": "Platforma Open Source integrująca technologie HTML, system pakietów oraz automatyzację środowiska Windows z PowerShell.",
+		"imageAlt": "Zrzut ekranu aplikacji HTWind prezentujący pracujące widżety",
+		"jsonLdDescription": "HTWind to program wspierający budowę i obługę wizualnych rozszerzeń typu Web dla systemu operacyjnego Windows."
+	},
+	"languageSelector": {
+		"label": "Język",
+		"ariaLabel": "Wybierz język portalu",
+		"options": {
+			"en": "English",
+			"tr": "Türkçe",
+			"hi": "हिन्दी",
+			"zh": "中文",
+			"de": "Deutsch",
+			"fr": "Français",
+			"ru": "Русский",
+			"ar": "العربية",
+			"ja": "日本語",
+			"es": "Español",
+			"pt": "Português",
+			"it": "Italiano",
+			"ko": "한국어",
+			"id": "Bahasa Indonesia",
+			"vi": "Tiếng Việt",
+			"nl": "Nederlands",
+			"pl": "Polski",
+			"uk": "Українська"
+		}
+	},
+	"banner": {
+		"text": "Stwórz czysty ekran! Otwartoźródłowa baza dla integracji widżetów stron WEB oraz skryptów w ekosystemie Windows"
+	},
+	"hero": {
+		"eyebrow": "Natywna Platforma Integracji Aplikacji Pulpitu",
+		"heading": "Skonstruuj czysty pulpit Windows dzięki widżetom HTML",
+		"description": "Rozwiązanie ułatwiające uruchamianie stałych narzędzi i paneli informatycznych używając HTML. Z zachowaniem kontroli systemu, z interfejsami API automatyzującymi komendy PowerShell.",
+		"includedLabel": "Zestaw posiada:",
+		"proofPoints": [
+			"Wsparcie renderu HTML, CSS i nowoczesnego JS na architekturze WebView2",
+			"Skonstruowane instalacje JSON z paczkami i zasobami z trybem Offline",
+			"Bezpieczne pomosty PowerShell przyspieszające monitoring komputera w tle"
+		],
+		"githubButton": "Wejdź na stronę GitHub",
+		"releaseNotesButton": "Zmiany najnowszego wydania",
+		"communityNotice": "Instalator z opcją EXE to najlepsza rekomendacja. Dla wdrożeń manualnych, mamy paczki systemowe MS Store i wersje ZIP typu Portable.",
+		"releaseCard": {
+			"title": "Obecna Wersja",
+			"loadingLabel": "Trwa poszukiwanie informacji",
+			"channels": [
+				{
+					"name": "Standardowy Instalator",
+					"description": "Preferowana ścieżka umożliwiająca stabilne odpalenie na stałe."
+				},
+				{
+					"name": "Przenośny Plik ZIP",
+					"description": "Zapisz i kontroluj ręcznie pliki konfiguracyjne projektu."
+				},
+				{
+					"name": "Sklep Microsoft",
+					"description": "Niezależna platforma dająca auto-aktualizacje firmie."
+				}
+			],
+			"storeAriaLabel": "Pobierz paczkę MS Store",
+			"storeImageAlt": "Kup w sieci MS Store",
+			"communityPrefix": "Projekty użytkowników badaj",
+			"communityGithubLabel": "Na panelu GitHuba",
+			"communityConnector": "czy chociażby",
+			"communityRedditLabel": "Konta w Reddit",
+			"communitySuffix": "."
+		}
+	},
+	"downloadMenu": {
+		"loading": "Ustalanie powiązanych wersji do ściagnięcia...",
+		"empty": "Zbiór nie zawiera aktywnych plików i wersji",
+		"choose": "Pobrania: Dostępnych ({count}) opcji",
+		"title": "Rekomendowane: Instalacja bazowa",
+		"hint": "Instalator ma komplet sterowników. Formaty specjalne dla inżynierów lub administratorów firm umieściliśmy dookoła.",
+		"ariaLabel": "Pole aktywnych wariantów wydanych programów",
+		"descriptions": {
+			"installer": "Stabilny system wdrażania standardu OS Windows",
+			"portable": "Grupowy archiwizator do otwarcia ze skrótów .exe",
+			"package": "Dystrybucja wewnętrzna Windows Installer Packages MSIX",
+			"other": "Szersze katalogi materiałowe oraz kody źródłowe Githuba"
+		},
+		"unknownSize": "Rozmiar niesprecyzowany"
+	},
+	"release": {
+		"loadingLatest": "Testujemy zgodność repozytorium serwera...",
+		"unavailable": "Stan powiadomień niedostępny",
+		"checkFeed": "Odwedź listę ogólnych aktualizacji oprogramowania",
+		"publishedOn": "Przekazano wydaną serię: {date}",
+		"unknownDate": "Data wykreowana ukryta."
+	},
+	"sections": {
+		"highlights": {
+			"heading": "Ustalenie gotowości deweloperskiej",
+			"lead": "Ten framework powołano, żeby po 2 tygodniach stania, on nadal z tą samą stabilnością nie zakłócił spójności wizualnej operacji biznesowych.",
+			"ariaLabel": "Najważniejsze cechy projektu"
+		},
+		"overview": {
+			"heading": "Odpal galerię zanim wkleisz instalacje środowiska",
+			"screenshotHint": "Działania widoczne na powiększanych i interaktywnoskach podglądzie miniatur.",
+			"viewLarger": "Aparat zoomu cyfrowego rozkłada {alt}"
+		},
+		"features": {
+			"heading": "Elementy funkcjonalne projektu aplikacji",
+			"lead": "Pozyskujemy surowość HTML i wklejamy interaktywności C#, co zapewnia ci elastyczność nie znając limitów starych technologii desktopu."
+		},
+		"widgets": {
+			"heading": "Prototypuj pakiety lub projektuj u nas",
+			"lead": "Nasze startery pogody, stoperów, śledzenia adresów IP w zupełności starczają. Wystarczy przenieść ich style we własny styl firmowy.",
+			"documentationPrefix": "Dostępne definicje z pełnym ujęciem odnajdziecie na",
+			"documentationLinkLabel": "Dokumentacyjnych zakładkach Wiki",
+			"documentationSuffix": "i Githubie.",
+			"promptPrefix": "Stwórz sobie własny moduł posługując się modelami AI wpisując:",
+			"promptLabel": "Wklejając nasze gotowe sztuczne prompty podzespołu LLM",
+			"promptConnector": "czy logując na platformie",
+			"sharedPromptLabel": "Prompty udostępniane publicznie",
+			"promptSuffix": "by po wymieszaniu w ChatGpt dostać profesjonalny i kompatybilnie bezpłatny generator układu interfejsu widżetu html na twój ekran komputera."
+		},
+		"packages": {
+			"heading": "Formaty jsonowych Manifestów Plikowych dla zasobów lokalnych w paczkach programisty",
+			"flowHeading": "Działania powtarzalne na schemacie działania system JSON Manifest.",
+			"schemaPrefix": "Dowiedz i zaznajom z formatami:",
+			"schemaLabel": "Schematu .json i metrykami budujących środowisko HTWIND",
+			"schemaConnector": "i przeanalizuj modelowy z życia skrypt archiwum pobierany od",
+			"exampleLabel": "Podłączonego wielkoformatowego systemu multi-widget",
+			"schemaSuffix": "by spakować swoje narzędzia i oprawić sprawnie jako pełny pakiet zip a z wieloma ramkami aplikacji widżetów na twoich systemach operacyjnych lokalnych OS."
+		},
+		"useCases": {
+			"heading": "Cele najczęściej wykorzystującego panel HTWIND w praktykach codziennych na PCie czy korporacyjnym laptopie.",
+			"lead": "Sytuacje programów i wizualnego wykorzystywania programowania widgetu w produktywnych dniach pracy systemowej administracji programistycznych."
+		},
+		"community": {
+			"heading": "Projekt budowany wokół dzielenia kodu z pomocą chmury programistów społeczności.",
+			"lead": "Sukces projektu polega z otwartości kodu - każdy dorzuca swój interfejs by inni budowali sobie super ładne nakładki wizualne ułatwiające skróty aplikacji bez konieczności uruchamiania wielkich stron.",
+			"visitPrefix": "Udaj w wycieczkę odwiedzenia do",
+			"githubLinkLabel": "Grupy na platformie serwisu GITHuba pod hasłem discussions (Forum o kodzie HTML widgetów dyskusje)",
+			"visitConnector": "albo na platformie anglojęzycznej pod adresem:",
+			"redditLinkLabel": "W grupie użytkowników Reddit sekcji projektanta zrzutów modowania.",
+			"visitSuffix": "Tam najpewniej wysłuchamy Twoich raportowych pomysłów błędu oraz przyjmiesz zapytania za wdrożenie unowocześnień funkcji."
+		},
+		"faq": {
+			"heading": "System Zapytania Rozwiązywania Zgłaszanych Zasad Wsparcia FAQ pytań stałych dla programu",
+			"lead": "Kompletowane porady co do konfiguracji bezpieczeńskich zezwoleń dla ułatwień w instalacji projektu."
+		},
+		"support": {
+			"heading": "Przekaż pomoc dla twórcy oprogramowania otwartych środowisk.",
+			"lead": "Wysiłki o aktualizacji dla serwerowych kosztu oraz wydania platformy programowej są wspierane jako dotacja do czasu prywatnego developera projektu HTW. Daje kopa dla postępów o nowotrzebnych technologii w projekcie HTW.",
+			"button": "Strona bezpośredniego datkowania wsparcia z płatnością u producenta"
+		}
+	},
+	"footer": {
+		"github": "Kody udostępnione z sieci GITHUBo platforma otwartego pobieranka i bazy dany.",
+		"releases": "System wdrażonych podwyższających update Release",
+		"discussions": "Formy dyskusyjne platform u producentów programowania portalu"
+	},
+	"lightbox": {
+		"close": "Wyloguj i Schowej Uwolni Koderze i Przywracanie"
+	},
+	"errors": {
+		"missingRoot": "Element React docelowego identyfikator systemu Root brakuje i utraciły się z map sieci kodu witryny WWW projektu programu deweloperskiego narzędziowego panel programowych wizytów."
+	},
+	"content": {
+		"widgets": [
+			{
+				"id": "clock",
+				"label": "Wizjer czasu klasycznych form układ w projektowych kompozycjach"
+			},
+			{
+				"id": "weather",
+				"label": "Komunikat stanu układ zewnętrznych usług chmur wizuala z danych programów i środowiska deszcz lub upał parametr widget wizuala."
+			},
+			{
+				"id": "network-tools",
+				"label": "Monitorowanie ruchowej paczki portach informacyjnych IT"
+			},
+			{
+				"id": "process-manager",
+				"label": "System zarządzania stan proces CPU systemowy parametr zużyć."
+			},
+			{
+				"id": "clipboard-studio",
+				"label": "Narzędzie schowków podpięcia zapisu z wieloma tryb parametrami klawiszowych kopii u pamięci maszyny z oknach nakładach bocznych."
+			},
+			{
+				"id": "file-explorer",
+				"label": "Ściągane eksplorator w skryptach"
+			},
+			{
+				"id": "dns-lookup",
+				"label": "Test pings"
+			},
+			{
+				"id": "powershell-console",
+				"label": "Rozpięcie Powershell i API po stron system."
+			}
+		],
+		"highlights": [
+			{
+				"value": "20+",
+				"label": "Skonfigurowane startówki dla nowych koder."
+			},
+			{
+				"value": "Gorący powiew kodów HTML natychmiast odświeżony przyciskiem save dla live kodowania widget form w locie interfejs renderu w procesach zapisu",
+				"label": ""
+			},
+			{
+				"value": "Motor Chromium z platform u deweloper bazy technologii Windows Core we wzbogacone Edge proces C++ bazy",
+				"label": ""
+			},
+			{
+				"value": "Technologia w pełnych darmowści format otwartego GPL projektu o licencyjna autorskiej wolność form w użyci programu open",
+				"label": ""
+			},
+			{
+				"value": "Ukryć przy odpaleni do Gier (Supresja)",
+				"label": "Ograniczenie automatyzowania okien w grach bez ekranowania panel przykrywających wyświetlanym",
+				"spanTwo": true
+			},
+			{
+				"value": "Edycji bezpośrednio paneli projekt",
+				"label": "Pisaniem bezpośrednia kod podprogram form okien program wewnętrznych modułu dewelopera",
+				"spanTwo": true
+			},
+			{
+				"value": "Form JSON koncepcja architektura katalogu folderu paczek modyfikacji",
+				"label": "Przemić format i udokumentować powiązania dla grafik wewnętrznym o obiekty w ścieżce na katalogowy pakiet importach z ZIP dla paczek manifestacji JSON pod obiekt w oknach system deweloper widget format JSON architektur modyfikacji i folder paczek.",
+				"spanTwo": true
+			},
+			{
+				"value": "Interfejsu C Systemowego PowerShell",
+				"label": "Odpalasz pliki system skryptowania powłoki",
+				"spanTwo": true
+			}
+		],
+		"featureCards": [
+			{
+				"title": "Html W Formatu Na Nakładkę Desktop Platform środowisk System.",
+				"description": "Zestaw sobie przez język web z wolność kompozycji kod od wyświetlanie grafik nakładając od ekran systemu baz przeglądarek Chrome proces i form okna powłok okienna wizyt C# system komendy narzędzia powłoki API desktop Windows Systemowym HTWIND framework projekt C",
+				"icon": "html"
+			},
+			{
+				"title": "Wykorzystaj środowisko API do Powershell skrypt system Windows narzędzia C",
+				"description": "API dające pewnych systemowi nakład środowisk od zapytania JSON w form C z plik Powershell do zwracanej informacji JSON jako odpowiedź zwrotowa ze strony kod systemowego w bezpieczny izolowanym i ograniczonym trybu okienna zapytanych komend platform do operacji na komputer PC API okna komunikacja Windows",
+				"icon": "powershell"
+			},
+			{
+				"title": "Wymuszenie form powłok form Windows okna natywne.",
+				"description": "Tryb zawsze pozostających na system okna powłok wizyt, ustawienie i zapamiętywania z użyciu wsparciu ustawiania format wielu ekran parametry w trybu zachowaj zapamiętywani do powłok C#, API tryby wyświetl nakład komendy.",
+				"icon": "windows"
+			}
+		],
+		"workflowUseCases": [
+			"Stale używanie sieci przez inżynier u administracja o weryfikacja błędy do interfejs i serwer pod prac log",
+			"Stoper w system dla projekt i uczeń po krawędzi komputery widoczne ekran",
+			"Odtwarzacz plików lub od panel zarządzania z audio z wizualna mod form interfejs i system do animowanym obiekty kod web html plik",
+			"Dashboard IT zespołu z metrykam z operacyjnym u monitoring sprzęcie proces i usługi firmy z serwer od system do widoczne pulpit w chmury bazy po HTML interfejs w pracy deweloper zespołu C.",
+			"Backup ZIP w form paczuś z udostępnioną interfejs u prac projektów biurowy do zespołowe"
+		],
+		"widgetPackageParagraphs": [
+			"Zrozumi JSON HTWIND architektur z pakowanie u pliki zip pod instalacje powłoki, by plik web w system wiedziały o od plików u katalog graficzna CSS od instalacyjnym z środowisku u program platform.",
+			"Pliki mogą pozostawiać u działanie aplikacji po plik z komputery folder do udostępniane i działający w form archaicznej aplikacji offline system deweloper pakiet.",
+			"Jeden paczuś importowany jest obsługi bez trud z eksport GUI moduły z panel od instalacja i plik u instalacja konfiguracjami pod PC z format zip paczkowania API dla użytkownik pobranym programu HTWIND udostępnianego narzędzi pakowania konfiguracji do paczkach środowisk i projekt API narzędzi C"
+		],
+		"widgetPackageCapabilities": [
+			{
+				"title": "Foldery Obrazy Działa Niezależni",
+				"description": "Podpinam ikony po form plików na aplikacja folder środowiska od powłoki w zip instalacja do folder pliki obraz i CSS lokalnych"
+			},
+			{
+				"title": "Kompilowanie Dużych System Zestaw 1 Okno Formaty",
+				"description": "Sklej projekt instalując pod powłok paczką z różny system u widget form do uruchomieni 2 i więcej pod jeden json system z instalator"
+			},
+			{
+				"title": "Schema Narzędzie Form JSON w IDE Zabezpieczeń i Składni C u deweloper Formaty.",
+				"description": "Kodując we edytor tekstów pliki u konfiguracjom powłoki u HTWIND ma kontrola błędu form składnie w projekcie dewelopera u zabezpieczonych kodu JSON"
+			},
+			{
+				"title": "Eksporter GUI zip System.",
+				"description": "Tworz w system programu pliki eksportów u klik po przycisk eksportuj instalacją dla aplikacji pliki zip i instalacyjne na powłok platform PC"
+			}
+		],
+		"widgetPackageSteps": [
+			"Konstruł folder powłok u pakowania systemu plików pod obiekt JSON HTWIND w pliku konfig.",
+			"Zlokalizuj dla aplikacja htwind od indeksowany html index pliku adres powłoki i foldera konfig JSON w folder API podział instalacja pakowania konfiguracji programu C",
+			"Zaimportuje plikiem przeciągania na panel API GUI dewelopera w oknie w zarządzanie z poziomu pod platform GUI aplikacji projekt API dla HTWIND Windows z instalacjami i powłok"
+		],
+		"communitySharingSteps": [
+			"Stawia posta pod forum za serwis zdjęcia z form od widget html modyfikacjom na platform system",
+			"Dopisujesz od pliki w użyci do operacjami jak przyspiesza dla systemu u PC platform",
+			"Umieś opisy z systemowych pozwoleń czy administrator powłoki na PS1 C# środowiska plików zip na uruchomionych skrypt deweloper powłok",
+			"Dołączasz log ze zmian wersji pliki u oprogramowanie do mod od pakietów archiwum instalacji do deweloper"
+		],
+		"faqItems": [
+			{
+				"question": "A do czego ta aplikacja posługuje w instalacja użytkowni platformy do użyciu na pc?",
+				"answer": "Pomocne platform z okienka html systemu z pulpit u Windows dla tworzenie mini-apps do wizual w zarządzania API powłoki do pracy dla użytkowników systemu Windows w instalacji projektu API"
+			},
+			{
+				"question": "Jak render działa powłoki HTML u aplikacja na Windows pod instalacje PC?",
+				"answer": "Do silniku do Chromium o Microsoft API WebView2 co złączonym silnika C do aplikacjami dla deweloper systemu operacyjnych Windows API"
+			},
+			{
+				"question": "Po co plikiem do HTWIND widget JSON architektur od instalacji format konfiguracji system u pliku pliki manifest deweloper platform z powłoki Windows aplikacji na pulpit formaty API zip z zip plikiem?",
+				"answer": "Bo by widget system na plikiem po plikiem json miał parametry na adres okienka do uruchomieni na instalacjami plikiem z API u konfiguracjom folder archiwum system.",
+				"spanTwoColumns": true
+			},
+			{
+				"question": "Nie przykrywa za okno gry z pulpit platform na system okna powłoki u okna pulpit PC?",
+				"answer": "Jest suppress w GUI od tryb opcje u chowanie od powłok na system podczas do uruchomionych u aplikacjami na gracz systemu w trybach pełnego okno ekran"
+			},
+			{
+				"question": "Czy zabieranie CPU i RAM maszynami pod aplikacją dużo pamięci na platform system plików na operacyjny system na pulpit z Windows platform w instalacyjnymi widgetu API u okien programy od komputer?",
+				"answer": "Minimalistycznym i oszczędności do RAM platform z silnika do API okien WebView2 systemu C na aplikacje wieloma okna instalacja widget na panel PC"
+			},
+			{
+				"question": "Z PS1 PowerShell system w komenda API u okna widget u skrypt w aplikacjami Windows platform dewelopera aplikacji czy system działa API okna do skryptów instalacja u użytkownik dla okna pulpit platform PC?",
+				"answer": "Most JS do C# by uruchamiać w system za bezpieczne do API zgód powłoki w do użyciem i wynikiem dla aplikacji na system Windows API instalacja"
+			},
+			{
+				"question": "Od start platform od panel u pulpit z Windows na włączeniu z system czy od okien uruchamianie dla u aplikacja na okna pulpit za PC?",
+				"answer": "Od ustawieni na okna platform do Boot na uruchomieniu dla od PC z system z Windows by włącz aplikacji u zapamiętanymi na okna współrzędnymi instalacjami na platform PC"
+			}
+		],
+		"overviewParagraphs": [
+			"Narzędziem dla program do aplikacji widget w html systemu na pulpit platform w system Windows by modyfikacji od pulpit okna z wolnością na konfiguracja kodu na projekt od web dewelopera instalacji aplikacji do PC Windows",
+			"Pobierz z instalacji na narzędziom w panel na pulpit z modyfikacją plików u API systemu okna na do pracy od użytkownik u aplikacji deweloper w system Windows instalacja platform PC z projekt od okna GUI"
+		],
+		"overviewScreenshots": [
+			{
+				"src": "/app_screenshots/page_home.png",
+				"alt": "Widok ekran z okien zarządzani aplikacjami z system widget"
+			},
+			{
+				"src": "/app_screenshots/page_settings.png",
+				"alt": "Opcjami na preferencja od GUI z system konfiguracjami"
+			},
+			{
+				"src": "/app_screenshots/page_about.png",
+				"alt": "O aplikacji plik do projekt systemu Windows"
+			}
+		]
+	}
+}

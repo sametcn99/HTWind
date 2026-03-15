@@ -1,0 +1,356 @@
+{
+	"meta": {
+		"locale": "it",
+		"ogLocale": "it_IT"
+	},
+	"seo": {
+		"title": "HTWind | Host per Widget Desktop Windows",
+		"description": "HTWind è un host open-source per widget desktop di Windows, per widget HTML, pacchetti manifesto e strumenti PowerShell controllati.",
+		"openGraphTitle": "HTWind | Host per Widget Desktop Windows",
+		"openGraphDescription": "Costruisci un desktop Windows più pulito con widget HTML, importazioni di pacchetti e controlli di flusso di lavoro integrati.",
+		"twitterTitle": "HTWind | Host per Widget Desktop Windows",
+		"twitterDescription": "Host open-source per widget Windows con integrazione HTML, pacchetti e PowerShell.",
+		"imageAlt": "Schermata desktop di HTWind con widget su Windows",
+		"jsonLdDescription": "HTWind è un host personalizzabile per widget basati su HTML per desktop Windows."
+	},
+	"languageSelector": {
+		"label": "Lingua",
+		"ariaLabel": "Seleziona la lingua della pagina",
+		"options": {
+			"en": "English",
+			"tr": "Türkçe",
+			"hi": "हिन्दी",
+			"zh": "中文",
+			"de": "Deutsch",
+			"fr": "Français",
+			"ru": "Русский",
+			"ar": "العربية",
+			"ja": "日本語",
+			"es": "Español",
+			"pt": "Português",
+			"it": "Italiano",
+			"ko": "한국어",
+			"id": "Bahasa Indonesia",
+			"vi": "Tiếng Việt",
+			"nl": "Nederlands",
+			"pl": "Polski",
+			"uk": "Українська"
+		}
+	},
+	"banner": {
+		"text": "Host open-source per desktop Windows con widget HTML, pacchetti e integrazione PowerShell"
+	},
+	"hero": {
+		"eyebrow": "Piattaforma widget desktop nativa per Windows",
+		"heading": "Costruisci un desktop più pulito con i widget HTML",
+		"description": "HTWind ti offre un host curato per widget HTML, pacchetti, strumenti desktop sempre attivi e azioni PowerShell senza abbandonare l'esperienza Windows.",
+		"includedLabel": "Incluso",
+		"proofPoints": [
+			"Widget creati in HTML, CSS e JavaScript e renderizzati tramite WebView2",
+			"Pacchetti manifesto per gestire risorse locali e widget multipli",
+			"Azioni PowerShell controllate per diagnostica rapida e utilità"
+		],
+		"githubButton": "Visualizza su GitHub",
+		"releaseNotesButton": "Note di rilascio",
+		"communityNotice": "L'installatore è la procedura consigliata. I formati portatili (ZIP) e Microsoft Store restano disponibili per altre necessità.",
+		"releaseCard": {
+			"title": "Ultimo rilascio",
+			"loadingLabel": "Caricamento",
+			"channels": [
+				{
+					"name": "Installatore",
+					"description": "Raccomandato per l'esperienza più fluida su Windows."
+				},
+				{
+					"name": "ZIP Portatile",
+					"description": "Per un'estrazione manuale senza installazione."
+				},
+				{
+					"name": "Microsoft Store",
+					"description": "Perfetto per aggiornamenti rapidi e macchine aziendali."
+				}
+			],
+			"storeAriaLabel": "Ottienilo dal Microsoft Store",
+			"storeImageAlt": "Ottieni dal Microsoft Store",
+			"communityPrefix": "Condividi widget su",
+			"communityGithubLabel": "GitHub Discussions",
+			"communityConnector": "e",
+			"communityRedditLabel": "Reddit",
+			"communitySuffix": "."
+		}
+	},
+	"downloadMenu": {
+		"loading": "Controllo dei download...",
+		"empty": "Nessun download disponibile",
+		"choose": "Scegli un file ({count})",
+		"title": "Consigliato: Installatore",
+		"hint": "Usa l'installatore per iniziare rapidamente. Modalità portatile qui in basso.",
+		"ariaLabel": "Elenco dei download disponibili",
+		"descriptions": {
+			"installer": "Programma di installazione consigliato",
+			"portable": "Archivio portatile",
+			"package": "Pacchetto nativo Windows",
+			"other": "Altre risorse"
+		},
+		"unknownSize": "Dimensione ignota"
+	},
+	"release": {
+		"loadingLatest": "Caricamento rilascio...",
+		"unavailable": "Informazioni non disponibili",
+		"checkFeed": "Controlla il feed per aggiornamenti",
+		"publishedOn": "Pubblicato il {date}",
+		"unknownDate": "Data sconosciuta"
+	},
+	"sections": {
+		"highlights": {
+			"heading": "Perché HTWind è pronto per l'uso quotidiano",
+			"lead": "HTWind offre stabilità e integrazione nativa profonda senza intralciare i tuoi task giornalieri.",
+			"ariaLabel": "Funzioni salienti"
+		},
+		"overview": {
+			"heading": "Anticipazioni visive dell'applicazione",
+			"screenshotHint": "Clicca le immagini per una versione ingrandita.",
+			"viewLarger": "Ingrandisci {alt}"
+		},
+		"features": {
+			"heading": "Funzionalità essenziali",
+			"lead": "Unisci la versatilità del web alla comodità delle API desktop in un unico posto."
+		},
+		"widgets": {
+			"heading": "Widget integrati da modificare",
+			"lead": "Una selezione di partenza con timer, clima e strumenti diagnostici. Impara dai design base e sviluppane di nuovi.",
+			"documentationPrefix": "Esplora i dettagli nella",
+			"documentationLinkLabel": "documentazione",
+			"documentationSuffix": ".",
+			"promptPrefix": "Vuoi farti aiutare da un'IA? Copia il",
+			"promptLabel": "Prompt HTWind",
+			"promptConnector": "o usa il",
+			"sharedPromptLabel": "modello pubblico",
+			"promptSuffix": "per generare codici compatibili."
+		},
+		"packages": {
+			"heading": "Pacchetti manifesto HTWind",
+			"flowHeading": "Anatomia di un pacchetto",
+			"schemaPrefix": "Apri il",
+			"schemaLabel": "file schema JSON",
+			"schemaConnector": "oppure l' ",
+			"exampleLabel": "esempio multi-widget",
+			"schemaSuffix": "per imparare a incapsulare logiche e asset multipli."
+		},
+		"useCases": {
+			"heading": "Scenari d'uso classici",
+			"lead": "Gestione e monitoraggio continuo senza aprire pesanti app complete."
+		},
+		"community": {
+			"heading": "Condividi e migliora",
+			"lead": "Partecipa alla community per trovare nuove idee di design.",
+			"visitPrefix": "Vai su",
+			"githubLinkLabel": "HTWind Discussions",
+			"visitConnector": "e",
+			"redditLinkLabel": "Reddit",
+			"visitSuffix": "per confrontarti."
+		},
+		"faq": {
+			"heading": "Domande Frequenti",
+			"lead": "Risposte rapide su come iniziare a usare o estendere HTWind."
+		},
+		"support": {
+			"heading": "Sostieni il progetto",
+			"lead": "Fai valere il tuo aiuto se HTWind rende il tuo schermo migliore.",
+			"button": "Pagina di donazione"
+		}
+	},
+	"footer": {
+		"github": "GitHub",
+		"releases": "Download",
+		"discussions": "Discussioni"
+	},
+	"lightbox": {
+		"close": "Chiudi"
+	},
+	"errors": {
+		"missingRoot": "Elemento Root non trovato."
+	},
+	"content": {
+		"widgets": [
+			{
+				"id": "clock",
+				"label": "orologio"
+			},
+			{
+				"id": "weather",
+				"label": "meteo"
+			},
+			{
+				"id": "network-tools",
+				"label": "rete"
+			},
+			{
+				"id": "process-manager",
+				"label": "processi"
+			},
+			{
+				"id": "clipboard-studio",
+				"label": "appunti"
+			},
+			{
+				"id": "file-explorer",
+				"label": "file"
+			},
+			{
+				"id": "dns-lookup",
+				"label": "dns"
+			},
+			{
+				"id": "powershell-console",
+				"label": "powershell"
+			}
+		],
+		"highlights": [
+			{
+				"value": "20+",
+				"label": "Template base"
+			},
+			{
+				"value": "Ricarica",
+				"label": "Hot reload automatico"
+			},
+			{
+				"value": "WebView2",
+				"label": "Web nativo MS"
+			},
+			{
+				"value": "Open Source",
+				"label": "Gratis & Sicuro"
+			},
+			{
+				"value": "Autonascondi",
+				"label": "Scompari nei giochi o app massimizzate",
+				"spanTwo": true
+			},
+			{
+				"value": "Editor in App",
+				"label": "Scrivi HTML nel programma",
+				"spanTwo": true
+			},
+			{
+				"value": "Sistema Pacchetti",
+				"label": "Importa JSON e directory annidate",
+				"spanTwo": true
+			},
+			{
+				"value": "Comandi PS",
+				"label": "Accesso di sistema controllato",
+				"spanTwo": true
+			}
+		],
+		"featureCards": [
+			{
+				"title": "Widget Web",
+				"description": "Utilizza il classico stack web ma vivilo immerso fuori dal browser e senza bordi limitanti.",
+				"icon": "html"
+			},
+			{
+				"title": "Host PS",
+				"description": "Impartisci comandi Windows per avere lettura dei log o monitoraggio porte in un micro pannello visuale.",
+				"icon": "powershell"
+			},
+			{
+				"title": "Windows Style",
+				"description": "Posizioni mnemoniche, supporto per display multipli e compatibilità con la dark-mode di Windows 11.",
+				"icon": "windows"
+			}
+		],
+		"workflowUseCases": [
+			"Incolla le note ricorrenti su uno stickie laterale.",
+			"Mostra la RAM o CPU usage durante un rendering pesante.",
+			"Usa i widget in team importando una repository in rete.",
+			"Esegui macro standard quotidiane con singoli bottoni HTML.",
+			"Cambia l'ambiente desktop esportando e importando file .json."
+		],
+		"widgetPackageParagraphs": [
+			"Il manifesto htwind.widget.json permette a un widget di vivere insieme ai suoi script JS scorporati, le sue immagini e fogli di stile.",
+			"Puoi raggruppare sotto un nome aziendale l'insieme degli strumenti.",
+			"Per condividerlo non occorrono server: invia la cartella zippata o caricala come archivio."
+		],
+		"widgetPackageCapabilities": [
+			{
+				"title": "Asset locali",
+				"description": "Usa immagini e font offline, il parser costruirà il webserver virtuale locale adeguato."
+			},
+			{
+				"title": "Design a schede",
+				"description": "Definisci un widget madre con varie facciate di supporto incluse nel medesimo manifesto."
+			},
+			{
+				"title": "Import / Export",
+				"description": "Menu di sistema per salvare in una mossa lo stato estetico."
+			},
+			{
+				"title": "Standard basato su JSON",
+				"description": "Comprendilo senza studiare documentazioni esoteriche; le voci ricalcano standard comuni JSON."
+			}
+		],
+		"widgetPackageSteps": [
+			"Apri una directory vuota.",
+			"Aggiungi un manifest base htwind.",
+			"Punta alla indexHTML.",
+			"Tira la directory dentro HTWind App."
+		],
+		"communitySharingSteps": [
+			"Visita Reddit per farti notare.",
+			"Aggiungi descrizioni tecniche.",
+			"Spiega se modifichi file nel disco.",
+			"Usa tag e argomenti per categorizzarlo."
+		],
+		"faqItems": [
+			{
+				"question": "È sicuro?",
+				"answer": "Pienamente. L'esecuzione di script esterni può essere vietata centralmente."
+			},
+			{
+				"question": "Come si inserisce un file CSS?",
+				"answer": "Basta usare i tag link verso i file relativi all'interno della cartella del widget."
+			},
+			{
+				"question": "Funziona su Windows 10?",
+				"answer": "Sì. Supporta pienamente Win 10 dalla versione 19041 e Windows 11.",
+				"spanTwoColumns": true
+			},
+			{
+				"question": "Pesa sulla RAM?",
+				"answer": "WebView2 condivide i processi di sistema per rendere l'uso della RAM comparabile (ma inferiore) a una scheda dormiente di Edge."
+			},
+			{
+				"question": "Supporta il multimonitor?",
+				"answer": "I widget mantengono memoria della loro posizione X Y che è legata al pixel mapping assoluto di Windows."
+			},
+			{
+				"question": "Cosa accade se rimuovo Edge?",
+				"answer": "WebView2 usa la runtime separata spesso già presente per le app di Windows moderne. E' resiliente alla rimozione dell'app browser utente."
+			},
+			{
+				"question": "Posso bloccarlo in primo piano?",
+				"answer": "Sì, supporta un parametro Always-on-top nativo."
+			}
+		],
+		"overviewParagraphs": [
+			"Costruito in WPF e .NET ma con un cuore moderno delegato ai framework Web per renderlo plasmabile.",
+			"Offre la possibilità di espandere da subito le feature base per renderle su misura."
+		],
+		"overviewScreenshots": [
+			{
+				"src": "/app_screenshots/page_home.png",
+				"alt": "Gestore Esteso"
+			},
+			{
+				"src": "/app_screenshots/page_settings.png",
+				"alt": "Configura Globale"
+			},
+			{
+				"src": "/app_screenshots/page_about.png",
+				"alt": "Info e Release"
+			}
+		]
+	}
+}

@@ -1,0 +1,356 @@
+{
+	"meta": {
+		"locale": "ja",
+		"ogLocale": "ja_JP"
+	},
+	"seo": {
+		"title": "HTWind | Windows デスクトップ ウィジェット プラットフォーム",
+		"description": "HTWind は、HTML ウィジェット、マニフェスト化パッケージ、および PowerShell の統合をサポートする、Windows 向けのオープンソース デスクトップ ウィジェット ホストです。",
+		"openGraphTitle": "HTWind | Windows デスクトップ ウィジェット プラットフォーム",
+		"openGraphDescription": "HTML ウィジェット、ネイティブ機能、強力なパッケージングを利用して、Windows 上で理想的なデスクトップ環境を構築しましょう。",
+		"twitterTitle": "HTWind | 究極の Windows ウィジェット ホスト",
+		"twitterDescription": "HTML、CSS、PowerShell、およびパッケージによる強力な拡張が可能な、Windows 用オープンソースプラットフォーム。",
+		"imageAlt": "Windows 上で動作する HTWind アプリといくつかのウィジェットのスクリーンショット",
+		"jsonLdDescription": "HTWind は、Windows でカスタマイズ可能な HTML ベースのウィジェットを作成するためのプラットフォームです。"
+	},
+	"languageSelector": {
+		"label": "言語",
+		"ariaLabel": "ページの言語を選択",
+		"options": {
+			"en": "English",
+			"tr": "Türkçe",
+			"hi": "हिन्दी",
+			"zh": "中文",
+			"de": "Deutsch",
+			"fr": "Français",
+			"ru": "Русский",
+			"ar": "العربية",
+			"ja": "日本語",
+			"es": "Español",
+			"pt": "Português",
+			"it": "Italiano",
+			"ko": "한국어",
+			"id": "Bahasa Indonesia",
+			"vi": "Tiếng Việt",
+			"nl": "Nederlands",
+			"pl": "Polski",
+			"uk": "Українська"
+		}
+	},
+	"banner": {
+		"text": "HTML ウィジェット、パッケージ、PowerShell を活用する Windows オープンソース デスクトップ ウィジェット プラットフォーム"
+	},
+	"hero": {
+		"eyebrow": "ネイティブ デスクトップ ウィジェット プラットフォーム",
+		"heading": "HTMLウィジェットで理想のWindowsデスクトップ環境を構築しよう",
+		"description": "HTWind は、HTML ベースのウィジェット、パッケージング、継続的に稼働するツール、そして確実な PowerShell アクション連携を、Windows のネイティブ作業フローから離れることなく提供します。",
+		"includedLabel": "含まれる主な機能",
+		"proofPoints": [
+			"最新の WebView2 エンジンによる HTML、CSS、JavaScript のレンダリング",
+			"ローカル リソースやマルチ ウィジェット構築を可能にするマニフェスト駆動パッケージ",
+			"システム診断や自動化のための安全な PowerShell アクション連携"
+		],
+		"githubButton": "GitHubで確認",
+		"releaseNotesButton": "リリースノート",
+		"communityNotice": "ほとんどのユーザーにはインストーラー版（Installer）を推奨します。特定のニーズ向けに、ポータブル ZIP 版や Microsoft Store 版も用意しています。",
+		"releaseCard": {
+			"title": "最新リリース",
+			"loadingLabel": "情報を取得中...",
+			"channels": [
+				{
+					"name": "インストーラー",
+					"description": "最も推奨されるクリーンな統合のためのセットアップ形式です。"
+				},
+				{
+					"name": "ポータブル ZIP",
+					"description": "インストール不要で、手動カスタマイズを行うための独立型フォルダ。"
+				},
+				{
+					"name": "Microsoft Store",
+					"description": "企業環境での運用や、バックグラウンドでの自動更新に最適です。"
+				}
+			],
+			"storeAriaLabel": "Microsoft Store から入手",
+			"storeImageAlt": "Microsoft Store",
+			"communityPrefix": "情報や作品を",
+			"communityGithubLabel": "GitHub Discussions",
+			"communityConnector": "や",
+			"communityRedditLabel": "Reddit コミュニティ",
+			"communitySuffix": "で共有してください。"
+		}
+	},
+	"downloadMenu": {
+		"loading": "利用可能なファイルを検索中...",
+		"empty": "ファイルが見つかりません。",
+		"choose": "ダウンロードするファイルを選択 ({count})",
+		"title": "推奨: インストーラー",
+		"hint": "素早く設定するには .exe インストーラーを使用してください。ZIP や パッケージ形式は以下から選択できます。",
+		"ariaLabel": "最新リリースのダウンロードファイル一覧",
+		"descriptions": {
+			"installer": "Windows 10/11 向けの標準セットアップ",
+			"portable": "解凍してすぐ実行できるポータブル アーカイブ",
+			"package": "モダンな Windows MSIX アプリ パッケージ",
+			"other": "その他のリリース ファイル"
+		},
+		"unknownSize": "サイズ不明"
+	},
+	"release": {
+		"loadingLatest": "リリース情報の読み込み中...",
+		"unavailable": "リリース情報が取得できません",
+		"checkFeed": "最新リリースページを確認する",
+		"publishedOn": "公開日: {date}",
+		"unknownDate": "公開日不明"
+	},
+	"sections": {
+		"highlights": {
+			"heading": "HTWind が日々のタスクに役立つ理由",
+			"lead": "このプラットフォームは、単なる見せかけではなく、現実の Windows デスクトップでの実用性を重視して設計されています。システムに統合された信頼性を発揮します。",
+			"ariaLabel": "主な機能の一覧"
+		},
+		"overview": {
+			"heading": "インストール前にインターフェイスを見る",
+			"screenshotHint": "スクリーンショットをクリックすると拡大表示されます。",
+			"viewLarger": "画像を拡大: {alt}"
+		},
+		"features": {
+			"heading": "コア機能と技術基盤",
+			"lead": "HTWind は、ネイティブの使いやすさとWeb 開発ツールの柔軟性を融合させています。"
+		},
+		"widgets": {
+			"heading": "テンプレートから始め、自由に進化させる",
+			"lead": "時計、天気、ネットワーク、生産性向上ツールなどの雛形を用意しています。これを微調整したり、本格的なパッケージ作成の基盤として利用してください。",
+			"documentationPrefix": "詳細な設定方法については",
+			"documentationLinkLabel": "リポジトリのドキュメント",
+			"documentationSuffix": "をご覧ください。",
+			"promptPrefix": "AI の力を借りて開発したいですか？",
+			"promptLabel": "HTWind Widget Prompt",
+			"promptConnector": "や、その",
+			"sharedPromptLabel": "オンライン版",
+			"promptSuffix": "を利用すれば、動作するコードをすばやく生成できます。"
+		},
+		"packages": {
+			"heading": "マニフェストによるウィジェットパッケージ",
+			"flowHeading": "マニフェストとパッケージの仕組み",
+			"schemaPrefix": "仕様の定義を確認するには",
+			"schemaLabel": "スキーマファイル",
+			"schemaConnector": "を見るか、または",
+			"exampleLabel": "マルチウィジェットのサンプル",
+			"schemaSuffix": "を開いてパッケージの構造を直接確認してください。"
+		},
+		"useCases": {
+			"heading": "開発と応用のユースケース",
+			"lead": "以下は、HTWind が特に真価を発揮するシナリオと実践例です。"
+		},
+		"community": {
+			"heading": "共有し、学び、共に構築する",
+			"lead": "ダッシュボード、ツール、スクリプトを共有し合うことで、HTWind はさらに強力になります。コミュニティでの知識共有がプロジェクトの要です。",
+			"visitPrefix": "是非",
+			"githubLinkLabel": "GitHub Discussions",
+			"visitConnector": "や",
+			"redditLinkLabel": "Reddit コミュニティ",
+			"visitSuffix": "にアクセスして、機能を提案してください。"
+		},
+		"faq": {
+			"heading": "よくある質問 (FAQ)",
+			"lead": "カスタマイズ、スクリプト実行、およびよくある疑問についての回答です。"
+		},
+		"support": {
+			"heading": "持続的な開発のサポート",
+			"lead": "HTWind が毎日のタスクや作業効率の向上に役立っている場合は、コミュニティ サポートで開発者を後援し、新機能の追加をお手伝いください。",
+			"button": "スポンサー パスを開く"
+		}
+	},
+	"footer": {
+		"github": "ソースコード (GitHub)",
+		"releases": "リリース",
+		"discussions": "フォーラム"
+	},
+	"lightbox": {
+		"close": "閉じる"
+	},
+	"errors": {
+		"missingRoot": "システムのルート要素が見つかりませんでした。"
+	},
+	"content": {
+		"widgets": [
+			{
+				"id": "clock",
+				"label": "時計"
+			},
+			{
+				"id": "weather",
+				"label": "天気"
+			},
+			{
+				"id": "network-tools",
+				"label": "ネットワーク"
+			},
+			{
+				"id": "process-manager",
+				"label": "プロセス管理"
+			},
+			{
+				"id": "clipboard-studio",
+				"label": "クリップボード"
+			},
+			{
+				"id": "file-explorer",
+				"label": "ファイル拡張"
+			},
+			{
+				"id": "dns-lookup",
+				"label": "DNS 照会"
+			},
+			{
+				"id": "powershell-console",
+				"label": "PowerShell"
+			}
+		],
+		"highlights": [
+			{
+				"value": "20+",
+				"label": "組み込みの開始用テンプレート"
+			},
+			{
+				"value": "ホットリロード",
+				"label": "コード保存後、即座に変更を反映"
+			},
+			{
+				"value": "WebView2",
+				"label": "Microsoft 最適化の高パフォーマンス エンジン"
+			},
+			{
+				"value": "オープンソース",
+				"label": "GPL 3.0 ライセンス準拠"
+			},
+			{
+				"value": "スマート非表示",
+				"label": "全画面ゲームプレイ中に自動的にウィジェットを隠す",
+				"spanTwo": true
+			},
+			{
+				"value": "ローカルエディタ",
+				"label": "外部エディタ不要でアプリ内から編集",
+				"spanTwo": true
+			},
+			{
+				"value": "マニフェスト形式",
+				"label": "すべての画像とスクリプトを JSON でパッケージ化",
+				"spanTwo": true
+			},
+			{
+				"value": "PowerShell API",
+				"label": "JS から安全にシステムコマンドを実行可能",
+				"spanTwo": true
+			}
+		],
+		"featureCards": [
+			{
+				"title": "デスクトップ上の HTML",
+				"description": "ブラウザから脱却しましょう。CSS/JS を駆使した UI を、HTWind が邪魔な枠なしでデスクトップに直接オーバーレイとして表示します。",
+				"icon": "html"
+			},
+			{
+				"title": "PowerShell ブリッジ",
+				"description": "ウィジェットからシステムの奥深くへアクセス。アクセス権限を制御しつつ、イベントログやリソース使用状況を JavaScript 内で受け取れます。",
+				"icon": "powershell"
+			},
+			{
+				"title": "ネイティブ ウィンドウ管理",
+				"description": "画面解像度の変更への追従、マルチモニターでの位置記憶、「常に手前に表示」設定など、Windows ネイティブの挙動をフル活用します。",
+				"icon": "windows"
+			}
+		],
+		"workflowUseCases": [
+			"サーバー監視用ネットワークポートモニターを常時表示。",
+			"ポモドーロ用タイマーを画面の隅にスタイリッシュに配置。",
+			"メディアプレーヤーやオーディオのシーン制御ダッシュボードを独自作成。",
+			"IT チーム内での内部業務を可視化するローカル・ダッシュボードを配布。",
+			"完璧にレイアウトされたデスク環境をパッケージ化し、ZIP でバックアップ。"
+		],
+		"widgetPackageParagraphs": [
+			"htwind.widget.json マニフェストを使用すると、関連する全ての HTML、CSS、JS、および画像リソースを、明確な境界を持つ単一の論理フォルダにまとめることができます。",
+			"これにより、依存関係が散乱するのを防ぎ、一つの完成したモジュールとして動作しやすくなります。",
+			"作成したパッケージは、パスの不整合を気にすることなく、他のマシンや友人に即座に共有できます。"
+		],
+		"widgetPackageCapabilities": [
+			{
+				"title": "ローカル アセットの動作",
+				"description": "画像を外部ホストに置く必要はありません。すべてのファイルをフォルダ内で完結させます。"
+			},
+			{
+				"title": "マルチ ウィジェット",
+				"description": "1 つのパッケージ内で、目的の異なる複数のウィジェットを同時に提供できます。"
+			},
+			{
+				"title": "スキーマによる検証",
+				"description": "専用のフォーマットで定義されているため、VS Code などで入力補完が効き、ミスを防ぎます。"
+			},
+			{
+				"title": "GUI ベースのインポート",
+				"description": "ZIP を専用マネージャーにドラッグ & ドロップするだけで、即座にインストールされます。"
+			}
+		],
+		"widgetPackageSteps": [
+			"新しいディレクトリを作成し、アセットを配置します。",
+			"htwind.widget.json を追加し、名前やバージョンなどのメタデータを記述します。",
+			"HTML ファイルのパスや、利用する権限などを JSON 内に宣言します。",
+			"HTWind アプリから「パッケージをインポート」を選択し、実行します。"
+		],
+		"communitySharingSteps": [
+			"作成したものを Reddit でプレビュー画像と共に公開します。",
+			"特定のユーザーが直面する悩みをどのように解決したかを説明します。",
+			"PowerShell スクリプトが含まれる場合は、権限に関する明確なガイドを追加します。",
+			"Changelog を更新して、将来のバージョン管理をより簡単にします。"
+		],
+		"faqItems": [
+			{
+				"question": "これは完全に無料ですか？",
+				"answer": "はい、GPL 3.0 ライセンスに基づく完全なオープンソースであり、無料で利用・ビルドできます。"
+			},
+			{
+				"question": "ウィンドウシステムはどうやって作られていますか？",
+				"answer": "C# と WPF (Windows Presentation Foundation) をベースに、レイヤードウィンドウを使用して透過と枠なしグラフィックスを実現しています。"
+			},
+			{
+				"question": "htwind.widget.json とはなんですか？",
+				"answer": "パッケージ全体のエントリーポイント（HTML の場所）、作者、バージョン、必要なウィジェットサイズなどを記述する設定ファイルです。",
+				"spanTwoColumns": true
+			},
+			{
+				"question": "フルスクリーンゲームの邪魔になりませんか？",
+				"answer": "設定で「全画面アプリの検知」を有効にすると、ゲーム実行時に自動でウィジェットを非表示にすることができます。"
+			},
+			{
+				"question": "リソースのオーバーヘッドは大きいですか？",
+				"answer": "すべてのウィジェットは共通の WebView2 環境下で実行されるため、実質的には最新のブラウザ（Edge 等）の数タブ程度の軽いメモリ消費で済みます。"
+			},
+			{
+				"question": "PowerShell 連携はどのようなものですか？",
+				"answer": "限定的な JavaScript API をブリッジとして使用し、ホストプログラム側に安全にスクリプトの実行を依頼し、その結果を取得できます。"
+			},
+			{
+				"question": "PC 起動時に自動で立ち上がりますか？",
+				"answer": "はい。自動起動を設定すれば、前回の構成やウィジェットの位置をそのまま復元して起動します。"
+			}
+		],
+		"overviewParagraphs": [
+			"素早いウェブフロントエンド開発の世界と、頑健なネイティブ Windows アーキテクチャを繋ぎます。",
+			"邪魔な機能を省き、あなたのマイクロ ツールがいつでも画面上で機能するように設計しました。"
+		],
+		"overviewScreenshots": [
+			{
+				"src": "/app_screenshots/page_home.png",
+				"alt": "メイン ウィジェット ライブラリと起動画面"
+			},
+			{
+				"src": "/app_screenshots/page_settings.png",
+				"alt": "詳細なアプリケーション設定画面"
+			},
+			{
+				"src": "/app_screenshots/page_about.png",
+				"alt": "作者情報とライセンスの詳細"
+			}
+		]
+	}
+}

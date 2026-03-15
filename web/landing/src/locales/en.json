@@ -1,0 +1,356 @@
+{
+	"meta": {
+		"locale": "en",
+		"ogLocale": "en_US"
+	},
+	"seo": {
+		"title": "HTWind | Windows Desktop Widget Host",
+		"description": "HTWind is an open-source Windows desktop widget host for HTML widgets, manifest packages, and controlled PowerShell tooling.",
+		"openGraphTitle": "HTWind | Windows Desktop Widget Host",
+		"openGraphDescription": "Build a cleaner Windows desktop with HTML widgets, package imports, and native-feeling workflow controls.",
+		"twitterTitle": "HTWind | Windows Desktop Widget Host",
+		"twitterDescription": "Open-source Windows widget host with HTML widgets, manifest packages, and PowerShell integration.",
+		"imageAlt": "HTWind desktop screenshot with widgets on Windows",
+		"jsonLdDescription": "HTWind is a customizable HTML-based widget host for Windows desktops."
+	},
+	"languageSelector": {
+		"label": "Language",
+		"ariaLabel": "Select page language",
+		"options": {
+			"en": "English",
+			"tr": "Türkçe",
+			"hi": "हिन्दी",
+			"zh": "中文",
+			"de": "Deutsch",
+			"fr": "Français",
+			"ru": "Русский",
+			"ar": "العربية",
+			"ja": "日本語",
+			"es": "Español",
+			"pt": "Português",
+			"it": "Italiano",
+			"ko": "한국어",
+			"id": "Bahasa Indonesia",
+			"vi": "Tiếng Việt",
+			"nl": "Nederlands",
+			"pl": "Polski",
+			"uk": "Українська"
+		}
+	},
+	"banner": {
+		"text": "Open-source Windows widget host for HTML widgets, package imports, and controlled PowerShell tools"
+	},
+	"hero": {
+		"eyebrow": "Windows-native desktop widget platform",
+		"heading": "Build a cleaner Windows desktop with HTML widgets",
+		"description": "HTWind gives you a polished host for HTML widgets, package imports, always-on desktop tools, and controlled PowerShell actions without leaving a native Windows workflow.",
+		"includedLabel": "Included",
+		"proofPoints": [
+			"HTML, CSS, and JavaScript widgets rendered with WebView2",
+			"Manifest-based packages for asset-backed and multi-widget setups",
+			"Controlled PowerShell actions for diagnostics and desktop workflows"
+		],
+		"githubButton": "View on GitHub",
+		"releaseNotesButton": "Release notes",
+		"communityNotice": "The installer is the recommended path for most users. Portable ZIP and Microsoft Store delivery stay available when you need a different deployment model.",
+		"releaseCard": {
+			"title": "Latest release",
+			"loadingLabel": "Loading",
+			"channels": [
+				{
+					"name": "Installer",
+					"description": "Recommended for the cleanest Windows setup."
+				},
+				{
+					"name": "Portable ZIP",
+					"description": "Keep a self-contained copy for manual deployment."
+				},
+				{
+					"name": "Microsoft Store",
+					"description": "Good fit for managed installs and quick updates."
+				}
+			],
+			"storeAriaLabel": "Get it from Microsoft Store",
+			"storeImageAlt": "Get it from Microsoft Store",
+			"communityPrefix": "Share widgets in",
+			"communityGithubLabel": "GitHub Discussions",
+			"communityConnector": "and",
+			"communityRedditLabel": "Reddit",
+			"communitySuffix": "."
+		}
+	},
+	"downloadMenu": {
+		"loading": "Checking downloads...",
+		"empty": "No downloads available",
+		"choose": "Choose a download ({count})",
+		"title": "Recommended: installer first",
+		"hint": "Use the installer for the smoothest setup. Portable and package formats are kept available below.",
+		"ariaLabel": "Latest release asset downloads",
+		"descriptions": {
+			"installer": "Recommended installer for most Windows setups",
+			"portable": "Portable package for manual extraction",
+			"package": "Windows package format for managed installs",
+			"other": "Additional release asset"
+		},
+		"unknownSize": "Unknown size"
+	},
+	"release": {
+		"loadingLatest": "Loading latest release...",
+		"unavailable": "Release info unavailable",
+		"checkFeed": "Check release feed for updates",
+		"publishedOn": "Published {date}",
+		"unknownDate": "Unknown release date"
+	},
+	"sections": {
+		"highlights": {
+			"heading": "Why HTWind feels production-ready",
+			"lead": "The platform is built for day-to-day desktop use, not just quick demos. These capabilities are what make the workflow feel reliable on Windows.",
+			"ariaLabel": "Project highlights"
+		},
+		"overview": {
+			"heading": "See the desktop experience before you install",
+			"screenshotHint": "Open any screenshot for a larger, zoomable preview.",
+			"viewLarger": "View larger {alt}"
+		},
+		"features": {
+			"heading": "Core product capabilities",
+			"lead": "HTWind combines a native-feeling shell with a practical toolchain for building, packaging, and running desktop widgets."
+		},
+		"widgets": {
+			"heading": "Start from built-in widgets, then customize",
+			"lead": "HTWind ships with practical starting points for clocks, diagnostics, file tools, and quick actions. You can keep them as-is or evolve them into richer packages with local assets.",
+			"documentationPrefix": "For complete details, check the",
+			"documentationLinkLabel": "repository documentation",
+			"documentationSuffix": ".",
+			"promptPrefix": "Want to generate widgets with LLM assistance? Start with the",
+			"promptLabel": "HTWind Widget Generator Prompt",
+			"promptConnector": "or the",
+			"sharedPromptLabel": "shared prompts.chat version",
+			"promptSuffix": "to produce HTWind-compatible widgets quickly, then expand them into asset-backed or multi-widget packages when the workflow grows."
+		},
+		"packages": {
+			"heading": "Manifest packages for multiple widgets and local assets",
+			"flowHeading": "Typical package flow",
+			"schemaPrefix": "Start from the",
+			"schemaLabel": "schema file",
+			"schemaConnector": "for the manifest contract, or inspect the",
+			"exampleLabel": "multi-widget example package",
+			"schemaSuffix": "to see how HTWind declares multiple widget folders inside a single importable bundle."
+		},
+		"useCases": {
+			"heading": "Common HTWind workflows",
+			"lead": "These examples show where HTWind fits best: lightweight desktop productivity, technical monitoring, and repeatable internal tooling."
+		},
+		"community": {
+			"heading": "Share widgets, learn patterns, and get feedback",
+			"lead": "HTWind grows best when widgets are shared with clear screenshots, setup notes, and real workflow context. Discussions and Reddit are the main places to publish releases, compare ideas, and get practical feedback from other users.",
+			"visitPrefix": "Visit",
+			"githubLinkLabel": "HTWind GitHub Discussions",
+			"visitConnector": "and",
+			"redditLinkLabel": "r/HTWind on Reddit",
+			"visitSuffix": "to publish widgets, request features, report issues, and share desktop setups."
+		},
+		"faq": {
+			"heading": "HTWind FAQ",
+			"lead": "Quick answers about installation, customization, packaging, and automation support."
+		},
+		"support": {
+			"heading": "Support the developer",
+			"lead": "If HTWind improves your daily workflow, direct support helps keep the project maintained, documented, and shipped.",
+			"button": "Open support page"
+		}
+	},
+	"footer": {
+		"github": "GitHub",
+		"releases": "Releases",
+		"discussions": "Discussions"
+	},
+	"lightbox": {
+		"close": "Close"
+	},
+	"errors": {
+		"missingRoot": "Root element with id 'root' was not found."
+	},
+	"content": {
+		"widgets": [
+			{
+				"id": "clock",
+				"label": "clock"
+			},
+			{
+				"id": "weather",
+				"label": "weather"
+			},
+			{
+				"id": "network-tools",
+				"label": "network-tools"
+			},
+			{
+				"id": "process-manager",
+				"label": "process-manager"
+			},
+			{
+				"id": "clipboard-studio",
+				"label": "clipboard-studio"
+			},
+			{
+				"id": "file-explorer",
+				"label": "file-explorer"
+			},
+			{
+				"id": "dns-lookup",
+				"label": "dns-lookup"
+			},
+			{
+				"id": "powershell-console",
+				"label": "powershell-console"
+			}
+		],
+		"highlights": [
+			{
+				"value": "20+",
+				"label": "Built-in templates"
+			},
+			{
+				"value": "Hot Reload",
+				"label": "Live preview while editing widgets"
+			},
+			{
+				"value": "WebView2",
+				"label": "Native Windows rendering stack"
+			},
+			{
+				"value": "Open Source",
+				"label": "GPL 3.0 licensed project"
+			},
+			{
+				"value": "Smart Suppression",
+				"label": "Display-aware hide modes for fullscreen and maximized apps",
+				"spanTwo": true
+			},
+			{
+				"value": "Built-in Editor",
+				"label": "Create and edit widgets inside the app",
+				"spanTwo": true
+			},
+			{
+				"value": "Manifest Packages",
+				"label": "Ship asset-backed or multi-widget bundles with one manifest",
+				"spanTwo": true
+			},
+			{
+				"value": "PowerShell API",
+				"label": "Host-side automation bridge",
+				"spanTwo": true
+			}
+		],
+		"featureCards": [
+			{
+				"title": "HTML Widgets on Desktop",
+				"description": "Build desktop widgets with HTML, CSS, and JavaScript, then run them in a native-feeling Windows host with support for single files and packaged folders.",
+				"icon": "html"
+			},
+			{
+				"title": "PowerShell Integration",
+				"description": "Run approved PowerShell actions through host APIs for diagnostics, automation, and system tasks without turning the widget layer into an unsafe shell.",
+				"icon": "powershell"
+			},
+			{
+				"title": "Windows Native Feel",
+				"description": "Stay aligned with modern Windows workflows through tray behavior, pin-on-top controls, state persistence, and display-aware suppression for fullscreen or maximized apps.",
+				"icon": "windows"
+			}
+		],
+		"workflowUseCases": [
+			"Keep clocks, weather, timers, and quick actions visible during focused work sessions.",
+			"Run network checks, DNS lookups, and process monitoring widgets during development or support work.",
+			"Use controlled PowerShell actions for diagnostics and repetitive system tasks.",
+			"Build internal HTML widgets that expose team-specific operational tools on the desktop.",
+			"Package dashboards, timers, and status boards as one manifest so teams can import a full setup in one step."
+		],
+		"widgetPackageParagraphs": [
+			"HTWind supports manifest-based widget packages through htwind.widget.json, so a widget is no longer limited to one HTML file. You can ship full folders with CSS, JavaScript, images, fonts, and other local assets under one explicit manifest.",
+			"The same format can describe multiple widgets in one import, which makes it practical for curated bundles, internal toolkits, and reusable desktop setups that should install together.",
+			"Import and export stay simple: bring in a standalone HTML widget, import a manifest package, export one managed widget, or export the full workspace for sharing and backup."
+		],
+		"widgetPackageCapabilities": [
+			{
+				"title": "Asset-backed widgets",
+				"description": "Package widgets with CSS, JavaScript, images, fonts, and other local assets instead of flattening everything into one file."
+			},
+			{
+				"title": "Multiple widgets per package",
+				"description": "Describe several widget folders inside one manifest so HTWind can import a complete dashboard or toolkit in one action."
+			},
+			{
+				"title": "Schema-guided structure",
+				"description": "Use the included schema and example package as a reference for consistent relative paths, entry files, and asset declarations."
+			},
+			{
+				"title": "Import and export ready",
+				"description": "Move from development to sharing without repackaging by hand: import manifests directly, export one widget, or export the full workspace."
+			}
+		],
+		"widgetPackageSteps": [
+			"Create a package root with htwind.widget.json at the top level.",
+			"Add one or more widget folders and point each widget entry to its HTML file through relative paths.",
+			"List the non-entry assets for each widget so the package stays explicit and portable.",
+			"Import the manifest into HTWind, or export an existing widget or workspace to generate a reusable package layout."
+		],
+		"communitySharingSteps": [
+			"Share widget releases in GitHub Discussions and highlight them in the HTWind Reddit community.",
+			"Add a short summary, screenshots, and the main Windows workflow your widget improves.",
+			"Include setup notes, required permissions, and any host API or PowerShell details.",
+			"Publish update notes so users can track versions, fixes, and feature changes."
+		],
+		"faqItems": [
+			{
+				"question": "What is HTWind used for?",
+				"answer": "HTWind manages and displays HTML-based desktop widgets on Windows, making it easier to keep diagnostics, shortcuts, and useful system context visible while you work."
+			},
+			{
+				"question": "Can I build my own widgets?",
+				"answer": "Yes. You can create custom widgets with HTML, CSS, and JavaScript, then package them as a single file, an asset-backed folder, or a manifest package with one or many widgets."
+			},
+			{
+				"question": "What is htwind.widget.json used for?",
+				"answer": "htwind.widget.json is the widget package manifest. It defines package metadata and one or more widgets, including each widget's relative folder, entry HTML file, and declared assets.",
+				"spanTwoColumns": true
+			},
+			{
+				"question": "Does HTWind support PowerShell automation?",
+				"answer": "Yes. HTWind includes host-side APIs that can execute approved PowerShell commands for diagnostics and controlled desktop actions."
+			},
+			{
+				"question": "Can widgets auto-hide while I use fullscreen or maximized apps?",
+				"answer": "Yes. In Settings, you can enable fullscreen suppression and a separate maximized-app suppression mode. Both work per display and temporarily close widget windows without changing saved visibility state."
+			},
+			{
+				"question": "Is HTWind open source?",
+				"answer": "Yes. HTWind is published on GitHub under the GPL 3.0 license for personal use, experimentation, and community-driven improvement."
+			},
+			{
+				"question": "Are contributions welcome?",
+				"answer": "Yes. You can open issues, share ideas in Discussions, and submit pull requests for widgets, templates, documentation, and core app improvements."
+			}
+		],
+		"overviewParagraphs": [
+			"HTWind combines native Windows behavior with flexible web content. HTML widgets render through WebView2, which makes it straightforward to build desktop tools that stay visible while you work.",
+			"The app is built for users who want a lightweight but extensible widget layer: tray integration, pin-on-top controls, state persistence, packaged widgets, and display-aware suppression all help turn a standard Windows desktop into a more useful workspace."
+		],
+		"overviewScreenshots": [
+			{
+				"src": "/app_screenshots/page_home.png",
+				"alt": "HTWind Home - Widget Library"
+			},
+			{
+				"src": "/app_screenshots/page_settings.png",
+				"alt": "HTWind Settings - Customization"
+			},
+			{
+				"src": "/app_screenshots/page_about.png",
+				"alt": "HTWind About - Version Info"
+			}
+		]
+	}
+}

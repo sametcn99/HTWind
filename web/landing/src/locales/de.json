@@ -1,0 +1,356 @@
+{
+	"meta": {
+		"locale": "de",
+		"ogLocale": "de_DE"
+	},
+	"seo": {
+		"title": "HTWind | Windows Desktop-Widget-Host",
+		"description": "HTWind ist ein Open-Source Windows Desktop-Widget-Host für HTML-Widgets, Manifest-Pakete und kontrollierte PowerShell-Tools.",
+		"openGraphTitle": "HTWind | Windows Desktop-Widget-Host",
+		"openGraphDescription": "Bauen Sie einen sauberen Windows-Desktop mit HTML-Widgets, Paketimporten und nativen Workflow-Steuerelementen.",
+		"twitterTitle": "HTWind | Windows Desktop-Widget-Host",
+		"twitterDescription": "Open-Source Windows Widget-Host mit HTML-Widgets, Manifest-Paketen und PowerShell-Integration.",
+		"imageAlt": "HTWind Desktop-Screenshot mit Widgets auf Windows",
+		"jsonLdDescription": "HTWind ist ein anpassbarer HTML-basierter Widget-Host für Windows Desktops."
+	},
+	"languageSelector": {
+		"label": "Sprache",
+		"ariaLabel": "Seitensprache auswählen",
+		"options": {
+			"en": "English",
+			"tr": "Türkçe",
+			"hi": "हिन्दी",
+			"zh": "中文",
+			"de": "Deutsch",
+			"fr": "Français",
+			"ru": "Русский",
+			"ar": "العربية",
+			"ja": "日本語",
+			"es": "Español",
+			"pt": "Português",
+			"it": "Italiano",
+			"ko": "한국어",
+			"id": "Bahasa Indonesia",
+			"vi": "Tiếng Việt",
+			"nl": "Nederlands",
+			"pl": "Polski",
+			"uk": "Українська"
+		}
+	},
+	"banner": {
+		"text": "Open-Source Windows Widget-Host für HTML-Widgets, Paket-Importe und gesteuerte PowerShell-Tools"
+	},
+	"hero": {
+		"eyebrow": "Windows-native Desktop-Widget-Plattform",
+		"heading": "Gestalten Sie einen sauberen Windows-Desktop durch HTML-Widgets",
+		"description": "HTWind bietet Ihnen einen erstklassigen Host für HTML-Widgets, Paket-Importe, On-Desktop-Tools und gesteuerte PowerShell-Aktionen ohne den nativen Windows-Workflow zu verlassen.",
+		"includedLabel": "Enthalten",
+		"proofPoints": [
+			"HTML, CSS und JavaScript Widgets mit WebView2 rendern",
+			"Manifest-basierte Pakete für Asset-gestützte Setups",
+			"Kontrollierte PowerShell-Aktionen für Diagnose und Steuerung"
+		],
+		"githubButton": "Auf GitHub ansehen",
+		"releaseNotesButton": "Versionshinweise",
+		"communityNotice": "Das Installationsprogramm ist der empfohlene Weg für die meisten Benutzer. Portable ZIP- oder Microsoft Store-Formate sind ebenfalls verfügbar.",
+		"releaseCard": {
+			"title": "Neueste Version",
+			"loadingLabel": "Lädt",
+			"channels": [
+				{
+					"name": "Installer",
+					"description": "Empfohlen für die sauberste Windows-Einrichtung."
+				},
+				{
+					"name": "Portable ZIP",
+					"description": "Ein eigenständiges Programm zur manuellen Nutzung."
+				},
+				{
+					"name": "Microsoft Store",
+					"description": "Perfekt für verwaltete Installationen und schnelle Updates."
+				}
+			],
+			"storeAriaLabel": "Im Microsoft Store herunterladen",
+			"storeImageAlt": "Erhältlich im Microsoft Store",
+			"communityPrefix": "Teilen Sie Ihre Widgets in",
+			"communityGithubLabel": "GitHub Discussions",
+			"communityConnector": "und",
+			"communityRedditLabel": "Reddit",
+			"communitySuffix": "."
+		}
+	},
+	"downloadMenu": {
+		"loading": "Prüfe Downloads...",
+		"empty": "Keine Downloads verfügbar",
+		"choose": "Wählen Sie einen Download ({count})",
+		"title": "Empfohlen: Zuerst Installer probieren",
+		"hint": "Benutzen Sie den Installer für maximale Bequemlichkeit. Andere Formate sind unten.",
+		"ariaLabel": "Download-Elemente",
+		"descriptions": {
+			"installer": "Für die Mehrheit der Nutzer empfohlener Installer",
+			"portable": "Kompaktes ZIP zur manuellen Entpackung",
+			"package": "Windows App Package-Format",
+			"other": "Weiteres Release"
+		},
+		"unknownSize": "Zeige Größe"
+	},
+	"release": {
+		"loadingLatest": "Lade neueste Version...",
+		"unavailable": "Versionsinformationen fehlen",
+		"checkFeed": "Überprüfen Sie den Feed auf Aktualisierungen",
+		"publishedOn": "Veröffentlicht am {date}",
+		"unknownDate": "Unbekanntes Datum"
+	},
+	"sections": {
+		"highlights": {
+			"heading": "Warum HTWind produktivitätsreif ist",
+			"lead": "Die Plattform ist auf den täglichen Desktop-Einsatz ausgelegt, nicht nur auf schnelle Demos.",
+			"ariaLabel": "Projekt-Highlights"
+		},
+		"overview": {
+			"heading": "Vorschau des Desktops ansehen",
+			"screenshotHint": "Öffnen Sie einen Screenshot für eine zoomfähige Vorschau.",
+			"viewLarger": "Vergrößern {alt}"
+		},
+		"features": {
+			"heading": "Kernfunktionen des Produkts",
+			"lead": "HTWind kombiniert eine native Shell mit praktischer Steuerung rund um Web-Technologien."
+		},
+		"widgets": {
+			"heading": "Nutzen Sie Vorlagen und passen Sie diese an",
+			"lead": "HTWind bringt Uhren, System-Diagnosen und Skript-Werkzeuge mit, die Sie beliebig ändern können.",
+			"documentationPrefix": "Details finden Sie in der",
+			"documentationLinkLabel": "Dokumentation",
+			"documentationSuffix": ".",
+			"promptPrefix": "Möchten Sie Widgets per LLM erstellen lassen? Nutzen Sie die",
+			"promptLabel": "HTWind Prompt-Hilfe",
+			"promptConnector": "oder die",
+			"sharedPromptLabel": "geteilten Vorlagen",
+			"promptSuffix": "für einen bequemen Start."
+		},
+		"packages": {
+			"heading": "Manifest-Pakete für lokale Assets",
+			"flowHeading": "Kompletter Workflow",
+			"schemaPrefix": "Schauen Sie sich die",
+			"schemaLabel": "Schema-Datei",
+			"schemaConnector": "an oder probieren Sie das",
+			"exampleLabel": "Demo-Paket",
+			"schemaSuffix": "um zu lernen, wie viele Widgets verpackt werden."
+		},
+		"useCases": {
+			"heading": "Einsatzgebiete von HTWind",
+			"lead": "Diese Beispiele zeigen, wie ideal HTWind in Überwachungs- und Entwicklungs-Prozesse passt."
+		},
+		"community": {
+			"heading": "Austauschen und Feedback einholen",
+			"lead": "HTWind wächst, wenn Anwender reale Workflow-Ideen teilen.",
+			"visitPrefix": "Besuchen Sie die",
+			"githubLinkLabel": "GitHub Discussions",
+			"visitConnector": "und",
+			"redditLinkLabel": "r/HTWind auf Reddit",
+			"visitSuffix": "für Ideenaustausch."
+		},
+		"faq": {
+			"heading": "Häufige Fragen",
+			"lead": "Schnelle Antworten zur Anpassung und Paketierung."
+		},
+		"support": {
+			"heading": "Projekt unterstützen",
+			"lead": "Ihre direkte Unterstützung hilft dem Entwickler, das Produkt regelmäßig zu aktualisieren.",
+			"button": "Support-Seite öffnen"
+		}
+	},
+	"footer": {
+		"github": "GitHub",
+		"releases": "Releases",
+		"discussions": "Diskussionen"
+	},
+	"lightbox": {
+		"close": "Schließen"
+	},
+	"errors": {
+		"missingRoot": "Element 'root' nicht gefunden."
+	},
+	"content": {
+		"widgets": [
+			{
+				"id": "clock",
+				"label": "Uhr"
+			},
+			{
+				"id": "weather",
+				"label": "Wetter"
+			},
+			{
+				"id": "network-tools",
+				"label": "Netzwerktools"
+			},
+			{
+				"id": "process-manager",
+				"label": "Prozessmanager"
+			},
+			{
+				"id": "clipboard-studio",
+				"label": "Zwischenablage"
+			},
+			{
+				"id": "file-explorer",
+				"label": "Dateiexplorer"
+			},
+			{
+				"id": "dns-lookup",
+				"label": "DNS-Abfrage"
+			},
+			{
+				"id": "powershell-console",
+				"label": "PowerShell"
+			}
+		],
+		"highlights": [
+			{
+				"value": "20+",
+				"label": "Eingebaute Web-Vorlagen"
+			},
+			{
+				"value": "Hot Reload",
+				"label": "Widgets live beim Editieren ansehen"
+			},
+			{
+				"value": "WebView2",
+				"label": "Solides Edge-basiertes Rendering"
+			},
+			{
+				"value": "Open Source",
+				"label": "Lizenziert nach GPL 3.0"
+			},
+			{
+				"value": "Smart Hide",
+				"label": "Versteckt Widgets bei Vollbild-Apps",
+				"spanTwo": true
+			},
+			{
+				"value": "Editor drin",
+				"label": "Einfaches Ändern direkt im Programm",
+				"spanTwo": true
+			},
+			{
+				"value": "Manifest",
+				"label": "Ressourcen bündeln in einer Datei",
+				"spanTwo": true
+			},
+			{
+				"value": "Host API",
+				"label": "Ausführen von PowerShell via Widget",
+				"spanTwo": true
+			}
+		],
+		"featureCards": [
+			{
+				"title": "Html direkt auf dem Bildschirm",
+				"description": "Erstellen und verwalten Sie Widgets in CSS und Javascript und überlassen Sie den Fenster-Kram HTWind.",
+				"icon": "html"
+			},
+			{
+				"title": "Gekapselte PowerShell",
+				"description": "Nutzen Sie eine sichere Brücke, um Befehle direkt in Windows zu rufen.",
+				"icon": "powershell"
+			},
+			{
+				"title": "Pures Windows-Gefühl",
+				"description": "Pin-on-Top, Standby-Speicherung und Tray-Menüs für optimalen Desktop-Flow.",
+				"icon": "windows"
+			}
+		],
+		"workflowUseCases": [
+			"Uhren und Status-Icons während Meetings im Auge behalten.",
+			"Ports und Skripte beim Arbeiten im Code checken.",
+			"Kurze Textbausteine lokal bereithalten und ablegen.",
+			"Die Serverdiagnose ins Dashboard-Format wandeln.",
+			"Exportierte Dashboards an Arbeitskollegen senden."
+		],
+		"widgetPackageParagraphs": [
+			"Dank htwind.widget.json können Assets (Bilder, JS, CSS) modular gehalten werden.",
+			"Teilen Sie komplette Toolkit-Sammlungen in einzelnen Archiven.",
+			"Exportieren, kopieren und einfügen für schnelle Backups."
+		],
+		"widgetPackageCapabilities": [
+			{
+				"title": "Unterstützte Assets",
+				"description": "Laden Sie Grafiken und Styles ohne externe CDNs direkt vom PC."
+			},
+			{
+				"title": "Multi-Widget-Sammlung",
+				"description": "Fassen Sie 5 kleine Tools in nur einen Manifest-Import zusammen."
+			},
+			{
+				"title": "JSON-Schema",
+				"description": "Auto-Vervollständigung beim Tippen garantiert schnelle Ergebnisse ohne Fehler."
+			},
+			{
+				"title": "Export ready",
+				"description": "Sie bearbeiten das Widget visuell und exportieren das ganze Setup per Klick."
+			}
+		],
+		"widgetPackageSteps": [
+			"Strukturieren Sie einen Ordner mit der JSON-Manifest-Datei.",
+			"Legen Sie Ordner dazu, welche die index.html beinhalten.",
+			"Geben Sie im JSON Pfade dafür an.",
+			"Laden Sie diesen Ordner in der Import-Sektion der App hoch."
+		],
+		"communitySharingSteps": [
+			"Starten Sie den Austausch mit klaren Reddit- oder GitHub-Posts.",
+			"Schildern Sie in drei Sätzen, wie das Widget bei der Arbeit hilft.",
+			"Listen Sie alle benötigten Berechtigungen auf.",
+			"Notieren Sie Versionen, wenn Sie Updates präsentieren."
+		],
+		"faqItems": [
+			{
+				"question": "Kostet das etwas?",
+				"answer": "Nein, es ist völlig frei und Open-Source."
+			},
+			{
+				"question": "Was brauche ich um Widgets zu bauen?",
+				"answer": "Ganz simple HTML / Javascript Kenntnisse genügen vollauf."
+			},
+			{
+				"question": "Lässt sich das mit meinen Vollbildspielen vereinbaren?",
+				"answer": "Ja, es gibt ein Suppression-System das genau dafür sorgt, dass Widgets verschwinden, wenn der Modus aktiviert ist.",
+				"spanTwoColumns": true
+			},
+			{
+				"question": "Ist PowerShell sicher dort drin?",
+				"answer": "Ja. Nur Widgets, denen Sie Admin-Rechte oder Host-Rechte zusichern, dürfen Skripte ausführen."
+			},
+			{
+				"question": "Wie installiert man es?",
+				"answer": "Manuell entpacken oder unseren Standard Installer nutzen."
+			},
+			{
+				"question": "Geht Multimonitor?",
+				"answer": "Ohne Probleme."
+			},
+			{
+				"question": "Braucht es viel Arbeitsspeicher?",
+				"answer": "Nur unwesentlich mehr als ein offener, stiller Browser Tab, dank nativer Chromium / Edge Verzahnung."
+			}
+		],
+		"overviewParagraphs": [
+			"Das .NET und WPF Backend liefert maximale Stabilität.",
+			"Kombiniert mit WebView2 erhalten Sie ein Produkt, das Web-Grafik mit OS-Features paart."
+		],
+		"overviewScreenshots": [
+			{
+				"src": "/app_screenshots/page_home.png",
+				"alt": "HTWind Homepage Übersicht"
+			},
+			{
+				"src": "/app_screenshots/page_settings.png",
+				"alt": "Einstellungsmenü Oberfläche"
+			},
+			{
+				"src": "/app_screenshots/page_about.png",
+				"alt": "Infoansicht"
+			}
+		]
+	}
+}

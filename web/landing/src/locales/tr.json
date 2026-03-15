@@ -1,0 +1,356 @@
+{
+	"meta": {
+		"locale": "tr",
+		"ogLocale": "tr_TR"
+	},
+	"seo": {
+		"title": "HTWind | Windows Masaustu Widget Sunucusu",
+		"description": "HTWind; HTML widget'lari, manifest paketleri ve kontrollu PowerShell araclari icin acik kaynakli bir Windows masaustu widget sunucusudur.",
+		"openGraphTitle": "HTWind | Windows Masaustu Widget Sunucusu",
+		"openGraphDescription": "HTML widget'lari, paket ice aktarma ve yerel hissettiren is akisi kontrolleriyle daha duzenli bir Windows masaustu kurun.",
+		"twitterTitle": "HTWind | Windows Masaustu Widget Sunucusu",
+		"twitterDescription": "HTML widget'lari, manifest paketleri ve PowerShell entegrasyonu iceren acik kaynakli Windows widget sunucusu.",
+		"imageAlt": "Windows uzerinde widget'larla HTWind masaustu goruntusu",
+		"jsonLdDescription": "HTWind, Windows masaustleri icin ozellestirilebilir HTML tabanli bir widget sunucusudur."
+	},
+	"languageSelector": {
+		"label": "Dil",
+		"ariaLabel": "Sayfa dilini sec",
+		"options": {
+			"en": "English",
+			"tr": "Türkçe",
+			"hi": "हिन्दी",
+			"zh": "中文",
+			"de": "Deutsch",
+			"fr": "Français",
+			"ru": "Русский",
+			"ar": "العربية",
+			"ja": "日本語",
+			"es": "Español",
+			"pt": "Português",
+			"it": "Italiano",
+			"ko": "한국어",
+			"id": "Bahasa Indonesia",
+			"vi": "Tiếng Việt",
+			"nl": "Nederlands",
+			"pl": "Polski",
+			"uk": "Українська"
+		}
+	},
+	"banner": {
+		"text": "HTML widget'lari, paket ice aktarma ve kontrollu PowerShell araclari icin acik kaynakli Windows widget sunucusu"
+	},
+	"hero": {
+		"eyebrow": "Windows'a yerel his veren masaustu widget platformu",
+		"heading": "HTML widget'lariyla daha temiz bir Windows masaustu olusturun",
+		"description": "HTWind; HTML widget'lari, paket ice aktarma, her zaman gorunen masaustu araclari ve kontrollu PowerShell eylemleri icin yerel Windows is akisindan cikmadan kullanabileceginiz duzenli bir sunucu sunar.",
+		"includedLabel": "Dahil",
+		"proofPoints": [
+			"WebView2 ile islenen HTML, CSS ve JavaScript widget'lari",
+			"Varlik destekli ve cok widget'li kurulumlar icin manifest tabanli paketler",
+			"Teshis ve masaustu is akislari icin kontrollu PowerShell eylemleri"
+		],
+		"githubButton": "GitHub'da gor",
+		"releaseNotesButton": "Surum notlari",
+		"communityNotice": "Cogu kullanici icin onerilen yol yukleyicidir. Farkli bir dagitim modeli gerektiginde tasinabilir ZIP ve Microsoft Store secenegi kullanilmaya devam eder.",
+		"releaseCard": {
+			"title": "Son surum",
+			"loadingLabel": "Yukleniyor",
+			"channels": [
+				{
+					"name": "Kurulum paketi",
+					"description": "En temiz Windows kurulumu icin onerilir."
+				},
+				{
+					"name": "Tasinabilir ZIP",
+					"description": "Elle dagitim icin kendinden yeterli bir kopya tutun."
+				},
+				{
+					"name": "Microsoft Store",
+					"description": "Yonetilen kurulumlar ve hizli guncellemeler icin uygundur."
+				}
+			],
+			"storeAriaLabel": "Microsoft Store'dan edin",
+			"storeImageAlt": "Microsoft Store'dan edin",
+			"communityPrefix": "Widget'lari burada paylasin:",
+			"communityGithubLabel": "GitHub Discussions",
+			"communityConnector": "ve",
+			"communityRedditLabel": "Reddit",
+			"communitySuffix": "."
+		}
+	},
+	"downloadMenu": {
+		"loading": "Indirmeler kontrol ediliyor...",
+		"empty": "Indirme bulunamadi",
+		"choose": "Indirme sec ({count})",
+		"title": "Onerilen: once kurulum paketi",
+		"hint": "En sorunsuz kurulum icin yukleyiciyi kullanin. Tasinabilir ve paket formatlari asagida yer almaya devam eder.",
+		"ariaLabel": "Son surum varlik indirmeleri",
+		"descriptions": {
+			"installer": "Cogu Windows kurulumu icin onerilen yukleyici",
+			"portable": "Elle cikarma icin tasinabilir paket",
+			"package": "Yonetilen kurulumlar icin Windows paket formati",
+			"other": "Ek surum dosyasi"
+		},
+		"unknownSize": "Boyut bilinmiyor"
+	},
+	"release": {
+		"loadingLatest": "Son surum yukleniyor...",
+		"unavailable": "Surum bilgisi kullanilamiyor",
+		"checkFeed": "Guncellemeler icin surum akisina bakin",
+		"publishedOn": "Yayin tarihi: {date}",
+		"unknownDate": "Surum tarihi bilinmiyor"
+	},
+	"sections": {
+		"highlights": {
+			"heading": "HTWind neden uretime hazir hissettiriyor",
+			"lead": "Platform yalnizca hizli demolar icin degil, gunluk masaustu kullanimi icin tasarlandi. Is akisini Windows'ta guvenilir hissettiren yetenekler bunlar.",
+			"ariaLabel": "Proje one cikanlar"
+		},
+		"overview": {
+			"heading": "Kurulumdan once masaustu deneyimini gorun",
+			"screenshotHint": "Daha buyuk ve yakinlastirilabilir onizleme icin herhangi bir ekran goruntusunu acin.",
+			"viewLarger": "Daha buyuk gor: {alt}"
+		},
+		"features": {
+			"heading": "Temel urun yetenekleri",
+			"lead": "HTWind; yerel hissettiren bir kabugu, masaustu widget'larini gelistirmek, paketlemek ve calistirmak icin pratik bir arac zinciriyle birlestirir."
+		},
+		"widgets": {
+			"heading": "Yerlesik widget'larla baslayin, sonra ozellestirin",
+			"lead": "HTWind; saatler, teshis araclari, dosya araclari ve hizli eylemler icin pratik baslangic noktalariyla gelir. Isterseniz oldugu gibi kullanin, isterseniz yerel varliklarla daha zengin paketlere donusturun.",
+			"documentationPrefix": "Tum ayrintilar icin",
+			"documentationLinkLabel": "depo dokumantasyonuna",
+			"documentationSuffix": "goz atin.",
+			"promptPrefix": "LLM yardimiyla widget uretmek mi istiyorsunuz?",
+			"promptLabel": "HTWind Widget Generator Prompt",
+			"promptConnector": "veya",
+			"sharedPromptLabel": "paylasilan prompts.chat surumuyla",
+			"promptSuffix": "uyumlu HTWind widget'larini hizlica uretip is akisi buyudukce bunlari varlik destekli ya da cok widget'li paketlere genisletebilirsiniz."
+		},
+		"packages": {
+			"heading": "Birden fazla widget ve yerel varlik icin manifest paketleri",
+			"flowHeading": "Tipik paket akisi",
+			"schemaPrefix": "Manifest sozlesmesi icin",
+			"schemaLabel": "schema dosyasindan",
+			"schemaConnector": "baslayin veya",
+			"exampleLabel": "cok widget'li ornek paketi",
+			"schemaSuffix": "inceleyerek HTWind'in tek bir ice aktarilabilir paket icinde birden fazla widget klasorunu nasil tanimladigini gorun."
+		},
+		"useCases": {
+			"heading": "Yaygin HTWind is akislari",
+			"lead": "Bu ornekler HTWind'in en iyi nerede oturdugunu gosterir: hafif masaustu verimliligi, teknik izleme ve tekrar edilebilir ic araclar."
+		},
+		"community": {
+			"heading": "Widget paylasin, kaliplari ogrenin ve geri bildirim alin",
+			"lead": "HTWind; widget'lar net ekran goruntuleri, kurulum notlari ve gercek is akisi baglami ile paylasildiginda en iyi sekilde buyur. Surum yayinlamak, fikir karsilastirmak ve diger kullanicilardan pratik geri bildirim almak icin ana yerler Discussions ve Reddit'tir.",
+			"visitPrefix": "Sunlari ziyaret edin:",
+			"githubLinkLabel": "HTWind GitHub Discussions",
+			"visitConnector": "ve",
+			"redditLinkLabel": "Reddit'te r/HTWind",
+			"visitSuffix": "widget yayinlamak, ozellik istemek, hata bildirmek ve masaustu kurulumlari paylasmak icin."
+		},
+		"faq": {
+			"heading": "HTWind SSS",
+			"lead": "Kurulum, ozellestirme, paketleme ve otomasyon destegi hakkinda kisa yanitlar."
+		},
+		"support": {
+			"heading": "Gelisticiyi destekleyin",
+			"lead": "HTWind gunluk is akisinizi iyilestiriyorsa dogrudan destek, projenin surdurulmesine, dokumantasyonuna ve yayinlanmasina yardimci olur.",
+			"button": "Destek sayfasini ac"
+		}
+	},
+	"footer": {
+		"github": "GitHub",
+		"releases": "Surumler",
+		"discussions": "Discussions"
+	},
+	"lightbox": {
+		"close": "Kapat"
+	},
+	"errors": {
+		"missingRoot": "'root' kimligine sahip kok oge bulunamadi."
+	},
+	"content": {
+		"widgets": [
+			{
+				"id": "clock",
+				"label": "clock"
+			},
+			{
+				"id": "weather",
+				"label": "weather"
+			},
+			{
+				"id": "network-tools",
+				"label": "network-tools"
+			},
+			{
+				"id": "process-manager",
+				"label": "process-manager"
+			},
+			{
+				"id": "clipboard-studio",
+				"label": "clipboard-studio"
+			},
+			{
+				"id": "file-explorer",
+				"label": "file-explorer"
+			},
+			{
+				"id": "dns-lookup",
+				"label": "dns-lookup"
+			},
+			{
+				"id": "powershell-console",
+				"label": "powershell-console"
+			}
+		],
+		"highlights": [
+			{
+				"value": "20+",
+				"label": "Yerlesik sablon"
+			},
+			{
+				"value": "Hot Reload",
+				"label": "Widget duzenlerken canli onizleme"
+			},
+			{
+				"value": "WebView2",
+				"label": "Yerel Windows gorsel yigin"
+			},
+			{
+				"value": "Acik Kaynak",
+				"label": "GPL 3.0 lisansli proje"
+			},
+			{
+				"value": "Akilli Gizleme",
+				"label": "Tam ekran ve buyutulmus uygulamalar icin ekran farkindalikli gizleme modlari",
+				"spanTwo": true
+			},
+			{
+				"value": "Yerlesik Editor",
+				"label": "Widget'lari uygulama icinde olustur ve duzenle",
+				"spanTwo": true
+			},
+			{
+				"value": "Manifest Paketleri",
+				"label": "Tek bir manifest ile varlik destekli veya cok widget'li paketler dagit",
+				"spanTwo": true
+			},
+			{
+				"value": "PowerShell API",
+				"label": "Sunucu tarafli otomasyon koprusu",
+				"spanTwo": true
+			}
+		],
+		"featureCards": [
+			{
+				"title": "Masaustunde HTML Widget'lari",
+				"description": "HTML, CSS ve JavaScript ile masaustu widget'lari olusturun; sonra bunlari tek dosya ve paketli klasor destegiyle yerel his veren bir Windows sunucusunda calistirin.",
+				"icon": "html"
+			},
+			{
+				"title": "PowerShell Entegrasyonu",
+				"description": "Widget katmanini guvensiz bir kabuga cevirmeden teshis, otomasyon ve sistem gorevleri icin onayli PowerShell eylemlerini sunucu API'leri uzerinden calistirin.",
+				"icon": "powershell"
+			},
+			{
+				"title": "Windows'a Yerel His",
+				"description": "Tepsi davranisi, ustte sabitleme kontrolleri, durum saklama ve tam ekran ya da buyutulmus uygulamalar icin ekran farkindalikli gizleme sayesinde modern Windows is akislariyla uyumlu kalin.",
+				"icon": "windows"
+			}
+		],
+		"workflowUseCases": [
+			"Odakli calisma sirasinda saat, hava durumu, zamanlayici ve hizli eylemleri gorunur tutun.",
+			"Gelisim veya destek calismalari sirasinda ag kontrolleri, DNS sorgulari ve surec izleme widget'larini calistirin.",
+			"Teshis ve tekrar eden sistem gorevleri icin kontrollu PowerShell eylemleri kullanin.",
+			"Takima ozel operasyon araclarini masaustune tasiyan dahili HTML widget'lari olusturun.",
+			"Panolari, zamanlayicilari ve durum ekranlarini tek manifest ile paketleyerek ekiplerin tam kurulumu tek adimda ice aktarmasini saglayin."
+		],
+		"widgetPackageParagraphs": [
+			"HTWind, htwind.widget.json uzerinden manifest tabanli widget paketlerini destekler; boylece bir widget artik tek bir HTML dosyasi ile sinirli kalmaz. CSS, JavaScript, gorseller, fontlar ve diger yerel varliklarla dolu klasorleri tek bir acik manifest altinda dagitabilirsiniz.",
+			"Ayni format tek bir ice aktarma icinde birden fazla widget tanimlayabilir. Bu da secilmis paketler, dahili arac setleri ve birlikte kurulmasi gereken tekrar kullanilabilir masaustu duzenleri icin pratiktir.",
+			"Ice aktarma ve disa aktarma basit kalir: tekil bir HTML widget'i getirin, bir manifest paketi ice aktarın, tek yonetilen widget'i disa aktarın veya paylasim ve yedekleme icin tum calisma alanini disa aktarın."
+		],
+		"widgetPackageCapabilities": [
+			{
+				"title": "Varlik destekli widget'lar",
+				"description": "Her seyi tek dosyada toplamak yerine CSS, JavaScript, gorseller, fontlar ve diger yerel varliklarla birlikte widget paketleyin."
+			},
+			{
+				"title": "Paket basina birden fazla widget",
+				"description": "HTWind'in tek islemle tam bir pano veya arac seti ice aktarabilmesi icin bir manifest icinde birden fazla widget klasoru tanimlayin."
+			},
+			{
+				"title": "Semaya yon veren yapi",
+				"description": "Tutarlı goreli yollar, giris dosyalari ve varlik bildirimleri icin dahil edilen schema ve ornek paketi referans alin."
+			},
+			{
+				"title": "Ice ve disa aktarmaya hazir",
+				"description": "Elle yeniden paketleme yapmadan gelistirmeden paylasima gecin: manifestleri dogrudan ice aktarın, tek widget'i veya tum calisma alanini disa aktarın."
+			}
+		],
+		"widgetPackageSteps": [
+			"En ust seviyede htwind.widget.json bulunan bir paket koku olusturun.",
+			"Bir veya daha fazla widget klasoru ekleyin ve her widget girisini goreli yollarla HTML dosyasina yonlendirin.",
+			"Paketin acik ve tasinabilir kalmasi icin her widget icin giris disi varliklari listeleyin.",
+			"Manifesti HTWind'e ice aktarın ya da tekrar kullanilabilir paket duzeni uretmek icin mevcut bir widget veya calisma alanini disa aktarın."
+		],
+		"communitySharingSteps": [
+			"Widget surumlerini GitHub Discussions'ta paylasin ve HTWind Reddit toplulugunda one cikarın.",
+			"Kisa bir ozet, ekran goruntuleri ve widget'in iyilestirdigi ana Windows is akisini ekleyin.",
+			"Kurulum notlarini, gerekli izinleri ve varsa sunucu API'si veya PowerShell ayrintilarini dahil edin.",
+			"Kullanicilarin surumleri, duzeltmeleri ve ozellik degisikliklerini takip edebilmesi icin guncelleme notlari yayinlayin."
+		],
+		"faqItems": [
+			{
+				"question": "HTWind ne icin kullanilir?",
+				"answer": "HTWind, Windows uzerinde HTML tabanli masaustu widget'larini yonetir ve goruntuler; boylece teshis araclarini, kisayollari ve faydali sistem baglamini calisirken gorunur tutmak kolaylasir."
+			},
+			{
+				"question": "Kendi widget'larimi olusturabilir miyim?",
+				"answer": "Evet. HTML, CSS ve JavaScript ile ozel widget'lar olusturabilir; sonra bunlari tek dosya, varlik destekli klasor veya bir ya da birden fazla widget iceren manifest paketi olarak paketleyebilirsiniz."
+			},
+			{
+				"question": "htwind.widget.json ne icin kullanilir?",
+				"answer": "htwind.widget.json, widget paket manifestidir. Paket metaverisini ve bir ya da daha fazla widget'i tanimlar; her widget'in goreli klasoru, giris HTML dosyasi ve beyan edilen varliklari burada yer alir.",
+				"spanTwoColumns": true
+			},
+			{
+				"question": "HTWind PowerShell otomasyonunu destekliyor mu?",
+				"answer": "Evet. HTWind, teshis ve kontrollu masaustu eylemleri icin onayli PowerShell komutlarini calistirabilen sunucu tarafli API'ler icerir."
+			},
+			{
+				"question": "Tam ekran veya buyutulmus uygulamalari kullanirken widget'lar otomatik gizlenebilir mi?",
+				"answer": "Evet. Ayarlar bolumunden tam ekran gizleme ve ayri bir buyutulmus uygulama gizleme modu etkinlestirebilirsiniz. Her ikisi de ekran bazinda calisir ve kaydedilen gorunurluk durumunu degistirmeden widget pencerelerini gecici olarak kapatir."
+			},
+			{
+				"question": "HTWind acik kaynak mi?",
+				"answer": "Evet. HTWind, kisisel kullanim, deneme ve topluluk odakli gelistirme icin GPL 3.0 lisansi ile GitHub'da yayinlanmistir."
+			},
+			{
+				"question": "Katkilar memnuniyetle karsilanir mi?",
+				"answer": "Evet. Widget'lar, sablonlar, dokumantasyon ve cekirdek uygulama iyilestirmeleri icin issue acabilir, Discussions'ta fikir paylasabilir ve pull request gonderebilirsiniz."
+			}
+		],
+		"overviewParagraphs": [
+			"HTWind, yerel Windows davranisini esnek web icerigiyle birlestirir. HTML widget'lari WebView2 ile islenir; bu da calisirken gorunur kalan masaustu araclari gelistirmeyi kolaylastirir.",
+			"Uygulama, hafif ama genisletilebilir bir widget katmani isteyen kullanicilar icin gelistirildi: tepsi entegrasyonu, ustte sabitleme kontrolleri, durum saklama, paketlenmis widget'lar ve ekran farkindalikli gizleme; standart bir Windows masaustunu daha kullanisli bir calisma alanina donusturur."
+		],
+		"overviewScreenshots": [
+			{
+				"src": "/app_screenshots/page_home.png",
+				"alt": "HTWind Ana Sayfa - Widget Kutuphanesi"
+			},
+			{
+				"src": "/app_screenshots/page_settings.png",
+				"alt": "HTWind Ayarlar - Ozellestirme"
+			},
+			{
+				"src": "/app_screenshots/page_about.png",
+				"alt": "HTWind Hakkinda - Surum Bilgisi"
+			}
+		]
+	}
+}

@@ -20,10 +20,18 @@ export function useDownloadMenu() {
 			}
 		}
 
+		function handleEscape(event: KeyboardEvent): void {
+			if (event.key === "Escape") {
+				setIsOpen(false);
+			}
+		}
+
 		window.addEventListener("pointerdown", handleDocumentPointerDown);
+		window.addEventListener("keydown", handleEscape);
 
 		return () => {
 			window.removeEventListener("pointerdown", handleDocumentPointerDown);
+			window.removeEventListener("keydown", handleEscape);
 		};
 	}, [isOpen]);
 
