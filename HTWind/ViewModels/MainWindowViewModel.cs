@@ -5,7 +5,10 @@ using System.Windows;
 using System.Windows.Input;
 
 using HTWind.Commands;
-using HTWind.Services;
+using HTWind.Model;
+using HTWind.Services.Application;
+using HTWind.Services.Templates;
+using HTWind.Services.Widget;
 
 namespace HTWind.ViewModels;
 

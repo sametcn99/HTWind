@@ -4,7 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
-using HTWind.Services;
+using HTWind.Services.Application;
+using HTWind.Services.Widget;
 using HTWind.ViewModels;
 using HTWind.Views.Pages;
 

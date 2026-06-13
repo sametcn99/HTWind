@@ -8,7 +8,8 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 
-using HTWind.Services;
+using HTWind.Model;
+using HTWind.Services.Widget;
 
 namespace HTWind.Views.Pages;
 

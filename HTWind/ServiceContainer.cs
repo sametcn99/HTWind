@@ -1,4 +1,9 @@
-using HTWind.Services;
+using HTWind.Model;
+using HTWind.Services.Application;
+using HTWind.Services.Editor;
+using HTWind.Services.Templates;
+using HTWind.Services.WebView;
+using HTWind.Services.Widget;
 using HTWind.ViewModels;
 
 namespace HTWind;
@@ -18,14 +23,27 @@ public sealed class ServiceContainer
             DeveloperModeService,
             WidgetPermissionStateService
         );
-        WidgetStateRepository = new WidgetStateRepository();
+        WidgetStateStore = new WidgetStateStore();
+        WidgetImportService = new WidgetImportService();
+        WidgetExportService = new WidgetExportService();
         WidgetGeometryService = new WidgetGeometryService();
         HtmlEditorService = new HtmlEditorService(WebViewEnvironmentProvider);
+
+        WidgetSuppressionMonitor = new WidgetSuppressionMonitor();
+        WidgetWindowTracker = new WidgetWindowTracker();
+        WidgetEditorManager = new WidgetEditorManager();
+        WidgetLifecycleService = new WidgetLifecycleService(WidgetStateStore, WidgetImportService);
+
         WidgetManager = new WidgetManager(
             WidgetWindowFactory,
-            WidgetStateRepository,
+            WidgetStateStore,
+            WidgetLifecycleService,
+            WidgetWindowTracker,
+            WidgetEditorManager,
+            WidgetSuppressionMonitor,
             WidgetGeometryService,
             HtmlEditorService,
+            WidgetExportService,
             WidgetPermissionStateService
         );
         WidgetTemplateService = new WidgetTemplateService();
@@ -48,7 +66,11 @@ public sealed class ServiceContainer
 
     public IWidgetManager WidgetManager { get; }
 
-    public IWidgetStateRepository WidgetStateRepository { get; }
+    public IWidgetStateStore WidgetStateStore { get; }
+
+    public IWidgetImportService WidgetImportService { get; }
+
+    public IWidgetExportService WidgetExportService { get; }
 
     public IWidgetGeometryService WidgetGeometryService { get; }
 
@@ -61,6 +83,14 @@ public sealed class ServiceContainer
     public IExecutionRiskConsentService ExecutionRiskConsentService { get; }
 
     public IBuiltInWidgetInitializationStateService BuiltInWidgetInitializationStateService { get; }
+
+    public IWidgetSuppressionMonitor WidgetSuppressionMonitor { get; }
+
+    public IWidgetWindowTracker WidgetWindowTracker { get; }
+
+    public IWidgetEditorManager WidgetEditorManager { get; }
+
+    public IWidgetLifecycleService WidgetLifecycleService { get; }
 
     public MainWindowViewModel CreateMainWindowViewModel()
     {
