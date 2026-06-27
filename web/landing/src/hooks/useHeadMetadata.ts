@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { GITHUB_REPOSITORY_URL, RELEASES_URL } from "../config/constants";
 import {
-	DEFAULT_LOCALE,
 	getLocalePath,
+	INTL_LOCALE_MAP,
 	type LocaleCode,
 	SUPPORTED_LOCALES,
 } from "../i18n/locales";
@@ -11,6 +11,11 @@ import type { LocaleMessages } from "../i18n/types";
 const SITE_URL = "https://htwind.vercel.app";
 const OG_IMAGE_URL = `${SITE_URL}/og-image.png`;
 const DEFAULT_CANONICAL_URL = `${SITE_URL}/`;
+const RTL_LOCALES: ReadonlySet<string> = new Set(["ar", "he", "fa", "ur"]);
+
+function isRtlLocale(locale: LocaleCode): boolean {
+	return RTL_LOCALES.has(locale);
+}
 
 function getAbsoluteUrl(locale: LocaleCode): string {
 	const path = getLocalePath(locale);
@@ -30,6 +35,24 @@ function upsertMeta(selector: string, attributes: Record<string, string>) {
 	}
 }
 
+function upsertMetaArray(
+	baseSelector: string,
+	key: string,
+	values: string[],
+	dataFlag: string,
+) {
+	document.head
+		.querySelectorAll(`meta[${baseSelector}][data-${dataFlag}="true"]`)
+		.forEach((node) => node.remove());
+
+	for (const value of values) {
+		const node = document.createElement("meta");
+		node.setAttribute(key, value);
+		node.setAttribute(`data-${dataFlag}`, "true");
+		document.head.append(node);
+	}
+}
+
 function upsertLink(selector: string, attributes: Record<string, string>) {
 	let node = document.head.querySelector<HTMLLinkElement>(selector);
 
@@ -43,20 +66,38 @@ function upsertLink(selector: string, attributes: Record<string, string>) {
 	}
 }
 
+function upsertJsonLd(id: string, data: unknown) {
+	let script = document.getElementById(id) as HTMLScriptElement | null;
+
+	if (!script) {
+		script = document.createElement("script");
+		script.id = id;
+		script.type = "application/ld+json";
+		document.head.append(script);
+	}
+
+	script.textContent = JSON.stringify(data);
+}
+
 export function useHeadMetadata(locale: LocaleCode, messages: LocaleMessages) {
 	useEffect(() => {
 		const canonicalUrl = getAbsoluteUrl(locale);
 		const localeLinks = SUPPORTED_LOCALES.map((supportedLocale) => ({
-			hrefLang: supportedLocale === DEFAULT_LOCALE ? "en" : supportedLocale,
+			hrefLang: supportedLocale,
 			href: getAbsoluteUrl(supportedLocale),
 		}));
 
 		document.documentElement.lang = locale;
+		document.documentElement.dir = isRtlLocale(locale) ? "rtl" : "ltr";
 		document.title = messages.seo.title;
 
 		upsertMeta('meta[name="description"]', {
 			name: "description",
 			content: messages.seo.description,
+		});
+		upsertMeta('meta[name="robots"]', {
+			name: "robots",
+			content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
 		});
 		upsertMeta('meta[property="og:type"]', {
 			property: "og:type",
@@ -82,6 +123,17 @@ export function useHeadMetadata(locale: LocaleCode, messages: LocaleMessages) {
 			property: "og:locale",
 			content: messages.meta.ogLocale,
 		});
+		upsertMetaArray(
+			'property="og:locale:alternate"',
+			"property",
+			SUPPORTED_LOCALES.filter(
+				(supportedLocale) => supportedLocale !== locale,
+			).map(
+				(supportedLocale) =>
+					INTL_LOCALE_MAP[supportedLocale].replace("-", "_"),
+			),
+			"og-locale-alternate",
+		);
 		upsertMeta('meta[property="og:image"]', {
 			property: "og:image",
 			content: OG_IMAGE_URL,
@@ -114,6 +166,10 @@ export function useHeadMetadata(locale: LocaleCode, messages: LocaleMessages) {
 			name: "twitter:image",
 			content: OG_IMAGE_URL,
 		});
+		upsertMeta('meta[name="twitter:image:alt"]', {
+			name: "twitter:image:alt",
+			content: messages.seo.imageAlt,
+		});
 
 		upsertLink('link[rel="canonical"]', {
 			rel: "canonical",
@@ -142,7 +198,7 @@ export function useHeadMetadata(locale: LocaleCode, messages: LocaleMessages) {
 		defaultLink.setAttribute("data-managed-hreflang", "true");
 		document.head.append(defaultLink);
 
-		const structuredData = {
+		upsertJsonLd("seo-structured-data-software", {
 			"@context": "https://schema.org",
 			"@type": "SoftwareApplication",
 			name: "HTWind",
@@ -159,19 +215,42 @@ export function useHeadMetadata(locale: LocaleCode, messages: LocaleMessages) {
 				name: "sametcn99",
 			},
 			sameAs: [GITHUB_REPOSITORY_URL],
-		};
+		});
 
-		let structuredDataScript = document.getElementById(
-			"seo-structured-data",
-		) as HTMLScriptElement | null;
+		upsertJsonLd("seo-structured-data-website", {
+			"@context": "https://schema.org",
+			"@type": "WebSite",
+			name: "HTWind",
+			url: SITE_URL,
+			inLanguage: locale,
+			publisher: {
+				"@type": "Organization",
+				name: "HTWind",
+				url: SITE_URL,
+			},
+		});
 
-		if (!structuredDataScript) {
-			structuredDataScript = document.createElement("script");
-			structuredDataScript.id = "seo-structured-data";
-			structuredDataScript.type = "application/ld+json";
-			document.head.append(structuredDataScript);
-		}
+		upsertJsonLd("seo-structured-data-organization", {
+			"@context": "https://schema.org",
+			"@type": "Organization",
+			name: "HTWind",
+			url: SITE_URL,
+			logo: OG_IMAGE_URL,
+			sameAs: [GITHUB_REPOSITORY_URL],
+		});
 
-		structuredDataScript.textContent = JSON.stringify(structuredData);
+		upsertJsonLd("seo-structured-data-faq", {
+			"@context": "https://schema.org",
+			"@type": "FAQPage",
+			inLanguage: locale,
+			mainEntity: messages.content.faqItems.map((faq) => ({
+				"@type": "Question",
+				name: faq.question,
+				acceptedAnswer: {
+					"@type": "Answer",
+					text: faq.answer,
+				},
+			})),
+		});
 	}, [locale, messages]);
 }

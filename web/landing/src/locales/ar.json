@@ -169,6 +169,9 @@
 	"lightbox": {
 		"close": "إغلاق الواجهة"
 	},
+	"a11y": {
+		"skipToContent": "taharruk ila al-muhtawa"
+	},
 	"errors": {
 		"missingRoot": "واجه النظام صعوبة برمجية في العثور على root الأساسي."
 	},

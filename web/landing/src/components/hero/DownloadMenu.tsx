@@ -122,7 +122,7 @@ export function DownloadMenu({
 								<Link
 									href={asset.browser_download_url}
 									target="_blank"
-									rel="noreferrer"
+									rel="noopener noreferrer"
 									className={mergeClasses(
 										styles.dropdownItem,
 										getAssetRank(asset) === 0 && styles.dropdownItemRecommended,

@@ -168,6 +168,9 @@
 	"lightbox": {
 		"close": "Venster sluiten"
 	},
+	"a11y": {
+		"skipToContent": "Naar inhoud springen"
+	},
 	"errors": {
 		"missingRoot": "Element met de root klasse id mist in het systeem."
 	},

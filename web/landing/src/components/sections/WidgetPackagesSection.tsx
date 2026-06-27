@@ -54,7 +54,7 @@ export function WidgetPackagesSection() {
 					<Link
 						href={WIDGET_PACKAGE_SCHEMA_URL}
 						target="_blank"
-						rel="noreferrer"
+						rel="noopener noreferrer"
 					>
 						{messages.sections.packages.schemaLabel}
 					</Link>{" "}
@@ -62,7 +62,7 @@ export function WidgetPackagesSection() {
 					<Link
 						href={WIDGET_PACKAGE_EXAMPLE_URL}
 						target="_blank"
-						rel="noreferrer"
+						rel="noopener noreferrer"
 					>
 						{messages.sections.packages.exampleLabel}
 					</Link>{" "}

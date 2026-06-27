@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://htwind.vercel.app/en/</loc>
+    <loc>https://htwind.vercel.app/</loc>
+    <lastmod>2026-06-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
     <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
     <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
@@ -21,92 +24,455 @@
     <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
     <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
+  </url>
+  <url>
+    <loc>https://htwind.vercel.app/en/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/tr/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/hi/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/zh/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/de/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/fr/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/ru/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/ar/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/ja/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/es/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/pt/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/it/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/ko/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/id/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/vi/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/nl/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/pl/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
   <url>
     <loc>https://htwind.vercel.app/uk/</loc>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://htwind.vercel.app/en/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://htwind.vercel.app/tr/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://htwind.vercel.app/hi/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://htwind.vercel.app/zh/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://htwind.vercel.app/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://htwind.vercel.app/fr/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://htwind.vercel.app/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://htwind.vercel.app/ar/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://htwind.vercel.app/ja/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://htwind.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://htwind.vercel.app/pt/" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://htwind.vercel.app/it/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://htwind.vercel.app/ko/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://htwind.vercel.app/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://htwind.vercel.app/vi/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://htwind.vercel.app/nl/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://htwind.vercel.app/pl/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://htwind.vercel.app/uk/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://htwind.vercel.app/" />
   </url>
 </urlset>

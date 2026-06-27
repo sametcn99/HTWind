@@ -168,6 +168,9 @@
 	"lightbox": {
 		"close": "Quit"
 	},
+	"a11y": {
+		"skipToContent": "Aller au contenu"
+	},
 	"errors": {
 		"missingRoot": "Échec de lecture base 'root'."
 	},

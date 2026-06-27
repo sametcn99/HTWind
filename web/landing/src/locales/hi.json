@@ -168,6 +168,9 @@
 	"lightbox": {
 		"close": "Band karein"
 	},
+	"a11y": {
+		"skipToContent": "samagrah par jaen"
+	},
 	"errors": {
 		"missingRoot": "'root' id wala root element nahi mila."
 	},

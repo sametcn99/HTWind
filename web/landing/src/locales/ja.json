@@ -168,6 +168,9 @@
 	"lightbox": {
 		"close": "閉じる"
 	},
+	"a11y": {
+		"skipToContent": "naiyou e sukirippu"
+	},
 	"errors": {
 		"missingRoot": "システムのルート要素が見つかりませんでした。"
 	},

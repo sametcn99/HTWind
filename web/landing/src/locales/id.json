@@ -168,6 +168,9 @@
 	"lightbox": {
 		"close": "Tutup (Esc)"
 	},
+	"a11y": {
+		"skipToContent": "Lewati ke konten"
+	},
 	"errors": {
 		"missingRoot": "Elemen root sistem dengan id 'root' tidak ditemukan."
 	},

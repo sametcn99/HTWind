@@ -168,6 +168,9 @@
 	"lightbox": {
 		"close": "닫기"
 	},
+	"a11y": {
+		"skipToContent": "naeyong-euro geunjeong"
+	},
 	"errors": {
 		"missingRoot": "root ID를 가진 요소를 찾을 수 없습니다."
 	},

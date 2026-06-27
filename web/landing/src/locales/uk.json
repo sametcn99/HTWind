@@ -168,6 +168,9 @@
 	"lightbox": {
 		"close": "Закрити зображення"
 	},
+	"a11y": {
+		"skipToContent": "Perejti do zmistu"
+	},
 	"errors": {
 		"missingRoot": "React: Не знайдено основний елемент 'root' у структурі DOM документа."
 	},

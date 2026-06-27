@@ -168,6 +168,9 @@
 	"lightbox": {
 		"close": "Chiudi"
 	},
+	"a11y": {
+		"skipToContent": "Vai al contenuto"
+	},
 	"errors": {
 		"missingRoot": "Elemento Root non trovato."
 	},

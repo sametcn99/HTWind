@@ -64,29 +64,29 @@ export function HeroSection({
 							latestAssets={latestAssets}
 						/>
 
-						<Button
-							as="a"
-							href={GITHUB_REPOSITORY_URL}
-							target="_blank"
-							rel="noreferrer"
-							icon={<Code24Regular />}
-							className={styles.ghostButton}
-							size="large"
-						>
-							{messages.hero.githubButton}
-						</Button>
+					<Button
+						as="a"
+						href={GITHUB_REPOSITORY_URL}
+						target="_blank"
+						rel="noreferrer noopener"
+						icon={<Code24Regular aria-hidden="true" focusable="false" />}
+						className={styles.ghostButton}
+						size="large"
+					>
+						{messages.hero.githubButton}
+					</Button>
 
-						<Button
-							as="a"
-							href={latestReleaseUrl ?? RELEASES_URL}
-							target="_blank"
-							rel="noreferrer"
-							icon={<Open24Regular />}
-							className={styles.ghostButton}
-							size="large"
-						>
-							{messages.hero.releaseNotesButton}
-						</Button>
+					<Button
+						as="a"
+						href={latestReleaseUrl ?? RELEASES_URL}
+						target="_blank"
+						rel="noreferrer noopener"
+						icon={<Open24Regular aria-hidden="true" focusable="false" />}
+						className={styles.ghostButton}
+						size="large"
+					>
+						{messages.hero.releaseNotesButton}
+					</Button>
 					</div>
 
 					<Body1 className={styles.communityNotice}>
@@ -142,12 +142,12 @@ export function HeroSection({
 						<Link
 							href={GITHUB_DISCUSSIONS_URL}
 							target="_blank"
-							rel="noreferrer"
+							rel="noopener noreferrer"
 						>
 							{messages.hero.releaseCard.communityGithubLabel}
 						</Link>{" "}
 						{messages.hero.releaseCard.communityConnector}{" "}
-						<Link href={REDDIT_COMMUNITY_URL} target="_blank" rel="noreferrer">
+						<Link href={REDDIT_COMMUNITY_URL} target="_blank" rel="noopener noreferrer">
 							{messages.hero.releaseCard.communityRedditLabel}
 						</Link>
 						{messages.hero.releaseCard.communitySuffix}

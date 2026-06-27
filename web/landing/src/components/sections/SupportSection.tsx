@@ -18,7 +18,7 @@ export function SupportSection() {
 					as="a"
 					href={SUPPORT_URL}
 					target="_blank"
-					rel="noreferrer"
+					rel="noopener noreferrer"
 					className={styles.ghostButton}
 					size="large"
 				>

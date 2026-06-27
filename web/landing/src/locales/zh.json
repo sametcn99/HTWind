@@ -168,6 +168,9 @@
 	"lightbox": {
 		"close": "关闭"
 	},
+	"a11y": {
+		"skipToContent": "tiao zhao zhengwen"
+	},
 	"errors": {
 		"missingRoot": "未找到 id 为 'root' 的根元素。"
 	},

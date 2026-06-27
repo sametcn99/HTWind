@@ -168,6 +168,9 @@
 	"lightbox": {
 		"close": "Thoát (Escape)"
 	},
+	"a11y": {
+		"skipToContent": "bo qua den noi dung"
+	},
 	"errors": {
 		"missingRoot": "Cảnh báo truy xuất: Không dò thấy React root trên thẻ HTML."
 	},

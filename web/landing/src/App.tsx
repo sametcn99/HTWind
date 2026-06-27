@@ -109,8 +109,13 @@ function App() {
 	return (
 		<LocaleProvider locale={locale} changeLocale={changeLocale}>
 			<FluentProvider theme={webDarkTheme} className={styles.page}>
-				<main className={styles.shell}>
+				<a href="#main-content" className={styles.skipLink}>
+					{messages.a11y.skipToContent}
+				</a>
+				<header>
 					<Banner />
+				</header>
+				<main id="main-content" className={styles.shell}>
 					<HeroSection
 						isLoadingRelease={isLoadingRelease}
 						releaseText={releaseText}
@@ -127,8 +132,8 @@ function App() {
 					<CommunitySection />
 					<FaqSection />
 					<SupportSection />
-					<Footer />
 				</main>
+				<Footer />
 				<ScreenshotLightbox
 					selectedImage={selectedImage}
 					onClose={() => setSelectedImage(null)}

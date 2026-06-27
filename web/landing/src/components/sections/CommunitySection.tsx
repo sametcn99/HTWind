@@ -27,11 +27,11 @@ export function CommunitySection() {
 				</ul>
 				<Body1>
 					{messages.sections.community.visitPrefix}{" "}
-					<Link href={GITHUB_DISCUSSIONS_URL} target="_blank" rel="noreferrer">
+					<Link href={GITHUB_DISCUSSIONS_URL} target="_blank" rel="noopener noreferrer">
 						{messages.sections.community.githubLinkLabel}
 					</Link>{" "}
 					{messages.sections.community.visitConnector}{" "}
-					<Link href={REDDIT_COMMUNITY_URL} target="_blank" rel="noreferrer">
+					<Link href={REDDIT_COMMUNITY_URL} target="_blank" rel="noopener noreferrer">
 						{messages.sections.community.redditLinkLabel}
 					</Link>{" "}
 					{messages.sections.community.visitSuffix}

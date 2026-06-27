@@ -11,7 +11,7 @@ export function Banner() {
 	return (
 		<div className={styles.banner}>
 			<div className={styles.bannerContent}>
-				<Desktop24Regular />
+				<Desktop24Regular aria-hidden="true" focusable="false" />
 				<Caption1 className={styles.bannerText}>
 					{messages.banner.text}
 				</Caption1>

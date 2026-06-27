@@ -168,6 +168,9 @@
 	"lightbox": {
 		"close": "Закрыть"
 	},
+	"a11y": {
+		"skipToContent": "Pereiti k soderzhimomu"
+	},
 	"errors": {
 		"missingRoot": "Системный Root элемент не распознан."
 	},

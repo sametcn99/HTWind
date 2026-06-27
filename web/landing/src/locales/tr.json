@@ -168,6 +168,9 @@
 	"lightbox": {
 		"close": "Kapat"
 	},
+	"a11y": {
+		"skipToContent": "Icerige gec"
+	},
 	"errors": {
 		"missingRoot": "'root' kimligine sahip kok oge bulunamadi."
 	},

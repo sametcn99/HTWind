@@ -17,7 +17,7 @@ export function Footer() {
 				<Link
 					href={GITHUB_REPOSITORY_URL}
 					target="_blank"
-					rel="noreferrer"
+					rel="noopener noreferrer"
 					className={styles.footerLink}
 				>
 					{messages.footer.github}
@@ -25,7 +25,7 @@ export function Footer() {
 				<Link
 					href={RELEASES_URL}
 					target="_blank"
-					rel="noreferrer"
+					rel="noopener noreferrer"
 					className={styles.footerLink}
 				>
 					{messages.footer.releases}
@@ -33,7 +33,7 @@ export function Footer() {
 				<Link
 					href={GITHUB_DISCUSSIONS_URL}
 					target="_blank"
-					rel="noreferrer"
+					rel="noopener noreferrer"
 					className={styles.footerLink}
 				>
 					{messages.footer.discussions}

@@ -168,6 +168,9 @@
 	"lightbox": {
 		"close": "Wyloguj i Schowej Uwolni Koderze i Przywracanie"
 	},
+	"a11y": {
+		"skipToContent": "Przejdz do tresci"
+	},
 	"errors": {
 		"missingRoot": "Element React docelowego identyfikator systemu Root brakuje i utraciły się z map sieci kodu witryny WWW projektu programu deweloperskiego narzędziowego panel programowych wizytów."
 	},
