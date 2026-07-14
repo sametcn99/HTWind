@@ -112,10 +112,10 @@ function App() {
 				<a href="#main-content" className={styles.skipLink}>
 					{messages.a11y.skipToContent}
 				</a>
+				<main id="main-content" className={styles.shell}>
 				<header>
 					<Banner />
 				</header>
-				<main id="main-content" className={styles.shell}>
 					<HeroSection
 						isLoadingRelease={isLoadingRelease}
 						releaseText={releaseText}
