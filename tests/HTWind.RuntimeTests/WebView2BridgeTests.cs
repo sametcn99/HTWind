@@ -28,6 +28,12 @@ public sealed class WebView2BridgeTests(WidgetHostSession session)
     {
         Assert.True(await WaitForBridgeReadyAsync());
 
+        // Other classes in this collection navigate real templates through the same shared
+        // session, which repoints the current widget file (and thus the storage folder).
+        // Re-anchor the session to the probe widget so this test is order-independent.
+        await session.NavigateFileAsync(session.WidgetFilePath, "bridge-probe");
+        Assert.True(await WaitForBridgeReadyAsync());
+
         var setResult = await session.InvokeAsync(
             "storage.set", new { key = "greeting", value = "hello-runtime" });
         Assert.True(GetBool(setResult, "ok"), GetError(setResult));

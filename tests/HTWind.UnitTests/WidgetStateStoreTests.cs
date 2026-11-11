@@ -27,7 +27,11 @@ public sealed class WidgetStateStoreTests : IClassFixture<Fixtures.TempDirectory
     [Fact]
     public void HasStateFile_ReflectsFileExistence()
     {
-        var store = CreateStore();
+        // The class-fixture folder is shared and other tests may already have written
+        // widgets-state.json into it; start from a private directory so the initial
+        // state does not depend on test execution order.
+        var store = new WidgetStateStore(CreateIsolatedPath());
+
         Assert.False(store.HasStateFile());
 
         store.Save(new WidgetStateSnapshot());
@@ -37,11 +41,19 @@ public sealed class WidgetStateStoreTests : IClassFixture<Fixtures.TempDirectory
     [Fact]
     public void Load_MissingFile_ReturnsDefaultSnapshot()
     {
-        var store = CreateStore();
+        var store = new WidgetStateStore(CreateIsolatedPath());
 
         var snapshot = store.Load();
 
         Assert.Empty(snapshot.Widgets);
+    }
+
+    /// <summary>A unique empty subfolder of the class fixture, isolated from other tests.</summary>
+    private string CreateIsolatedPath()
+    {
+        var path = Path.Combine(_temp.Path, $"isolated-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(path);
+        return path;
     }
 
     [Fact]
