@@ -1,13 +1,40 @@
-using System.Diagnostics;
-using System.IO;
-using System.Text;
 using System.Text.Json;
+
+using HTWind.Services.PowerShellExecution;
 
 namespace HTWind.Services.WebView;
 
 public sealed class WidgetHostApiService : IWidgetHostApiService
 {
-    public async Task<WidgetHostApiExecutionResult> ExecuteAsync(string command, JsonElement? args)
+    public const string PowerShellCommand = "powershell.exec";
+
+    private readonly PowerShellExecutionEngine _powerShellEngine = new();
+    private readonly SystemMetricsService _systemMetricsService = new();
+    private readonly AudioVisualizerService _audioVisualizerService = new();
+    private readonly MediaSessionService _mediaSessionService = new();
+    private readonly WidgetStorageService _storageService = new();
+
+    public event EventHandler<WidgetHostThemePayload>? ThemeChanged;
+
+    public void PublishThemeChanged(WidgetHostThemePayload? payload = null)
+    {
+        ThemeChanged?.Invoke(this, payload ?? WidgetHostThemePayload.Build());
+    }
+
+    public string? GetWidgetSettingsJson(string? widgetFilePath)
+    {
+        return _storageService.GetSettings(widgetFilePath)?.ToJsonString(WidgetStorageService.SerializerOptions);
+    }
+
+    public void SaveWidgetSettings(string? widgetFilePath, System.Text.Json.Nodes.JsonObject settings)
+    {
+        _storageService.SaveSettings(widgetFilePath, settings);
+    }
+
+    public async Task<WidgetHostApiExecutionResult> ExecuteAsync(
+        string command,
+        JsonElement? args,
+        WidgetExecutionContext? context = null)
     {
         if (string.IsNullOrWhiteSpace(command))
         {
@@ -18,7 +45,14 @@ public sealed class WidgetHostApiService : IWidgetHostApiService
         {
             return command switch
             {
-                "powershell.exec" => Ok(await ExecutePowerShellAsync(args)),
+                PowerShellCommand => Ok(await ExecutePowerShellAsync(args, context)),
+                "system.metrics" => Ok(await _systemMetricsService.GetSnapshotAsync()),
+                "audio.visualizer" => Ok(_audioVisualizerService.GetSnapshot(args)),
+                "media.session" => Ok(await _mediaSessionService.HandleAsync(args)),
+                "storage.get" => Ok(_storageService.Get(ResolveWidgetFilePath(context), args)),
+                "storage.set" => Ok(_storageService.Set(ResolveWidgetFilePath(context), args)),
+                "theme.get" => Ok(WidgetHostThemePayload.Build()),
+                "theme.onChanged" => Ok(WidgetHostThemePayload.Build()),
                 _ => Fail($"Unsupported command: {command}")
             };
         }
@@ -28,8 +62,19 @@ public sealed class WidgetHostApiService : IWidgetHostApiService
         }
     }
 
-    private static async Task<object> ExecutePowerShellAsync(JsonElement? args)
+    private static string? ResolveWidgetFilePath(WidgetExecutionContext? context)
     {
+        var widgetFilePath = context?.WidgetFilePath;
+        return string.IsNullOrWhiteSpace(widgetFilePath) ? null : widgetFilePath;
+    }
+
+    private async Task<object> ExecutePowerShellAsync(JsonElement? args, WidgetExecutionContext? context)
+    {
+        if (context?.PowerShellAuthorization is null)
+        {
+            throw new InvalidOperationException("PowerShell execution requires per-widget authorization.");
+        }
+
         var script = ReadStringArg(args, "script");
         if (string.IsNullOrWhiteSpace(script))
         {
@@ -47,106 +92,39 @@ public sealed class WidgetHostApiService : IWidgetHostApiService
         var shell = (ReadStringArg(args, "shell") ?? "powershell").Trim().ToLowerInvariant();
         var shellExecutable = shell == "pwsh" ? "pwsh.exe" : "powershell.exe";
 
-        var workingDirectoryArg = ReadStringArg(args, "workingDirectory");
-        var workingDirectory = string.IsNullOrWhiteSpace(workingDirectoryArg)
-            ? Environment.CurrentDirectory
-            : Environment.ExpandEnvironmentVariables(workingDirectoryArg.Trim());
-
-        if (!Directory.Exists(workingDirectory))
+        var output = await _powerShellEngine.ExecuteAsync(new PowerShellExecutionRequest
         {
-            workingDirectory = Environment.CurrentDirectory;
-        }
-
-        var encodedScript = Convert.ToBase64String(Encoding.Unicode.GetBytes(script));
-
-        var startInfo = new ProcessStartInfo
-        {
-            FileName = shellExecutable,
-            Arguments = $"-NoProfile -NonInteractive -ExecutionPolicy Bypass -EncodedCommand {encodedScript}",
-            WorkingDirectory = workingDirectory,
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            CreateNoWindow = true
-        };
-
-        using var process = new Process { StartInfo = startInfo };
-        process.Start();
-
-        var outputTask = process.StandardOutput.ReadToEndAsync();
-        var errorTask = process.StandardError.ReadToEndAsync();
-        var waitForExitTask = process.WaitForExitAsync();
-
-        var timedOut = await Task.WhenAny(waitForExitTask, Task.Delay(timeoutMs)) != waitForExitTask;
-        if (timedOut)
-        {
-            try
-            {
-                process.Kill(true);
-            }
-            catch
-            {
-            }
-        }
-
-        var output = await outputTask;
-        var error = await errorTask;
-
-        var clippedOutput = maxOutputChars.HasValue && output.Length > maxOutputChars.Value
-            ? output[..maxOutputChars.Value]
-            : output;
-        var clippedError = maxOutputChars.HasValue && error.Length > maxOutputChars.Value
-            ? error[..maxOutputChars.Value]
-            : error;
+            Script = script,
+            TimeoutMilliseconds = timeoutMs,
+            MaxOutputChars = maxOutputChars,
+            Shell = shellExecutable,
+            WorkingDirectory = ReadStringArg(args, "workingDirectory"),
+            Mode = context.PowerShellAuthorization == PowerShellExecutionAuthorization.ReadOnly
+                ? PowerShellExecutionMode.ReadOnly
+                : PowerShellExecutionMode.Full
+        });
 
         return new
         {
-            TimedOut = timedOut,
-            ExitCode = timedOut ? (int?)null : process.ExitCode,
-            Output = clippedOutput,
-            Error = clippedError,
-            OutputTruncated = maxOutputChars.HasValue && output.Length > maxOutputChars.Value,
-            ErrorTruncated = maxOutputChars.HasValue && error.Length > maxOutputChars.Value,
-            Shell = shellExecutable,
-            WorkingDirectory = workingDirectory
+            output.TimedOut,
+            output.ExitCode,
+            output.Output,
+            output.Error,
+            output.OutputTruncated,
+            output.ErrorTruncated,
+            Shell = output.Shell,
+            output.WorkingDirectory
         };
     }
 
     private static string? ReadStringArg(JsonElement? args, string key)
     {
-        if (!args.HasValue || args.Value.ValueKind != JsonValueKind.Object)
-        {
-            return null;
-        }
-
-        return args.Value.TryGetProperty(key, out var value)
-            ? value.GetString()
-            : null;
+        return WidgetHostApiArgs.ReadStringArg(args, key);
     }
 
     private static int? ReadIntArg(JsonElement? args, string key)
     {
-        if (!args.HasValue || args.Value.ValueKind != JsonValueKind.Object)
-        {
-            return null;
-        }
-
-        if (!args.Value.TryGetProperty(key, out var value))
-        {
-            return null;
-        }
-
-        if (value.ValueKind == JsonValueKind.Number && value.TryGetInt32(out var number))
-        {
-            return number;
-        }
-
-        if (value.ValueKind == JsonValueKind.String && int.TryParse(value.GetString(), out var parsed))
-        {
-            return parsed;
-        }
-
-        return null;
+        return WidgetHostApiArgs.ReadIntArg(args, key);
     }
 
     private static WidgetHostApiExecutionResult Ok(object? result)

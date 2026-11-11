@@ -237,6 +237,9 @@
       return [];
     }
 
+    let nativeApiAvailable = null;
+    let isRefreshing = false;
+
     function setError(message) {
       const el = document.getElementById("error");
       if (!message) {
@@ -275,7 +278,33 @@
       });
     }
 
-    async function refresh() {
+    function applySystemMetrics(payload) {
+      const machineName = pick(payload, "machineName", "MachineName") || "Unknown";
+      const physicalUsed = Number(pick(payload, "memoryUsedBytes", "MemoryUsedBytes") || 0);
+      const physicalTotal = Number(pick(payload, "memoryTotalBytes", "MemoryTotalBytes") || 0);
+      const physicalPercent = clampPercent(pick(payload, "memoryUsedPercent", "MemoryUsedPercent") || 0);
+      const topProcesses = toArray(pick(payload, "topProcesses", "TopProcesses"));
+
+      document.getElementById("machine").textContent = machineName;
+      document.getElementById("meta").textContent = "Native host metrics (zero-process)";
+      document.getElementById("physicalText").textContent = `${fmtBytes(physicalUsed)} / ${fmtBytes(physicalTotal)}`;
+      document.getElementById("physicalFill").style.width = `${physicalPercent}%`;
+
+      // Virtual memory and heap details are only available through the PowerShell fallback.
+      document.getElementById("virtualText").textContent = "-";
+      document.getElementById("virtualFill").style.width = "0%";
+      document.getElementById("workingSet").textContent = "-";
+      document.getElementById("managedHeap").textContent = "-";
+      renderProcessList(topProcesses);
+      setError("");
+    }
+
+    async function refreshNative() {
+      const payload = await window.HTWind.invoke("system.metrics", { timeoutMs: 5000 });
+      applySystemMetrics(payload);
+    }
+
+    async function refreshWithPowerShell() {
       const payload = await runPs(`
         $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop
         $proc = [System.Diagnostics.Process]::GetCurrentProcess()
@@ -350,12 +379,32 @@
     }
 
     async function refreshSafely() {
+      // In-flight guard plus native-first fallback chain.
+      if (isRefreshing) {
+        return;
+      }
+
+      isRefreshing = true;
       try {
-        await refresh();
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        setError(`Memory stats update failed.\n${message}`);
-        console.error(error);
+        if (nativeApiAvailable !== false) {
+          try {
+            await refreshNative();
+            nativeApiAvailable = true;
+            return;
+          } catch {
+            nativeApiAvailable = false;
+          }
+        }
+
+        try {
+          await refreshWithPowerShell();
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          setError(`Memory stats update failed.\n${message}`);
+          console.error(error);
+        }
+      } finally {
+        isRefreshing = false;
       }
     }
 

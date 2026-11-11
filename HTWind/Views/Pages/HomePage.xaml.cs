@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Threading;
 
 using HTWind.Model;
 using HTWind.Services.Widget;
@@ -15,13 +14,14 @@ namespace HTWind.Views.Pages;
 
 public partial class HomePage : UserControl
 {
-    private const string DiscussionsUrl = "https://github.com/sametcn99/HTWind/discussions";
+    private const int SearchDebounceMilliseconds = 150;
 
     private readonly IWidgetManager _widgetManager;
     private ICollectionView? _widgetsCollectionView;
     private bool _areWidgetSubscriptionsAttached;
     private SortOption _sortOption = SortOption.NameAsc;
     private VisibilityFilterOption _visibilityFilterOption = VisibilityFilterOption.All;
+    private DispatcherTimer? _searchDebounceTimer;
 
     private enum VisibilityFilterOption
     {
@@ -71,6 +71,8 @@ public partial class HomePage : UserControl
             widget.PropertyChanged -= Widget_PropertyChanged;
         }
 
+        _searchDebounceTimer?.Stop();
+        _searchDebounceTimer = null;
         _areWidgetSubscriptionsAttached = false;
     }
 
@@ -120,24 +122,25 @@ public partial class HomePage : UserControl
         );
     }
 
-    private void FindMore_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = DiscussionsUrl,
-                UseShellExecute = true
-            });
-        }
-        catch
-        {
-            // Ignore failures opening external links.
-        }
-    }
-
     private void WidgetSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
+        // Debounced (150 ms) so typing does not trigger a full filter/sort per keystroke.
+        if (_searchDebounceTimer is null)
+        {
+            _searchDebounceTimer = new DispatcherTimer(DispatcherPriority.Background)
+            {
+                Interval = TimeSpan.FromMilliseconds(SearchDebounceMilliseconds)
+            };
+            _searchDebounceTimer.Tick += SearchDebounceTimer_Tick;
+        }
+
+        _searchDebounceTimer.Stop();
+        _searchDebounceTimer.Start();
+    }
+
+    private void SearchDebounceTimer_Tick(object? sender, EventArgs e)
+    {
+        _searchDebounceTimer?.Stop();
         ApplyWidgetFilterAndSort();
     }
 
@@ -305,6 +308,22 @@ public partial class HomePage : UserControl
         }
     }
 
+    private void WidgetSettingsMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not System.Windows.Controls.MenuItem menuItem
+            || menuItem.Parent is not ContextMenu menu)
+        {
+            return;
+        }
+
+        if (menu.PlacementTarget is not FrameworkElement { DataContext: WidgetModel model })
+        {
+            return;
+        }
+
+        _widgetManager.OpenWidgetSettings(model);
+    }
+
     private sealed class WidgetComparer(SortOption sortOption) : IComparer
     {
         public int Compare(object? x, object? y)
@@ -352,46 +371,13 @@ public partial class HomePage : UserControl
 
         private static int CompareByCreated(WidgetModel left, WidgetModel right)
         {
-            return GetFileCreationUtc(left.FilePath).CompareTo(GetFileCreationUtc(right.FilePath));
+            // Cached timestamps (refreshed on import/save) instead of synchronous disk I/O.
+            return left.FileCreatedUtc.GetValueOrDefault().CompareTo(right.FileCreatedUtc.GetValueOrDefault());
         }
 
         private static int CompareByUpdated(WidgetModel left, WidgetModel right)
         {
-            return GetFileUpdatedUtc(left.FilePath).CompareTo(GetFileUpdatedUtc(right.FilePath));
-        }
-
-        private static DateTime GetFileCreationUtc(string? filePath)
-        {
-            if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
-            {
-                return DateTime.MinValue;
-            }
-
-            try
-            {
-                return File.GetCreationTimeUtc(filePath);
-            }
-            catch
-            {
-                return DateTime.MinValue;
-            }
-        }
-
-        private static DateTime GetFileUpdatedUtc(string? filePath)
-        {
-            if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
-            {
-                return DateTime.MinValue;
-            }
-
-            try
-            {
-                return File.GetLastWriteTimeUtc(filePath);
-            }
-            catch
-            {
-                return DateTime.MinValue;
-            }
+            return left.FileUpdatedUtc.GetValueOrDefault().CompareTo(right.FileUpdatedUtc.GetValueOrDefault());
         }
     }
 }

@@ -1,0 +1,96 @@
+<UserControl
+  x:Class="HTWind.Views.Pages.GalleryPage"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+  xmlns:loc="clr-namespace:HTWind.Localization">
+  <Grid Margin="28,8,28,28">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <StackPanel Grid.Row="0"
+        Margin="0,0,0,16">
+      <TextBlock
+        Text="{loc:Loc Gallery_Header}"
+        FontSize="28"
+        FontWeight="SemiBold"
+        Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+      <TextBlock
+        Margin="0,4,0,0"
+        FontSize="13"
+        TextWrapping="Wrap"
+        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+        Text="{loc:Loc Gallery_Description}"/>
+    </StackPanel>
+
+    <ui:Card Grid.Row="1"
+        Margin="0,0,0,10"
+        Padding="14">
+      <StackPanel>
+        <TextBlock
+          FontWeight="SemiBold"
+          Text="{loc:Loc Gallery_InstallUrlTitle}"/>
+        <TextBlock
+          Margin="0,2,0,8"
+          FontSize="12"
+          TextWrapping="Wrap"
+          Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+          Text="{loc:Loc Gallery_InstallUrlDescription}"/>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <ui:TextBox
+            x:Name="GalleryUrlTextBox"
+            MinHeight="34"
+            VerticalAlignment="Center"
+            PlaceholderText="https://example.com/widget.htwind"
+            AutomationProperties.Name="{loc:Loc Gallery_UrlLabel}"/>
+          <ui:Button
+            x:Name="InstallFromUrlButton"
+            Grid.Column="1"
+            Margin="8,0,0,0"
+            MinHeight="34"
+            Appearance="Primary"
+            Content="{loc:Loc Gallery_InstallUrl}"
+            Click="InstallFromUrl_Click"/>
+        </Grid>
+      </StackPanel>
+    </ui:Card>
+
+    <ui:Card Grid.Row="2"
+        Margin="0,0,0,10"
+        Padding="14">
+      <StackPanel>
+        <TextBlock
+          FontWeight="SemiBold"
+          Text="{loc:Loc Gallery_InstallFileTitle}"/>
+        <TextBlock
+          Margin="0,2,0,8"
+          FontSize="12"
+          TextWrapping="Wrap"
+          Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+          Text="{loc:Loc Gallery_InstallFileDescription}"/>
+        <ui:Button
+          x:Name="InstallFromFileButton"
+          MinHeight="34"
+          Content="{loc:Loc Gallery_InstallFile}"
+          Click="InstallFromFile_Click"/>
+      </StackPanel>
+    </ui:Card>
+
+    <TextBlock
+      x:Name="GalleryStatusText"
+      Grid.Row="3"
+      Margin="0,4,0,0"
+      FontSize="12"
+      TextWrapping="Wrap"
+      Visibility="Collapsed"
+      Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+  </Grid>
+</UserControl>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    html, body, #container {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #1e1e1e;
+    }
+    #fallback {
+      display: none;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      border: none;
+      resize: none;
+      padding: 12px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      font: 14px Consolas, 'Courier New', monospace;
+    }
+  </style>
+  <script src="/vs/loader.js"></script>
+</head>
+<body>
+  <div id="container"></div>
+  <textarea id="fallback"></textarea>
+
+  <script>
+    let editor = null;
+    let useFallback = false;
+    let publishTimer = null;
+    let validationTimer = null;
+    let activeDocumentName = null;
+    const documents = new Map();
+
+    function b64ToUtf8(b64) {
+      const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
+    }
+
+    function utf8ToB64(text) {
+      try {
+        const bytes = new TextEncoder().encode(text);
+        let binary = '';
+        bytes.forEach(function (b) { binary += String.fromCharCode(b); });
+        return btoa(binary);
+      } catch {
+        return '';
+      }
+    }
+
+    window.isEditorReady = function () {
+      return editor !== null || useFallback;
+    };
+
+    function fallbackModel() {
+      return { name: activeDocumentName || 'fallback.txt', content: document.getElementById('fallback').value, dirty: false };
+    }
+
+    function getDocumentOrFallback(name) {
+      if (useFallback) {
+        return fallbackModel();
+      }
+      return documents.get(name || activeDocumentName) || null;
+    }
+
+    window.setEditorDocument = function (name, base64, language) {
+      const content = b64ToUtf8(base64 || '');
+      if (useFallback) {
+        activeDocumentName = name;
+        document.getElementById('fallback').value = content;
+        return;
+      }
+      if (!editor) {
+        return;
+      }
+
+      let document = documents.get(name);
+      if (!document) {
+        const model = monaco.editor.createModel(content, language || 'plaintext', monaco.Uri.parse('htwind://widget/' + encodeURIComponent(name)));
+        document = { model: model, dirty: false, language: language || 'plaintext' };
+        documents.set(name, document);
+        model.onDidChangeContent(function () {
+          document.dirty = true;
+          onEditorContentChanged();
+        });
+      } else if (document.model.getValue() !== content) {
+        document.model.setValue(content);
+        document.dirty = false;
+      }
+
+      activeDocumentName = name;
+      editor.setModel(document.model);
+    };
+
+    window.getActiveDocumentName = function () {
+      return activeDocumentName;
+    };
+
+    window.getDocumentStates = function () {
+      if (useFallback) {
+        return JSON.stringify([fallbackModel()]);
+      }
+      const states = [];
+      documents.forEach(function (document, name) {
+        states.push({ name: name, language: document.language, dirty: document.dirty });
+      });
+      return JSON.stringify(states);
+    };
+
+    window.getDocumentContent = function (name) {
+      const document = getDocumentOrFallback(name);
+      if (!document) {
+        return '';
+      }
+      // Monaco documents wrap their text in a model; the fallback stores plain content.
+      return useFallback ? document.content : document.model.getValue();
+    };
+
+    window.getDocumentContentBase64 = function (name) {
+      return utf8ToB64(window.getDocumentContent(name));
+    };
+
+    window.markDocumentSaved = function (name) {
+      if (useFallback) {
+        return;
+      }
+      const document = documents.get(name);
+      if (document) {
+        document.dirty = false;
+      }
+    };
+
+    window.getEditorContent = function () {
+      return window.getDocumentContent(activeDocumentName);
+    };
+
+    function publishContentChanged() {
+      if (!window.chrome || !window.chrome.webview || !window.chrome.webview.postMessage) {
+        return;
+      }
+
+      window.chrome.webview.postMessage({
+        type: 'contentChanged',
+        name: activeDocumentName,
+        content: window.getEditorContent()
+      });
+    }
+
+    function schedulePublish() {
+      if (publishTimer) {
+        clearTimeout(publishTimer);
+      }
+
+      publishTimer = setTimeout(function () {
+        publishContentChanged();
+      }, 180);
+    }
+
+    function configureLanguageServices() {
+      monaco.languages.html.htmlDefaults.setOptions({
+        validate: true,
+        format: {
+          tabSize: 2,
+          insertSpaces: true,
+          wrapLineLength: 120
+        },
+        suggest: {
+          html5: true
+        }
+      });
+
+      monaco.languages.css.cssDefaults.setOptions({
+        validate: true,
+        lint: {
+          unknownProperties: 'warning',
+          duplicateProperties: 'warning',
+          emptyRules: 'warning',
+          important: 'ignore'
+        }
+      });
+
+      monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
+      monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+        allowNonTsExtensions: true,
+        target: monaco.languages.typescript.ScriptTarget.ES2020,
+        checkJs: true,
+        noEmit: true
+      });
+      monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+        noSemanticValidation: false,
+        noSyntaxValidation: false
+      });
+    }
+
+    function validateHtmlStructure() {
+      if (!editor || useFallback) {
+        return;
+      }
+
+      const model = editor.getModel();
+      if (!model) {
+        return;
+      }
+
+      const value = model.getValue();
+      const parser = new DOMParser();
+      const parsed = parser.parseFromString(value, 'text/html');
+      const parserError = parsed.querySelector('parsererror');
+      if (!parserError) {
+        monaco.editor.setModelMarkers(model, 'HTWind-html-parse', []);
+        return;
+      }
+
+      const text = parserError.textContent || 'HTML parse error';
+      const lineMatch = text.match(/line\s*(\d+)/i);
+      const colMatch = text.match(/column\s*(\d+)/i);
+      const line = lineMatch ? Number(lineMatch[1]) : 1;
+      const column = colMatch ? Number(colMatch[1]) : 1;
+
+      monaco.editor.setModelMarkers(model, 'HTWind-html-parse', [
+        {
+          severity: monaco.MarkerSeverity.Error,
+          message: text,
+          startLineNumber: line,
+          startColumn: column,
+          endLineNumber: line,
+          endColumn: column + 1
+        }
+      ]);
+    }
+
+    // Debounced HTML structure validation (250 ms) instead of parsing on every keystroke.
+    function scheduleValidation() {
+      if (!editor || useFallback) {
+        return;
+      }
+
+      if (validationTimer) {
+        clearTimeout(validationTimer);
+      }
+
+      validationTimer = setTimeout(function () {
+        validationTimer = null;
+        validateHtmlStructure();
+      }, 250);
+    }
+
+    function onEditorContentChanged() {
+      schedulePublish();
+      scheduleValidation();
+    }
+
+    function notifyEditorReady() {
+      if (!window.chrome || !window.chrome.webview || !window.chrome.webview.postMessage) {
+        return;
+      }
+
+      window.chrome.webview.postMessage({ type: 'editorReady' });
+    }
+
+    function activateFallback() {
+      useFallback = true;
+      document.getElementById('container').style.display = 'none';
+      const fallback = document.getElementById('fallback');
+      fallback.style.display = 'block';
+      fallback.addEventListener('input', schedulePublish);
+      notifyEditorReady();
+    }
+
+    if (typeof require === 'function') {
+      require.config({ paths: { 'vs': '/vs' } });
+      require(['vs/editor/editor.main'], function () {
+        configureLanguageServices();
+        editor = monaco.editor.create(document.getElementById('container'), {
+          value: '',
+          language: 'html',
+          theme: 'vs-dark',
+          automaticLayout: true,
+          minimap: { enabled: true },
+          scrollBeyondLastLine: false,
+          quickSuggestions: {
+            other: true,
+            comments: false,
+            strings: true
+          },
+          suggestOnTriggerCharacters: true,
+          wordBasedSuggestions: 'currentDocument',
+          parameterHints: { enabled: true },
+          autoClosingBrackets: 'always',
+          autoClosingQuotes: 'always',
+          formatOnPaste: true,
+          formatOnType: true
+        });
+        editor.onDidChangeModelContent(onEditorContentChanged);
+        notifyEditorReady();
+      }, activateFallback);
+    } else {
+      activateFallback();
+    }
+
+    setTimeout(function () {
+      if (!editor && !useFallback) {
+        activateFallback();
+      }
+    }, 4000);
+  </script>
+</body>
+</html>

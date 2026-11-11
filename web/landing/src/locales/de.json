@@ -48,7 +48,8 @@
 		"proofPoints": [
 			"HTML, CSS und JavaScript Widgets mit WebView2 rendern",
 			"Manifest-basierte Pakete für Asset-gestützte Setups",
-			"Kontrollierte PowerShell-Aktionen für Diagnose und Steuerung"
+			"Kontrollierte PowerShell-Aktionen mit Berechtigungen pro Widget",
+			"Native Host-APIs für Systemmetriken, Audio, Mediensteuerung, Speicherung und Theming"
 		],
 		"githubButton": "Auf GitHub ansehen",
 		"releaseNotesButton": "Versionshinweise",
@@ -243,24 +244,34 @@
 			},
 			{
 				"value": "Host API",
-				"label": "Ausführen von PowerShell via Widget",
+				"label": "Berechtigungen pro Widget mit gesandboxtem Nur-Lese-Modus",
+				"spanTwo": true
+			},
+			{
+				"value": "Native Host-APIs",
+				"label": "Systemmetriken, Audiopegel, Mediensitzungen, Speicherung und Theme-Bridges ohne Prozesse",
+				"spanTwo": true
+			},
+			{
+				"value": "Arbeitsbereich-Profile",
+				"label": "Komplette Widget-Layouts über das Tray-Menü speichern und wechseln",
 				"spanTwo": true
 			}
 		],
 		"featureCards": [
 			{
 				"title": "Html direkt auf dem Bildschirm",
-				"description": "Erstellen und verwalten Sie Widgets in CSS und Javascript und überlassen Sie den Fenster-Kram HTWind.",
+				"description": "Erstelle Desktop-Widgets mit HTML, CSS und JavaScript. Der eingebaute Editor öffnet Dateipakete in Tabs mit Live-Vorschau (Hot Reload) und einer Runtime-Konsole für Fehler und Logs.",
 				"icon": "html"
 			},
 			{
 				"title": "Gekapselte PowerShell",
-				"description": "Nutzen Sie eine sichere Brücke, um Befehle direkt in Windows zu rufen.",
+				"description": "PowerShell läuft über die In-Process-Engine, nachdem du einem Widget ausdrücklich Berechtigung gegeben hast (nur lesen, voll oder ablehnen). Der Nur-Lese-Modus läuft in einer eingeschränkten Sandbox; jeder Aufruf ist isoliert und zeitlich begrenzt.",
 				"icon": "powershell"
 			},
 			{
 				"title": "Pures Windows-Gefühl",
-				"description": "Pin-on-Top, Standby-Speicherung und Tray-Menüs für optimalen Desktop-Flow.",
+				"description": "Tray-Verhalten, immer-oben oder Desktop-Ebene anheften, magnetisches Andocken, Transparenz und Zoom pro Widget, Arbeitsbereich-Profile und bildschirmbewusstes Ausblenden lassen Widgets nativ zu Windows wirken.",
 				"icon": "windows"
 			}
 		],
@@ -322,11 +333,20 @@
 			},
 			{
 				"question": "Ist PowerShell sicher dort drin?",
-				"answer": "Ja. Nur Widgets, denen Sie Admin-Rechte oder Host-Rechte zusichern, dürfen Skripte ausführen."
+				"answer": "Ja. Widgets können PowerShell über die In-Process-Engine ausführen, benötigen dafür aber zuerst eine ausdrückliche Berechtigung pro Widget: nur lesen (gesandboxt), voller Zugriff oder ablehnen. Die Auswahl wird pro Widget gespeichert."
+			},
+			{
+				"question": "Welche nativen Host-APIs stehen Widgets zur Verfügung?",
+				"answer": "Widgets können system.metrics (CPU, Arbeitsspeicher, Datenträger, Netzwerk, Akku), audio.visualizer (Echtzeit-Audio-FFT), media.session (Aktuelle Wiedergabe und Steuerung), storage.get/set (persistente Widget-Einstellungen) und theme.get/onChanged (Live-Theme und Akzentfarben) aufrufen – ganz ohne Prozesse.",
+				"spanTwoColumns": true
 			},
 			{
 				"question": "Wie installiert man es?",
-				"answer": "Manuell entpacken oder unseren Standard Installer nutzen."
+				"answer": "Ja. In den Einstellungen kannst du Vollbild-Ausblenden und einen separaten Modus für maximierte Apps aktivieren. Beide arbeiten pro Bildschirm: Widget-Fenster werden sofort ausgeblendet und angehalten, behalten ihren Zustand und werden automatisch wiederhergestellt, ohne den gespeicherten Sichtbarkeitsstatus zu ändern."
+			},
+			{
+				"question": "Kann ich verschiedene Widget-Layouts speichern?",
+				"answer": "Ja. Arbeitsbereich-Profile speichern das aktuelle Widget-Setup – Sichtbarkeit, Positionen, Größen, Sperr- und Anheftmodi, Transparenz und Zoom – als benanntes Layout, das du jederzeit über das Tray-Menü aufrufen kannst."
 			},
 			{
 				"question": "Geht Multimonitor?",
@@ -339,12 +359,16 @@
 		],
 		"overviewParagraphs": [
 			"Das .NET und WPF Backend liefert maximale Stabilität.",
-			"Kombiniert mit WebView2 erhalten Sie ein Produkt, das Web-Grafik mit OS-Features paart."
+			"Die App ist für Nutzer gedacht, die eine schlanke, aber erweiterbare Widget-Ebene wollen: Tray-Integration, Anheften oben oder auf Desktop-Ebene, magnetisches Andocken, Transparenz und Zoom pro Widget, Arbeitsbereich-Profile, gepackte Widgets und bildschirmbewusstes Ausblendenverwandeln einen Standard-Windows-Desktop in einen nützlicheren Arbeitsplatz."
 		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
 				"alt": "HTWind Homepage Übersicht"
+			},
+			{
+				"src": "/app_screenshots/page_gallery.png",
+				"alt": "HTWind Gallery - Community-Widgets installieren"
 			},
 			{
 				"src": "/app_screenshots/page_settings.png",

@@ -240,6 +240,16 @@ internal static class WidgetManifestHelper
         return ResolvePathInsideRoot(widgetRootPath, normalizedEntryFile);
     }
 
+    /// <summary>
+    ///     Resolves a manifest-relative asset path to an absolute file path that is guaranteed to
+    ///     stay inside the widget root.
+    /// </summary>
+    public static string ResolveFileInsideRoot(string widgetRootPath, string relativePath)
+    {
+        var normalizedRelativePath = NormalizeAndValidateRelativePath(relativePath, allowHtml: true);
+        return ResolvePathInsideRoot(widgetRootPath, normalizedRelativePath);
+    }
+
     public static string ResolveWidgetRootPath(string packageRootPath, string relativePath)
     {
         var normalizedRelativePath = NormalizeAndValidateRelativePath(relativePath, allowHtml: true);
@@ -250,15 +260,22 @@ internal static class WidgetManifestHelper
     {
         var rootPathWithSeparator = Path.GetFullPath(widgetRootPath) + Path.DirectorySeparatorChar;
         var resolvedPath = Path.GetFullPath(Path.Combine(widgetRootPath, relativePath));
-        if (!resolvedPath.StartsWith(rootPathWithSeparator, StringComparison.OrdinalIgnoreCase))
+        if (resolvedPath.StartsWith(rootPathWithSeparator, StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidOperationException("The widget manifest contains a path outside the widget root.");
+            return resolvedPath;
         }
 
-        return resolvedPath;
+        // The widget root itself is a valid resolution target (single-widget packages use
+        // relativePath "."), which GetFullPath collapses onto the root without the separator.
+        if (string.Equals(resolvedPath, Path.GetFullPath(widgetRootPath), StringComparison.OrdinalIgnoreCase))
+        {
+            return resolvedPath;
+        }
+
+        throw new InvalidOperationException("The widget manifest contains a path outside the widget root.");
     }
 
-    private static string NormalizeAndValidateRelativePath(string? path, bool allowHtml)
+    internal static string NormalizeAndValidateRelativePath(string? path, bool allowHtml)
     {
         if (string.IsNullOrWhiteSpace(path))
         {
@@ -363,6 +380,181 @@ internal static class WidgetManifestHelper
             .Where(path => !string.Equals(path, normalizedEntryFile, StringComparison.OrdinalIgnoreCase))
             .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
             .ToList();
+    }
+
+    /// <summary>
+    ///     Collects the exact set of files that belong to one widget: the entry file plus the
+    ///     manifest-declared assets (managed packages) or locally referenced files (plain HTML).
+    ///     Never copies sibling widgets that merely share the same folder, so exporting one
+    ///     built-in template cannot package every other template in the shared directory.
+    /// </summary>
+    public static List<string> CollectWidgetExportFiles(
+        string entryFilePath,
+        string widgetRootPath,
+        JsonSerializerOptions jsonOptions)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(entryFilePath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(widgetRootPath);
+
+        var collected = new List<string>();
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        void AddFile(string candidatePath)
+        {
+            try
+            {
+                var fullPath = Path.GetFullPath(candidatePath);
+                var rootWithSeparator = Path.GetFullPath(widgetRootPath) + Path.DirectorySeparatorChar;
+                if (!fullPath.StartsWith(rootWithSeparator, StringComparison.OrdinalIgnoreCase)
+                    || !File.Exists(fullPath)
+                    || IsRuntimeGeneratedFile(Path.GetFileName(fullPath)))
+                {
+                    return;
+                }
+
+                if (seen.Add(fullPath))
+                {
+                    collected.Add(fullPath);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        AddFile(entryFilePath);
+
+        // Managed packages: copy exactly the manifest entry plus declared assets.
+        var manifest = LoadManifestIfPresent(widgetRootPath, jsonOptions);
+        if (manifest is not null)
+        {
+            var normalizedEntryRelative = NormalizeRelativePath(Path.GetRelativePath(widgetRootPath, Path.GetFullPath(entryFilePath)));
+            var widgetItem = manifest.Widgets.FirstOrDefault(item =>
+                string.Equals(
+                    NormalizeRelativePath(item.EntryFile),
+                    normalizedEntryRelative,
+                    StringComparison.OrdinalIgnoreCase));
+
+            widgetItem ??= manifest.Widgets.Count == 1 ? manifest.Widgets[0] : null;
+
+            if (widgetItem is not null)
+            {
+                foreach (var asset in widgetItem.Assets)
+                {
+                    try
+                    {
+                        AddFile(ResolveFileInsideRoot(widgetRootPath, asset));
+                    }
+                    catch
+                    {
+                        // Undeclared or invalid asset paths are skipped.
+                    }
+                }
+
+                return collected;
+            }
+        }
+
+        // Plain HTML widgets: follow relative references from the entry file (one CSS hop deep).
+        var pendingReferenceSources = new Queue<string>();
+        pendingReferenceSources.Enqueue(Path.GetFullPath(entryFilePath));
+        var visitedSources = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { Path.GetFullPath(entryFilePath) };
+        var cssHopsRemaining = 16;
+
+        while (pendingReferenceSources.Count > 0 && cssHopsRemaining > 0)
+        {
+            var sourcePath = pendingReferenceSources.Dequeue();
+            string content;
+            try
+            {
+                if (!File.Exists(sourcePath))
+                {
+                    continue;
+                }
+
+                content = File.ReadAllText(sourcePath);
+            }
+            catch
+            {
+                continue;
+            }
+
+            foreach (var reference in ExtractLocalReferences(content))
+            {
+                try
+                {
+                    var resolved = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(sourcePath)!, reference));
+                    AddFile(resolved);
+
+                    if (
+                        visitedSources.Add(resolved)
+                        && string.Equals(Path.GetExtension(resolved), ".css", StringComparison.OrdinalIgnoreCase)
+                    )
+                    {
+                        cssHopsRemaining--;
+                        pendingReferenceSources.Enqueue(resolved);
+                    }
+                }
+                catch
+                {
+                    // References that escape the widget root are ignored.
+                }
+            }
+        }
+
+        return collected;
+    }
+
+    private const string WidgetStorageFileSuffix = ".htwind-settings.json";
+    private const string LivePreviewFileSuffix = ".htwind-live-preview.html";
+
+    /// <summary>Runtime-generated files (widget storage, live previews) never belong in a package.</summary>
+    private static bool IsRuntimeGeneratedFile(string fileName)
+    {
+        if (string.Equals(fileName, WidgetPackageConstants.ManifestFileName, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return fileName.EndsWith(WidgetStorageFileSuffix, StringComparison.OrdinalIgnoreCase)
+            || fileName.EndsWith(LivePreviewFileSuffix, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static IEnumerable<string> ExtractLocalReferences(string content)
+    {
+        // src/href attributes plus CSS url(...) values; only same-root relative references matter.
+        var matches = System.Text.RegularExpressions.Regex.Matches(
+            content,
+            """(?:(?:src|href)\s*=\s*["']([^"']+)["']|url\(\s*['"]?([^'")]+)['"]?\s*\))""",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        foreach (System.Text.RegularExpressions.Match match in matches)
+        {
+            var reference = match.Groups[1].Success ? match.Groups[1].Value : match.Groups[2].Value;
+            reference = reference.Trim();
+
+            if (string.IsNullOrWhiteSpace(reference)
+                || reference.StartsWith("http:", StringComparison.OrdinalIgnoreCase)
+                || reference.StartsWith("https:", StringComparison.OrdinalIgnoreCase)
+                || reference.StartsWith("data:", StringComparison.OrdinalIgnoreCase)
+                || reference.StartsWith("file:", StringComparison.OrdinalIgnoreCase)
+                || reference.StartsWith("#")
+                || reference.StartsWith("//"))
+            {
+                continue;
+            }
+
+            var queryIndex = reference.IndexOfAny(['?', '#']);
+            if (queryIndex >= 0)
+            {
+                reference = reference[..queryIndex];
+            }
+
+            if (!string.IsNullOrWhiteSpace(reference))
+            {
+                yield return Uri.UnescapeDataString(reference);
+            }
+        }
     }
 
     public static void CopyWidgetDirectory(string sourceDirectory, string destinationDirectory)

@@ -68,6 +68,22 @@
       });
     }
 
+    function setFftBars(fftBands, isPlaying) {
+      if (!Array.isArray(fftBands) || fftBands.length === 0) {
+        return false;
+      }
+
+      bars.forEach((bar, i) => {
+        const sourceIndex = Math.min(fftBands.length - 1, Math.round(i * (fftBands.length - 1) / (bars.length - 1)));
+        const level = isPlaying ? Math.max(0, Math.min(1, Number(fftBands[sourceIndex]) || 0)) : 0;
+        const height = Math.max(8, 8 + (level * 78));
+        bar.style.height = `${Math.round(height)}px`;
+        bar.style.opacity = `${0.3 + (level * 0.7)}`;
+      });
+
+      return true;
+    }
+
     function formatTime(seconds) {
       const total = Math.max(0, Math.floor(seconds));
       const m = Math.floor(total / 60);
@@ -75,7 +91,60 @@
       return `${m}:${String(s).padStart(2, "0")}`;
     }
 
-    async function refresh() {
+    // Native zero-process APIs (audio.visualizer + media.session); PowerShell fallback below.
+    let nativeApiAvailable = null;
+    let isRefreshing = false;
+    let lastMediaSignature = "";
+
+    async function refreshNative() {
+      const [audioResult, mediaResult] = await Promise.all([
+        window.HTWind.invoke("audio.visualizer", { bands: 16, timeoutMs: 3000 }),
+        window.HTWind.invoke("media.session", { action: "get", includeArt: false, timeoutMs: 3000 })
+      ]);
+
+      const audio = pick(audioResult, "audio", "Audio");
+      const media = pick(mediaResult, "media", "Media");
+      const isPlaying = String(pick(media, "playbackStatus", "PlaybackStatus") || "").toLowerCase() === "playing";
+
+      if (audio) {
+        const rawPeak = Number(pick(audio, "peakLevel", "PeakLevel") || 0);
+        smoothedPeak = (smoothedPeak * 0.5) + (Math.max(0, Math.min(1, rawPeak)) * 0.5);
+
+        const bands = pick(audio, "bands", "Bands");
+        if (!setFftBars(bands, isPlaying)) {
+          setAudioReactiveBars(0, smoothedPeak, Date.now() / 180, isPlaying);
+        }
+      }
+
+      if (!media) {
+        if (lastMediaSignature !== "") {
+          titleEl.textContent = "No media session";
+          artistEl.textContent = "-";
+          lastMediaSignature = "";
+        }
+        metaEl.textContent = `Level ${Math.round(smoothedPeak * 100)}%`;
+        return;
+      }
+
+      const title = pick(media, "title", "Title") || "Unknown track";
+      const artist = pick(media, "artist", "Artist") || pick(media, "sourceAppUserModelId", "SourceAppUserModelId") || "Unknown source";
+      const statusRaw = pick(media, "playbackStatus", "PlaybackStatus") || "Unknown";
+      const positionSeconds = toSeconds(pick(media, "positionSeconds", "PositionSeconds"));
+      const endTimeSeconds = toSeconds(pick(media, "endTimeSeconds", "EndTimeSeconds"));
+      const signature = `${title}|${artist}|${statusRaw}`;
+
+      if (signature !== lastMediaSignature) {
+        titleEl.textContent = title;
+        artistEl.textContent = artist;
+        lastMediaSignature = signature;
+      }
+
+      metaEl.textContent = endTimeSeconds > 0
+        ? `${statusRaw} • ${formatTime(positionSeconds)} / ${formatTime(endTimeSeconds)} • Level ${Math.round(smoothedPeak * 100)}%`
+        : `${statusRaw} • Level ${Math.round(smoothedPeak * 100)}%`;
+    }
+
+    async function refreshWithPowerShell() {
       try {
         const script = `
 $knownPlayers = @('spotify','music','vlc','foobar2000','itunes','aimp','winamp')
@@ -102,12 +171,12 @@ if ($null -eq $candidates) {
   $title = $titleRaw
   $artist = ''
 
-  if ($titleRaw -match '^(?<artist>.+?)\s+-\s+(?<title>.+)$') {
+  if ($titleRaw -match '^(?<artist>.+?)\\s+-\\s+(?<title>.+)$') {
     $artist = $Matches.artist
     $title = $Matches.title
   }
 
-  if ($title -match '^(?<title>.+?)\s+[-|]\s+YouTube') {
+  if ($title -match '^(?<title>.+?)\\s+[-|]\\s+YouTube') {
     $title = $Matches.title
   }
 
@@ -175,6 +244,30 @@ if ($null -eq $candidates) {
       }
     }
 
+    async function refresh() {
+      // In-flight guard: never stack overlapping refresh cycles.
+      if (isRefreshing) {
+        return;
+      }
+
+      isRefreshing = true;
+      try {
+        if (nativeApiAvailable !== false) {
+          try {
+            await refreshNative();
+            nativeApiAvailable = true;
+            return;
+          } catch {
+            nativeApiAvailable = false;
+          }
+        }
+
+        await refreshWithPowerShell();
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
     setIdleBars();
 
     async function execPs(script) {
@@ -198,7 +291,7 @@ if ($null -eq $candidates) {
     }
 
     refresh();
-    setInterval(refresh, 220);
+    setInterval(refresh, 500);
   </script>
 </body>
 </html>

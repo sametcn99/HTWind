@@ -17,6 +17,16 @@ public partial class SettingsPage : UserControl
         InitializeComponent();
     }
 
+    private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is not ComboBox comboBox || comboBox.SelectedItem is not ComboBoxItem { Tag: string cultureName })
+        {
+            return;
+        }
+
+        _viewModel.SelectedCultureName = cultureName;
+    }
+
     private void RunOnStartupToggle_Checked(object sender, RoutedEventArgs e)
     {
         _viewModel.SetRunOnStartup(true);

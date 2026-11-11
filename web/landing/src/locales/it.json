@@ -48,7 +48,8 @@
 		"proofPoints": [
 			"Widget creati in HTML, CSS e JavaScript e renderizzati tramite WebView2",
 			"Pacchetti manifesto per gestire risorse locali e widget multipli",
-			"Azioni PowerShell controllate per diagnostica rapida e utilità"
+			"Azioni PowerShell controllate con permessi per widget",
+			"API host native per metriche di sistema, audio, controllo multimediale, archiviazione e temi"
 		],
 		"githubButton": "Visualizza su GitHub",
 		"releaseNotesButton": "Note di rilascio",
@@ -243,24 +244,34 @@
 			},
 			{
 				"value": "Comandi PS",
-				"label": "Accesso di sistema controllato",
+				"label": "Permessi per widget con modalità sola-lettura in sandbox",
+				"spanTwo": true
+			},
+			{
+				"value": "API host native",
+				"label": "Metriche di sistema, livelli audio, sessioni multimediali, archiviazione e bridge di tema senza processi",
+				"spanTwo": true
+			},
+			{
+				"value": "Profili di lavoro",
+				"label": "Salva e cambia disposizioni complete di widget dal menu della barra",
 				"spanTwo": true
 			}
 		],
 		"featureCards": [
 			{
 				"title": "Widget Web",
-				"description": "Utilizza il classico stack web ma vivilo immerso fuori dal browser e senza bordi limitanti.",
+				"description": "Crea widget desktop con HTML, CSS e JavaScript. L'editor integrato apre i pacchetti multi-file in schede con anteprima dal vivo (hot reload) e una console di runtime per errori e log.",
 				"icon": "html"
 			},
 			{
 				"title": "Host PS",
-				"description": "Impartisci comandi Windows per avere lettura dei log o monitoraggio porte in un micro pannello visuale.",
+				"description": "Esegui PowerShell tramite il motore in-process dopo un'autorizzazione esplicita per widget (sola lettura, completa o nega). La modalità sola lettura gira in una sandbox limitata; ogni chiamata è isolata e limitata nel tempo.",
 				"icon": "powershell"
 			},
 			{
 				"title": "Windows Style",
-				"description": "Posizioni mnemoniche, supporto per display multipli e compatibilità con la dark-mode di Windows 11.",
+				"description": "Comportamento della barra, aggancio in alto o al livello desktop, aggancio magnetico delle finestre, opacità e zoom per widget, profili di lavoro e soppressione consapevole dello schermo rendono i widget nativi per Windows.",
 				"icon": "windows"
 			}
 		],
@@ -322,11 +333,20 @@
 			},
 			{
 				"question": "Pesa sulla RAM?",
-				"answer": "WebView2 condivide i processi di sistema per rendere l'uso della RAM comparabile (ma inferiore) a una scheda dormiente di Edge."
+				"answer": "Sì. I widget possono eseguire PowerShell tramite il motore in-process, ma ciascuno richiede prima un'autorizzazione esplicita: sola lettura (sandbox), accesso completo o nega. La scelta viene ricordata per ogni widget."
+			},
+			{
+				"question": "Quali API host native sono disponibili per i widget?",
+				"answer": "I widget possono chiamare system.metrics (CPU, memoria, dischi, rete, batteria), audio.visualizer (FFT audio in tempo reale), media.session (informazioni e controlli di riproduzione), storage.get/set (impostazioni persistenti per widget) e theme.get/onChanged (tema e colore accent dal vivo), il tutto senza avviare processi.",
+				"spanTwoColumns": true
 			},
 			{
 				"question": "Supporta il multimonitor?",
-				"answer": "I widget mantengono memoria della loro posizione X Y che è legata al pixel mapping assoluto di Windows."
+				"answer": "Sì. Nelle Impostazioni puoi abilitare la soppressione a schermo intero e una modalità separata per le app ingrandite. Entrambe funzionano per schermo: le finestre dei widget vengono nascoste e sospese all'istante, conservano il loro stato e vengono ripristinate automaticamente senza modificare lo stato di visibilità salvato."
+			},
+			{
+				"question": "Posso salvare disposizioni di widget diverse?",
+				"answer": "Sì. I profili di lavoro salvano la configurazione attuale dei widget — visibilità, posizioni, dimensioni, modalità di blocco e aggancio, opacità e zoom — come disposizione con nome che puoi richiamare dal menu della barra in qualsiasi momento."
 			},
 			{
 				"question": "Cosa accade se rimuovo Edge?",
@@ -339,12 +359,16 @@
 		],
 		"overviewParagraphs": [
 			"Costruito in WPF e .NET ma con un cuore moderno delegato ai framework Web per renderlo plasmabile.",
-			"Offre la possibilità di espandere da subito le feature base per renderle su misura."
+			"L'app è pensata per chi vuole un livello di widget leggero ma estendibile: integrazione nella barra, aggancio in alto o al livello desktop, aggancio magnetico, opacità e zoom per widget, profili di lavoro, widget in pacchetti e soppressione consapevole dello schermo trasformano un desktop Windows standard in uno spazio di lavoro più utile."
 		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
 				"alt": "Gestore Esteso"
+			},
+			{
+				"src": "/app_screenshots/page_gallery.png",
+				"alt": "Galleria HTWind - Installa widget della community"
 			},
 			{
 				"src": "/app_screenshots/page_settings.png",

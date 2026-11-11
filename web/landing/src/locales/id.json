@@ -48,7 +48,8 @@
 		"proofPoints": [
 			"Widget HTML, CSS, dan JavaScript dirender dengan WebView2",
 			"Paket berbasis manifes untuk pengaturan yang didukung aset dan multi-widget",
-			"Tindakan PowerShell terkontrol untuk diagnostik dan alur kerja desktop"
+			"Aksi PowerShell terkontrol dengan izin per widget",
+			"API host native untuk metrik sistem, audio, kontrol media, penyimpanan, dan tema"
 		],
 		"githubButton": "Lihat di GitHub",
 		"releaseNotesButton": "Catatan rilis",
@@ -176,23 +177,56 @@
 	},
 	"content": {
 		"widgets": [
-			{ "id": "clock", "label": "jam" },
-			{ "id": "weather", "label": "cuaca" },
-			{ "id": "network-tools", "label": "jaringan" },
-			{ "id": "process-manager", "label": "proses" },
-			{ "id": "clipboard-studio", "label": "papan klip" },
-			{ "id": "file-explorer", "label": "berkas" },
-			{ "id": "dns-lookup", "label": "pencarian dns" },
-			{ "id": "powershell-console", "label": "konsol powershell" }
+			{
+				"id": "clock",
+				"label": "jam"
+			},
+			{
+				"id": "weather",
+				"label": "cuaca"
+			},
+			{
+				"id": "network-tools",
+				"label": "jaringan"
+			},
+			{
+				"id": "process-manager",
+				"label": "proses"
+			},
+			{
+				"id": "clipboard-studio",
+				"label": "papan klip"
+			},
+			{
+				"id": "file-explorer",
+				"label": "berkas"
+			},
+			{
+				"id": "dns-lookup",
+				"label": "pencarian dns"
+			},
+			{
+				"id": "powershell-console",
+				"label": "konsol powershell"
+			}
 		],
 		"highlights": [
-			{ "value": "20+", "label": "Templat bawaan untuk memulai" },
+			{
+				"value": "20+",
+				"label": "Templat bawaan untuk memulai"
+			},
 			{
 				"value": "Muat Ulang Panas",
 				"label": "Pratinjau langsung saat mengedit widget"
 			},
-			{ "value": "WebView2", "label": "Tumpukan rendering Windows asli" },
-			{ "value": "Sumber Terbuka", "label": "Proyek berlisensi GPL 3.0" },
+			{
+				"value": "WebView2",
+				"label": "Tumpukan rendering Windows asli"
+			},
+			{
+				"value": "Sumber Terbuka",
+				"label": "Proyek berlisensi GPL 3.0"
+			},
 			{
 				"value": "Penyembunyian Cerdas",
 				"label": "Mode sembunyikan sesuai mode untuk aplikasi layar penuh",
@@ -210,24 +244,34 @@
 			},
 			{
 				"value": "API PowerShell",
-				"label": "Jembatan otomatisasi sisi host",
+				"label": "Izin per widget dengan mode baca-saja ter-sandbox",
+				"spanTwo": true
+			},
+			{
+				"value": "API Host Native",
+				"label": "Metrik sistem, level audio, sesi media, penyimpanan, dan jembatan tema tanpa proses",
+				"spanTwo": true
+			},
+			{
+				"value": "Profil Ruang Kerja",
+				"label": "Simpan dan ganti tata letak widget lengkap dari menu baki",
 				"spanTwo": true
 			}
 		],
 		"featureCards": [
 			{
 				"title": "Widget HTML di Desktop",
-				"description": "Bangun widget desktop dengan HTML, CSS, dan JavaScript, lalu jalankan di host bernuansa Windows dengan dukungan file tunggal atau bundel manifes.",
+				"description": "Bangun widget desktop dengan HTML, CSS, dan JavaScript. Editor bawaan membuka paket multi-file dalam tab dengan pratinjau langsung (hot reload) dan konsol runtime untuk kesalahan dan log.",
 				"icon": "html"
 			},
 			{
 				"title": "Integrasi PowerShell",
-				"description": "Jalankan perintah PowerShell khusus secara langsung melalui antarmuka JS. Dirancang untuk otomatisasi tanpa keamanan yang longgar.",
+				"description": "Jalankan PowerShell melalui engine in-process setelah memberi izin eksplisit per widget (baca-saja, penuh, atau tolak). Mode baca-saja berjalan dalam sandbox terbatas; setiap panggilan terisolasi dan dibatasi waktu.",
 				"icon": "powershell"
 			},
 			{
 				"title": "Pengalaman Windows Premium",
-				"description": "Terintegrasi baik dengan penempatan tray, sembunyikan saat bermain game (mode layar penuh), dan menyimpan lokasi widget per monitor.",
+				"description": "Perilaku baki, sematkan di atas atau di lapisan desktop, penjendelaan magnetik, opasitas dan zoom per widget, profil ruang kerja, dan penyembunyian sadar-layar membuat widget terasa native di Windows.",
 				"icon": "windows"
 			}
 		],
@@ -264,7 +308,8 @@
 		"widgetPackageSteps": [
 			"Buat root paket dengan file htwind.widget.json agar terdeteksi.",
 			"Setel metadata umum dan atur daftar direktori HTML yang berjalan independen satu sama lain.",
-			"Impor langsung ke HTWind dan atur posisi setiap layar sesuka hati Anda."
+			"Impor langsung ke HTWind dan atur posisi setiap layar sesuka hati Anda.",
+			"Impor manifest ke HTWind, atau ekspor widget atau ruang kerja yang sudah ada untuk menghasilkan tata letak paket yang dapat digunakan kembali."
 		],
 		"communitySharingSteps": [
 			"Banyak yang menunggu inspirasi baru: tampilkan kreasi antarmuka yang mempesona di Reddit dan Github.",
@@ -288,11 +333,20 @@
 			},
 			{
 				"question": "Pernah bermain game layar penuh dengan widget menutupi visual?",
-				"answer": "Kami mengerti masalah itu. Cukup centang 'Nonaktifkan jika ada jendela penuh' pada panel pengaturan untuk menyembunyikannya sementara."
+				"answer": "Ya. Widget dapat menjalankan PowerShell melalui engine in-process, tetapi setiap widget memerlukan izin eksplisit terlebih dahulu: baca-saja (sandbox), akses penuh, atau tolak. Pilihan diingat per widget."
+			},
+			{
+				"question": "API host native apa saja yang tersedia untuk widget?",
+				"answer": "Widget dapat memanggil system.metrics (CPU, memori, disk, jaringan, baterai), audio.visualizer (FFT audio waktu-nyata), media.session (info dan kontrol pemutaran), storage.get/set (pengaturan widget persisten), dan theme.get/onChanged (tema dan warna aksen langsung) — semuanya tanpa memunculkan proses apa pun.",
+				"spanTwoColumns": true
 			},
 			{
 				"question": "Apakah ini menyedot tenaga PC?",
-				"answer": "Konsumsinya disatukan dalam RAM shared pool dari browser. Sangat minimalis, biasanya berada di angka satuan atau belasan Megabyte saja per fungsi."
+				"answer": "Ya. Di Pengaturan, Anda dapat mengaktifkan penyembunyian layar penuh dan mode terpisah untuk aplikasi yang dimaksimalkan. Keduanya bekerja per layar: jendela widget disembunyikan dan ditangguhkan seketika, statusnya tetap terjaga, dan dipulihkan otomatis tanpa mengubah status visibilitas tersimpan."
+			},
+			{
+				"question": "Bisakah saya menyimpan tata letak widget yang berbeda?",
+				"answer": "Ya. Profil ruang kerja menyimpan pengaturan widget saat ini — visibilitas, posisi, ukuran, mode kunci dan semat, opasitas, dan zoom — sebagai tata letak bernama yang dapat Anda panggil dari menu baki kapan saja."
 			},
 			{
 				"question": "Bagaimana menjalankan kode sistem tingkat tinggi?",
@@ -305,12 +359,16 @@
 		],
 		"overviewParagraphs": [
 			"HTWind memotong batas klasik aplikasi Win32 masa lampau, membawakan kustomisasi tanpa batas bahasa internet terkini.",
-			"Kembangkan dan distribusikan utilitas rahasia atau sekadar pengukur ramalan cuaca idaman: tidak ada aturan mengekang, cukup muat di desktop."
+			"Aplikasi ini dibuat untuk pengguna yang menginginkan lapisan widget yang ringan namun dapat diperluas: integrasi baki, penyematan di atas atau di lapisan desktop, penjendelaan magnetik, opasitas dan zoom per widget, profil ruang kerja, widget terpaket, dan penyembunyian sadar-layar mengubah desktop Windows standar menjadi ruang kerja yang lebih berguna."
 		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
 				"alt": "Halaman Utama Manajemen"
+			},
+			{
+				"src": "/app_screenshots/page_gallery.png",
+				"alt": "Galeri HTWind - Pasang widget komunitas"
 			},
 			{
 				"src": "/app_screenshots/page_settings.png",

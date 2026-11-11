@@ -8,19 +8,16 @@ import { formatReleaseDate } from "../lib/formatters";
 import { readCachedRelease, writeCachedRelease } from "../lib/storage";
 
 export function useLatestRelease(locale: LocaleCode, messages: LocaleMessages) {
-	const [latestRelease, setLatestRelease] = useState<GitHubRelease | null>(
-		null,
+	const [latestRelease, setLatestRelease] = useState<GitHubRelease | null>(() =>
+		readCachedRelease(),
 	);
-	const [isLoadingRelease, setIsLoadingRelease] = useState(true);
+	const [isLoadingRelease, setIsLoadingRelease] = useState(
+		() => readCachedRelease() === null,
+	);
 
 	useEffect(() => {
 		const abortController = new AbortController();
 		const cachedRelease = readCachedRelease();
-
-		if (cachedRelease) {
-			setLatestRelease(cachedRelease);
-			setIsLoadingRelease(false);
-		}
 
 		async function loadLatestRelease(): Promise<void> {
 			try {

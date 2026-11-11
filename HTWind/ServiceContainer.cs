@@ -13,6 +13,7 @@ public sealed class ServiceContainer
     public ServiceContainer()
     {
         FileDialogService = new FileDialogService();
+        DialogService = MessageBoxDialogService.Instance;
         DeveloperModeService = new DeveloperModeService();
         WebViewEnvironmentProvider = new WebViewEnvironmentProvider();
         WidgetPermissionStateService = new WidgetPermissionStateService();
@@ -44,7 +45,9 @@ public sealed class ServiceContainer
             WidgetGeometryService,
             HtmlEditorService,
             WidgetExportService,
-            WidgetPermissionStateService
+            WidgetPermissionStateService,
+            WidgetHostApiService,
+            dialogService: DialogService
         );
         WidgetTemplateService = new WidgetTemplateService();
         StartupRegistrationService = new StartupRegistrationService();
@@ -53,6 +56,8 @@ public sealed class ServiceContainer
     }
 
     public IFileDialogService FileDialogService { get; }
+
+    public IDialogService DialogService { get; }
 
     public IWidgetHostApiService WidgetHostApiService { get; }
 
@@ -92,13 +97,15 @@ public sealed class ServiceContainer
 
     public IWidgetLifecycleService WidgetLifecycleService { get; }
 
-    public MainWindowViewModel CreateMainWindowViewModel()
+    public MainWindowViewModel CreateMainWindowViewModel(ThemeOption initialTheme = ThemeOption.Device)
     {
         return new MainWindowViewModel(
             FileDialogService,
             WidgetManager,
             StartupRegistrationService,
-            DeveloperModeService
+            DeveloperModeService,
+            initialTheme,
+            DialogService
         );
     }
 
@@ -106,13 +113,25 @@ public sealed class ServiceContainer
     {
         ArgumentNullException.ThrowIfNull(mainWindow);
 
-        var themeService = new ThemeService(mainWindow);
+        // Restore the persisted theme before any window is shown.
+        var snapshot = WidgetStateStore.Load();
+        var initialTheme = ThemeOption.Device;
+        if (
+            !string.IsNullOrWhiteSpace(snapshot.ThemeOption)
+            && Enum.TryParse<ThemeOption>(snapshot.ThemeOption, ignoreCase: true, out var parsedTheme)
+        )
+        {
+            initialTheme = parsedTheme;
+        }
+
+        var themeService = new ThemeService(mainWindow, WidgetHostApiService);
         return new ApplicationBootstrapper(
             WidgetManager,
             WidgetTemplateService,
             BuiltInWidgetInitializationStateService,
             themeService,
-            mainWindow
+            mainWindow,
+            initialTheme
         );
     }
 }

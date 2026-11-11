@@ -5,7 +5,9 @@ using System.Windows.Threading;
 
 using HTWind.Localization;
 using HTWind.Model;
+using HTWind.Services.Application;
 using HTWind.Services.Editor;
+using HTWind.Services.WebView;
 
 using Microsoft.Win32;
 
@@ -28,6 +30,11 @@ public class WidgetManager : IWidgetManager, IDisposable
     private readonly IWidgetWindowFactory _windowFactory;
     private readonly IWidgetExportService _exportService;
     private readonly IWidgetPermissionStateService _widgetPermissionStateService;
+    private readonly IWidgetHostApiService _widgetHostApiService;
+    private readonly IDialogService _dialogService;
+    private readonly WorkspaceProfileStore _workspaceProfileStore;
+    private ThemeOption? _preferredTheme;
+    private string? _preferredCulture;
     private bool _isDisposed;
 
     public WidgetManager(
@@ -40,7 +47,11 @@ public class WidgetManager : IWidgetManager, IDisposable
         IWidgetGeometryService geometryService,
         IHtmlEditorService htmlEditorService,
         IWidgetExportService exportService,
-        IWidgetPermissionStateService widgetPermissionStateService)
+        IWidgetPermissionStateService widgetPermissionStateService,
+        IWidgetHostApiService? widgetHostApiService = null,
+        WorkspaceProfileStore? workspaceProfileStore = null,
+        TimeSpan? saveDebounceInterval = null,
+        IDialogService? dialogService = null)
     {
         _windowFactory = windowFactory ?? throw new ArgumentNullException(nameof(windowFactory));
         _stateStore = stateStore ?? throw new ArgumentNullException(nameof(stateStore));
@@ -52,8 +63,14 @@ public class WidgetManager : IWidgetManager, IDisposable
         _htmlEditorService = htmlEditorService ?? throw new ArgumentNullException(nameof(htmlEditorService));
         _exportService = exportService ?? throw new ArgumentNullException(nameof(exportService));
         _widgetPermissionStateService = widgetPermissionStateService ?? throw new ArgumentNullException(nameof(widgetPermissionStateService));
+        _widgetHostApiService = widgetHostApiService ?? new HTWind.Services.WebView.WidgetHostApiService();
+        _workspaceProfileStore = workspaceProfileStore ?? new WorkspaceProfileStore();
+        _dialogService = dialogService ?? MessageBoxDialogService.Instance;
 
-        _saveDebounceTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(350) };
+        _saveDebounceTimer = new DispatcherTimer
+        {
+            Interval = saveDebounceInterval ?? TimeSpan.FromMilliseconds(350)
+        };
         _saveDebounceTickHandler = SaveDebounceTimer_Tick;
         _saveDebounceTimer.Tick += _saveDebounceTickHandler;
 
@@ -96,11 +113,51 @@ public class WidgetManager : IWidgetManager, IDisposable
         }
     }
 
+    /// <summary>Theme restored from widgets-state.json, if any.</summary>
+    public ThemeOption? PreferredTheme => _preferredTheme;
+
+    /// <summary>Culture restored from widgets-state.json, if any.</summary>
+    public string? PreferredCulture => _preferredCulture;
+
+    public void SetPreferredTheme(ThemeOption option)
+    {
+        if (_preferredTheme == option)
+        {
+            return;
+        }
+
+        _preferredTheme = option;
+        ScheduleSave();
+    }
+
+    public void SetPreferredCulture(string cultureName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(cultureName);
+
+        if (string.Equals(_preferredCulture, cultureName, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _preferredCulture = cultureName;
+        ScheduleSave();
+    }
+
     public void LoadPersistedWidgets()
     {
         var snapshot = _stateStore.Load();
         _suppressionMonitor.IsFullscreenSuppressionEnabled = snapshot.SuppressWidgetsOnFullscreen;
         _suppressionMonitor.IsMaximizedSuppressionEnabled = snapshot.SuppressWidgetsOnMaximized;
+
+        if (
+            !string.IsNullOrWhiteSpace(snapshot.ThemeOption)
+            && Enum.TryParse<ThemeOption>(snapshot.ThemeOption, ignoreCase: true, out var parsedTheme)
+        )
+        {
+            _preferredTheme = parsedTheme;
+        }
+
+        _preferredCulture = snapshot.Culture;
 
         _lifecycleService.LoadPersistedWidgets(
             (model, hasPersistedGeometry) => ShouldSuppressWidget(model),
@@ -121,13 +178,46 @@ public class WidgetManager : IWidgetManager, IDisposable
     {
         var model = _lifecycleService.AddWidget(filePath, isVisible, EnqueueVisibleWindowCreation);
         _lifecycleService.RegisterModelChangeHandler(model, OnModelPropertyChanged);
+        model.RefreshFileTimestamps();
         ScheduleSave();
+    }
+
+    public void AddWidgets(IEnumerable<string> filePaths, bool isVisible)
+    {
+        ArgumentNullException.ThrowIfNull(filePaths);
+
+        var addedAny = false;
+
+        foreach (var filePath in filePaths.Where(path => !string.IsNullOrWhiteSpace(path)))
+        {
+            try
+            {
+                var model = _lifecycleService.AddWidget(
+                    filePath,
+                    isVisible,
+                    EnqueueVisibleWindowCreation);
+                _lifecycleService.RegisterModelChangeHandler(model, OnModelPropertyChanged);
+                model.RefreshFileTimestamps();
+                addedAny = true;
+            }
+            catch
+            {
+                // A single broken source must not abort the batch.
+            }
+        }
+
+        if (addedAny)
+        {
+            // Single debounced state save for the entire batch.
+            ScheduleSave();
+        }
     }
 
     public void CreateWidgetWithEditor(string fileName, bool isVisible, bool enableHotReload)
     {
         var model = _lifecycleService.CreateWidgetWithEditor(fileName, isVisible, EnqueueVisibleWindowCreation);
         _lifecycleService.RegisterModelChangeHandler(model, OnModelPropertyChanged);
+        model.RefreshFileTimestamps();
         OpenEditorCore(model, enableHotReload);
         ScheduleSave();
     }
@@ -217,9 +307,11 @@ public class WidgetManager : IWidgetManager, IDisposable
 
         if (_suppressionMonitor.ShouldSuppressWidget(model))
         {
+            // Suppression must not destroy the WebView2: hide + suspend so state is preserved
+            // and un-suppressing is instant (no re-creation on Alt+Tab transitions).
             _geometryService.CaptureGeometry(window, model);
             ScheduleSave();
-            window.Close();
+            window.SetRuntimeVisibility(false);
             return;
         }
 
@@ -243,7 +335,7 @@ public class WidgetManager : IWidgetManager, IDisposable
             return;
         }
 
-        window.Topmost = model.IsPinned;
+        window.ApplyPinMode(model.PinMode);
     }
 
     public void ResetWidgetPosition(WidgetModel model)
@@ -287,6 +379,7 @@ public class WidgetManager : IWidgetManager, IDisposable
 
         foreach (var model in Widgets.ToList())
         {
+            model.PinMode = WidgetPinMode.None;
             model.IsPinned = false;
             ApplyPinState(model);
 
@@ -327,8 +420,147 @@ public class WidgetManager : IWidgetManager, IDisposable
             widgetId => _editorManager.CloseEditor(widgetId),
             widgetId => _windowTracker.UntrackWindow(widgetId));
 
+        WidgetRuntimeConsole.Clear(model.Id);
         ScheduleSave();
     }
+
+    #region Workspace profiles (layouts)
+
+    public IReadOnlyList<string> GetWorkspaceProfileNames()
+    {
+        return _workspaceProfileStore.GetProfileNames();
+    }
+
+    public void CaptureWorkspaceProfile(string profileName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(profileName);
+
+        var profile = new WorkspaceProfile
+        {
+            Name = profileName,
+            CreatedUtc = DateTimeOffset.UtcNow.ToString("O")
+        };
+
+        foreach (var model in Widgets)
+        {
+            profile.Widgets.Add(new WorkspaceProfileWidget
+            {
+                Name = model.Name,
+                FilePath = model.FilePath,
+                IsVisible = model.IsVisible,
+                IsLocked = model.IsLocked,
+                PinMode = model.PinMode.ToPersistedValue(),
+                WidgetOpacityPercent = model.WidgetOpacityPercent,
+                ZoomFactorPercent = model.ZoomFactorPercent,
+                Left = model.Left,
+                Top = model.Top,
+                Width = model.WidgetWidth,
+                Height = model.WidgetHeight,
+                MonitorDeviceName = model.MonitorDeviceName,
+                PreferredMonitorDeviceName = model.PreferredMonitorDeviceName
+            });
+        }
+
+        _workspaceProfileStore.Save(profile);
+    }
+
+    public bool ApplyWorkspaceProfile(string profileName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(profileName);
+
+        var profile = _workspaceProfileStore.TryLoad(profileName);
+        if (profile is null)
+        {
+            return false;
+        }
+
+        var matchedWidgetIds = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var profileWidget in profile.Widgets)
+        {
+            if (string.IsNullOrWhiteSpace(profileWidget.FilePath) || !File.Exists(profileWidget.FilePath))
+            {
+                continue;
+            }
+
+            var model = Widgets.FirstOrDefault(candidate =>
+                string.Equals(candidate.FilePath, profileWidget.FilePath, StringComparison.OrdinalIgnoreCase))
+                ?? Widgets.FirstOrDefault(candidate =>
+                    !string.IsNullOrWhiteSpace(profileWidget.Name)
+                    && string.Equals(candidate.Name, profileWidget.Name, StringComparison.OrdinalIgnoreCase));
+
+            if (model is null)
+            {
+                var countBefore = Widgets.Count;
+                AddWidget(profileWidget.FilePath, isVisible: false);
+                model = Widgets.Count > countBefore ? Widgets[^1] : null;
+            }
+
+            if (model is null)
+            {
+                continue;
+            }
+
+            matchedWidgetIds.Add(model.Id);
+
+            model.IsLocked = profileWidget.IsLocked;
+            model.PinMode = WidgetPinModeExtensions.FromPersistedValue(profileWidget.PinMode, profileWidget.IsPinnedFallback());
+            model.WidgetOpacityPercent = profileWidget.WidgetOpacityPercent ?? 100;
+            model.ZoomFactorPercent = profileWidget.ZoomFactorPercent ?? 100;
+            model.Left = profileWidget.Left;
+            model.Top = profileWidget.Top;
+            model.WidgetWidth = profileWidget.Width;
+            model.WidgetHeight = profileWidget.Height;
+            model.MonitorDeviceName = profileWidget.MonitorDeviceName;
+            model.PreferredMonitorDeviceName = profileWidget.PreferredMonitorDeviceName;
+            model.IsVisible = profileWidget.IsVisible;
+
+            ApplyPinState(model);
+            ApplyVisibility(model);
+        }
+
+        // Widgets not part of this profile are hidden so switching layouts is deterministic.
+        foreach (var model in Widgets.Where(candidate => !matchedWidgetIds.Contains(candidate.Id)).ToList())
+        {
+            if (!model.IsVisible)
+            {
+                continue;
+            }
+
+            model.IsVisible = false;
+            ApplyVisibility(model);
+        }
+
+        ScheduleSave();
+        return true;
+    }
+
+    public bool DeleteWorkspaceProfile(string profileName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(profileName);
+        return _workspaceProfileStore.Delete(profileName);
+    }
+
+    #endregion
+
+    #region Widget settings (manifest settingsSchema)
+
+    public void OpenWidgetSettings(WidgetModel model)
+    {
+        ArgumentNullException.ThrowIfNull(model);
+
+        var settingsWindow = new WidgetSettingsWindow(
+            model,
+            _widgetHostApiService,
+            () => _windowTracker.GetWindow(model.Id)?.ApplyInjectedSettings())
+        {
+            Owner = System.Windows.Application.Current?.MainWindow
+        };
+
+        settingsWindow.ShowDialog();
+    }
+
+    #endregion
 
     public void CloseAll()
     {
@@ -382,6 +614,13 @@ public class WidgetManager : IWidgetManager, IDisposable
         SaveStateToDisk();
     }
 
+    /// <summary>Stops the debounce timer and persists the state immediately (test seam).</summary>
+    internal void FlushPendingSave()
+    {
+        _saveDebounceTimer.Stop();
+        SaveStateToDisk();
+    }
+
     private void ScheduleSave()
     {
         _saveDebounceTimer.Stop();
@@ -394,6 +633,8 @@ public class WidgetManager : IWidgetManager, IDisposable
         {
             SuppressWidgetsOnFullscreen = IsFullscreenSuppressionEnabled,
             SuppressWidgetsOnMaximized = IsMaximizedSuppressionEnabled,
+            ThemeOption = _preferredTheme?.ToString(),
+            Culture = _preferredCulture,
             Widgets = Widgets
                 .Select(model => new WidgetStateRecord
                 {
@@ -403,6 +644,9 @@ public class WidgetManager : IWidgetManager, IDisposable
                     IsVisible = model.IsVisible,
                     IsLocked = model.IsLocked,
                     IsPinned = model.IsPinned,
+                    PinMode = model.PinMode.ToPersistedValue(),
+                    WidgetOpacityPercent = model.WidgetOpacityPercent,
+                    ZoomFactorPercent = model.ZoomFactorPercent,
                     Left = model.Left,
                     Top = model.Top,
                     WidgetWidth = model.WidgetWidth,
@@ -436,6 +680,9 @@ public class WidgetManager : IWidgetManager, IDisposable
             || propertyName == nameof(WidgetModel.IsVisible)
             || propertyName == nameof(WidgetModel.IsLocked)
             || propertyName == nameof(WidgetModel.IsPinned)
+            || propertyName == nameof(WidgetModel.PinMode)
+            || propertyName == nameof(WidgetModel.WidgetOpacityPercent)
+            || propertyName == nameof(WidgetModel.ZoomFactorPercent)
             || propertyName == nameof(WidgetModel.Left)
             || propertyName == nameof(WidgetModel.Top)
             || propertyName == nameof(WidgetModel.WidgetWidth)
@@ -530,7 +777,9 @@ public class WidgetManager : IWidgetManager, IDisposable
         window.SetRuntimeVisibility(false);
         _geometryService.CaptureGeometry(window, model);
 
-        window.Topmost = model.IsPinned;
+        window.ApplyPinMode(model.PinMode);
+        window.ApplyWidgetOpacity();
+        window.ApplyZoomFactor();
 
         return window;
     }
@@ -541,11 +790,9 @@ public class WidgetManager : IWidgetManager, IDisposable
 
         if (string.IsNullOrWhiteSpace(model.FilePath) || !File.Exists(model.FilePath))
         {
-            System.Windows.MessageBox.Show(
+            _dialogService.ShowWarning(
                 LocalizationService.Get("EditorWindow_LoadError"),
-                LocalizationService.Get("EditorWindow_Title"),
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning
+                LocalizationService.Get("EditorWindow_Title")
             );
             return;
         }
@@ -561,6 +808,7 @@ public class WidgetManager : IWidgetManager, IDisposable
             var editor = new HtmlCodeEditorWindow(m, _htmlEditorService, hotReload);
             editor.ContentSaved += (_, _) =>
             {
+                m.RefreshFileTimestamps();
                 var widgetWindow = _windowTracker.GetWindow(m.Id);
                 widgetWindow?.RefreshContent();
             };
@@ -612,8 +860,10 @@ public class WidgetManager : IWidgetManager, IDisposable
                 {
                     _geometryService.CaptureGeometry(window, model);
                     ScheduleSave();
-                    window.Close();
+                    // Hide + suspend instead of closing so the WebView2 (and widget state) survives.
+                    window.SetRuntimeVisibility(false);
                 }
+
                 continue;
             }
 
@@ -625,6 +875,11 @@ public class WidgetManager : IWidgetManager, IDisposable
                     || model.WidgetWidth.HasValue
                     || model.WidgetHeight.HasValue;
                 EnqueueVisibleWindowCreation(model, hasPersistedGeometry);
+            }
+            else if (!window.IsVisible)
+            {
+                // Widget was runtime-suppressed; restore it now that suppression ended.
+                window.SetRuntimeVisibility(true);
             }
         }
     }

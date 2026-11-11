@@ -48,7 +48,8 @@
 		"proofPoints": [
 			"WebView2로 렌더링되는 HTML, CSS 및 JavaScript 위젯",
 			"단일 매니페스트로 다중 위젯과 로컬 리소스를 지원하는 패키지",
-			"데스크톱 워크플로우를 보조하는 안전한 PowerShell 명령어 지원"
+			"위젯별 권한을 갖는 제어된 PowerShell 작업",
+			"시스템 메트릭, 오디오, 미디어 제어, 저장소, 테마를 위한 네이티브 호스트 API"
 		],
 		"githubButton": "GitHub에서 보기",
 		"releaseNotesButton": "업데이트 기록",
@@ -144,7 +145,7 @@
 		"community": {
 			"heading": "공유하고, 피드백을 얻으세요",
 			"lead": "자신만의 위젯을 커뮤니티에 공개하여 함께 더 나은 바탕화면을 만들 수 있습니다.",
-			"visitPrefix": "",
+			"visitPrefix": "방문",
 			"githubLinkLabel": "GitHub Discussions",
 			"visitConnector": "및",
 			"redditLinkLabel": "r/HTWind 레딧 커뮤니티",
@@ -243,24 +244,34 @@
 			},
 			{
 				"value": "PowerShell 연동",
-				"label": "호스트 API를 경유하여 네이티브 수준의 시스템 스크립트 실행",
+				"label": "샌드박스 읽기 전용 모드가 있는 위젯별 권한",
+				"spanTwo": true
+			},
+			{
+				"value": "네이티브 호스트 API",
+				"label": "시스템 메트릭, 오디오 레벨, 미디어 세션, 저장소, 테마 브리지를 프로세스 없이 제공",
+				"spanTwo": true
+			},
+			{
+				"value": "작업 공간 프로필",
+				"label": "트레이 메뉴에서 전체 위젯 레이아웃 저장 및 전환",
 				"spanTwo": true
 			}
 		],
 		"featureCards": [
 			{
 				"title": "HTML 웹을 모니터로",
-				"description": "HTML, CSS, JS만 다룰 수 있다면 어떤 디자인으로든 나만의 툴 패널을 만들 수 있습니다.",
+				"description": "HTML, CSS, JavaScript로 데스크톱 위젯을 만들어 보세요. 내장 에디터는 다중 파일 패키지를 탭으로 열고, 라이브 미리보기(핫 리로드)와 오류·로그용 런타임 콘솔을 제공합니다.",
 				"icon": "html"
 			},
 			{
 				"title": "강력한 PowerShell 플러그인",
-				"description": "위젯 내 버튼에서 호스트 프로세스로 메시지를 보내, 안전하게 관리되는 PowerShell 스크립트 동작을 발동시킵니다.",
+				"description": "위젯별 명시적 권한(읽기 전용, 전체, 거부)을 부여한 후 인프로세스 엔진으로 PowerShell을 실행합니다. 읽기 전용 모드는 제한된 샌드박스에서 실행되며, 모든 호출은 격리되고 시간 제한이 있습니다.",
 				"icon": "powershell"
 			},
 			{
 				"title": "Windows에 완벽히 동화된 뷰",
-				"description": "시스템 트레이, 항상 위 표시 및 개별 위젯 상태 저장 기능으로 위화감 없이 바탕화면에 녹아듭니다.",
+				"description": "트레이 동작, 상단 또는 데스크톱 레이어 고정, 자기 창 스냅, 위젯별 불투명도와 줌, 작업 공간 프로필, 화면 인식 숨김이 위젯을 Windows에 자연스럽게 어울리게 합니다.",
 				"icon": "windows"
 			}
 		],
@@ -322,11 +333,20 @@
 			},
 			{
 				"question": "PowerShell 연동을 사용하면 무엇이 좋습니까?",
-				"answer": "단순 웹 열람을 넘어, 로컬 PC 내부의 하드웨어 모니터링, 프로세스 종료 등 백그라운드 조작을 웹 인터페이스로 직접 통제하게 해줍니다."
+				"answer": "네. 위젯은 인프로세스 엔진으로 PowerShell을 실행할 수 있지만, 먼저 위젯별 명시적 권한이 필요합니다: 읽기 전용(샌드박스), 전체 액세스 또는 거부. 선택은 위젯별로 기억됩니다."
+			},
+			{
+				"question": "위젯에 어떤 네이티브 호스트 API를 사용할 수 있나요?",
+				"answer": "위젯은 system.metrics(CPU, 메모리, 디스크, 네트워크, 배터리), audio.visualizer(실시간 오디오 FFT), media.session(재생 정보 및 제어), storage.get/set(영구 위젯 설정), theme.get/onChanged(라이브 테마 및 강조 색상)를 호출할 수 있으며, 프로세스를 전혀 시작하지 않습니다.",
+				"spanTwoColumns": true
 			},
 			{
 				"question": "게임 중에도 화면에 계속 표시되나요?",
-				"answer": "설정에서 전체 화면이나 최대화된 앱 실행 시 위젯을 안 보이게끔 자동 숨기는 스마트 모드를 켤 수 있습니다."
+				"answer": "네. 설정에서 전체 화면 숨김과 별도의 최대화 앱 숨김 모드를 활성화할 수 있습니다. 둘 다 화면별로 작동합니다. 위젯 창은 즉시 숨겨지고 일시 중단되며, 상태를 유지하고, 저장된 표시 상태를 변경하지 않고 자동으로 복원됩니다."
+			},
+			{
+				"question": "서로 다른 위젯 레이아웃을 저장할 수 있나요?",
+				"answer": "네. 작업 공간 프로필은 현재 위젯 구성(표시 여부, 위치, 크기, 잠금 및 고정 모드, 불투명도, 줌)을 명명된 레이아웃으로 저장하여 언제든지 트레이 메뉴에서 전환할 수 있습니다."
 			},
 			{
 				"question": "프로젝트가 오픈 소스인가요?",
@@ -339,12 +359,16 @@
 		],
 		"overviewParagraphs": [
 			"Windows 개발의 강력함 위에 유연함이 결합된 WebView2 엔진 기반으로, 가벼우면서도 제한 없는 인터페이스가 구현됩니다.",
-			"마치 오랫동안 기다렸던 모던 윈도우용 진화형 가젯 환경을 경험할 수 있도록 지속 업데이트 되고 있습니다."
+			"이 앱은 가볍지만 확장 가능한 위젯 레이어를 원하는 사용자를 위해 만들어졌습니다. 트레이 통합, 상단 또는 데스크톱 레이어 고정, 자기 스냅, 위젯별 불투명도와 줌, 작업 공간 프로필, 패키지 위젯, 화면 인식 숨김이 표준 Windows 데스크톱을 더 유용한 작업 공간으로 바꿔 줍니다."
 		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
 				"alt": "HTWind 위젯 보관소 화면"
+			},
+			{
+				"src": "/app_screenshots/page_gallery.png",
+				"alt": "HTWind 갤러리 - 커뮤니티 위젯 설치"
 			},
 			{
 				"src": "/app_screenshots/page_settings.png",

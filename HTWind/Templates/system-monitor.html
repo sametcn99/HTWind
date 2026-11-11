@@ -227,6 +227,8 @@
       return Math.max(0, Math.min(100, n));
     }
 
+    let nativeApiAvailable = null;
+    let isRefreshing = false;
     let previousNetworkSample = null;
 
     function toArray(value) {
@@ -253,6 +255,12 @@
       document.getElementById("network").textContent = `RX ${rxText} | TX ${txText}`;
     }
 
+    function updateNetworkRateText(rxPerSec, txPerSec) {
+      previousNetworkSample = null;
+      document.getElementById("network").textContent =
+        `RX ${fmtBytes(Math.max(0, Math.round(rxPerSec)))}/s | TX ${fmtBytes(Math.max(0, Math.round(txPerSec)))}/s`;
+    }
+
     function setError(message) {
       const el = document.getElementById("error");
       if (!message) {
@@ -265,7 +273,65 @@
       el.textContent = message;
     }
 
-    async function refresh() {
+    function renderDisks(disks) {
+      const disksHost = document.getElementById("disks");
+      disksHost.innerHTML = "";
+
+      if (disks.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "small";
+        empty.textContent = "No ready disks detected.";
+        disksHost.appendChild(empty);
+      }
+
+      disks.forEach((d) => {
+        const name = pick(d, "name", "Name") || "-";
+        const label = pick(d, "label", "Label") || "";
+        const usedPercent = clampPercent(pick(d, "usedPercent", "UsedPercent") || 0);
+        const usedBytes = Number(pick(d, "usedBytes", "UsedBytes") || 0);
+        const totalBytes = Number(pick(d, "totalBytes", "TotalBytes") || 0);
+
+        const wrap = document.createElement("div");
+        wrap.className = "disk";
+        wrap.innerHTML = `<div class="disk-head"><span>${name} ${label}</span><span>${usedPercent.toFixed(1)}%</span></div>
+          <div class="bar"><div class="fill" style="background:var(--disk); width:${usedPercent}%"></div></div>
+          <div class="small">Used ${fmtBytes(usedBytes)} / ${fmtBytes(totalBytes)}</div>`;
+        disksHost.appendChild(wrap);
+      });
+    }
+
+    function applySystemMetrics(payload) {
+      const machineName = pick(payload, "machineName", "MachineName") || "Unknown";
+      const osVersion = pick(payload, "osVersion", "OsVersion") || "Unknown OS";
+      const uptimeSeconds = Number(pick(payload, "uptimeSeconds", "UptimeSeconds") || 0);
+      const cpuLoadPercent = clampPercent(pick(payload, "cpuLoadPercent", "CpuLoadPercent") || 0);
+      const processCount = Number(pick(payload, "processCount", "ProcessCount") || 0);
+      const memoryUsedBytes = Number(pick(payload, "memoryUsedBytes", "MemoryUsedBytes") || 0);
+      const memoryTotalBytes = Number(pick(payload, "memoryTotalBytes", "MemoryTotalBytes") || 0);
+      const memoryUsedPercent = clampPercent(pick(payload, "memoryUsedPercent", "MemoryUsedPercent") || 0);
+      const rxPerSecond = Number(pick(payload, "networkBytesReceivedPerSecond", "NetworkBytesReceivedPerSecond") || 0);
+      const txPerSecond = Number(pick(payload, "networkBytesSentPerSecond", "NetworkBytesSentPerSecond") || 0);
+      const disks = toArray(pick(payload, "disks", "Disks"));
+
+      document.getElementById("machine").textContent = machineName;
+      document.getElementById("osVersion").textContent = osVersion;
+      document.getElementById("uptime").textContent = formatUptime(uptimeSeconds);
+      document.getElementById("cpuLoad").textContent = `${cpuLoadPercent.toFixed(1)}%`;
+      document.getElementById("cpuFill").style.width = `${cpuLoadPercent}%`;
+      document.getElementById("memoryText").textContent = `${fmtBytes(memoryUsedBytes)} / ${fmtBytes(memoryTotalBytes)}`;
+      document.getElementById("memoryFill").style.width = `${memoryUsedPercent}%`;
+      document.getElementById("procCount").textContent = `${processCount}`;
+      updateNetworkRateText(rxPerSecond, txPerSecond);
+      renderDisks(disks);
+      setError("");
+    }
+
+    async function refreshNative() {
+      const payload = await window.HTWind.invoke("system.metrics", { timeoutMs: 5000 });
+      applySystemMetrics(payload);
+    }
+
+    async function refreshWithPowerShell() {
       const payload = await runPs(`
         $os = Get-CimInstance Win32_OperatingSystem
         $uptime = (Get-Date) - $os.LastBootUpTime
@@ -376,13 +442,37 @@
       setError("");
     }
 
-    async function refreshSafely() {
+    async function refreshWithPowerShellSafely() {
       try {
-        await refresh();
+        await refreshWithPowerShell();
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         setError(`System monitor update failed.\n${message}`);
         console.error(error);
+      }
+    }
+
+    async function refreshSafely() {
+      // In-flight guard plus native-first fallback chain.
+      if (isRefreshing) {
+        return;
+      }
+
+      isRefreshing = true;
+      try {
+        if (nativeApiAvailable !== false) {
+          try {
+            await refreshNative();
+            nativeApiAvailable = true;
+            return;
+          } catch {
+            nativeApiAvailable = false;
+          }
+        }
+
+        await refreshWithPowerShellSafely();
+      } finally {
+        isRefreshing = false;
       }
     }
 

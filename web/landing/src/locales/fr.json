@@ -48,7 +48,8 @@
 		"proofPoints": [
 			"Création en HTML, CSS, JavaScript et rendu natif par WebView2",
 			"Paquets par manifestes pour intégrer de multiples ressources locales",
-			"Exécution contrôlée des actions PowerShell pour l'automatisation"
+			"Actions PowerShell contrôlées avec autorisations par widget",
+			"API hôtes natives pour métriques système, audio, contrôle multimédia, stockage et thèmes"
 		],
 		"githubButton": "Voir sur GitHub",
 		"releaseNotesButton": "Notes de version",
@@ -243,24 +244,34 @@
 			},
 			{
 				"value": "Système Intégré",
-				"label": "PowerShell contrôlé via JavaScript",
+				"label": "Autorisations par widget avec un mode lecture seule isolé",
+				"spanTwo": true
+			},
+			{
+				"value": "API hôtes natives",
+				"label": "Métriques système, niveaux audio, sessions multimédias, stockage et ponts de thème sans aucun processus",
+				"spanTwo": true
+			},
+			{
+				"value": "Profils d'espace de travail",
+				"label": "Enregistrez et changez des dispositions complètes de widgets depuis le menu de la barre",
 				"spanTwo": true
 			}
 		],
 		"featureCards": [
 			{
 				"title": "Création Web Indépendante",
-				"description": "Liez HTML/CSS/JS pour animer vos propres métriques de bureaux sans barrières.",
+				"description": "Créez des widgets de bureau en HTML, CSS et JavaScript. L'éditeur intégré ouvre les paquets multi-fichiers dans des onglets avec aperçu en direct (rechargement à chaud) et une console d'exécution pour les erreurs et les journaux.",
 				"icon": "html"
 			},
 			{
 				"title": "Puissance du Shell Microsoft",
-				"description": "Commandez des redémarrages de répertoires ou analysez vos disques depuis des accès limités et sécurisants.",
+				"description": "Exécutez PowerShell via le moteur in-process après une autorisation explicite par widget (lecture seule, complet ou refuser). Le mode lecture seule s'exécute dans un bac à sable restreint ; chaque appel est isolé et limité dans le temps.",
 				"icon": "powershell"
 			},
 			{
 				"title": "L'interface respecte l'OS",
-				"description": "L'exécutable retient comment vous organisez votre écran de travail en préservant son écosystème WinUI.",
+				"description": "Comportement de la barre système, épinglage au-dessus ou sur la couche du bureau, alignement magnétique des fenêtres, opacité et zoom par widget, profils d'espace de travail et masquage adapté à l'écran rendent les widgets natifs à Windows.",
 				"icon": "windows"
 			}
 		],
@@ -322,11 +333,20 @@
 			},
 			{
 				"question": "Est-ce sécurisé la gestion des scripts admin ?",
-				"answer": "Les Widgets requièrent toujours un appui humain confirmant l'exécution."
+				"answer": "Oui. Les widgets peuvent exécuter PowerShell via le moteur in-process, mais chacun doit d'abord recevoir une autorisation explicite : lecture seule (bac à sable), accès complet ou refus. Le choix est mémorisé pour chaque widget."
+			},
+			{
+				"question": "Quelles API hôtes natives sont disponibles pour les widgets ?",
+				"answer": "Les widgets peuvent appeler system.metrics (CPU, mémoire, disques, réseau, batterie), audio.visualizer (FFT audio en temps réel), media.session (infos et contrôles de lecture), storage.get/set (paramètres persistants par widget) et theme.get/onChanged (thème et couleur d'accentuation en direct), le tout sans créer de processus.",
+				"spanTwoColumns": true
 			},
 			{
 				"question": "L'interface peut-elle ne pas déranger les autres fenêtres ?",
-				"answer": "Absolument, des sondes natives surveillent vos actions de plein-écran."
+				"answer": "Oui. Dans Paramètres, vous pouvez activer le masquage en plein écran et un mode distinct pour les applications maximisées. Les deux fonctionnent par écran : les fenêtres de widgets sont masquées et suspendues instantanément, conservent leur état et sont restaurées automatiquement sans modifier l'état de visibilité enregistré."
+			},
+			{
+				"question": "Puis-je enregistrer différentes dispositions de widgets ?",
+				"answer": "Oui. Les profils d'espace de travail enregistrent la configuration actuelle des widgets — visibilité, positions, tailles, modes de verrouillage et d'épinglage, opacité et zoom — sous forme de disposition nommée que vous pouvez rappeler depuis le menu de la barre système à tout moment."
 			},
 			{
 				"question": "Puis-je altérer HTWind par moi-même ?",
@@ -339,12 +359,16 @@
 		],
 		"overviewParagraphs": [
 			"Un environnement de codage accessible avec WebView2, couplé à la performance de la compilation WPF et .Net.",
-			"Faites de grandes choses et facilitez la rétention visuelle de ces actions avec HTWind."
+			"L'application est conçue pour ceux qui veulent une couche de widgets légère mais extensible : intégration à la barre système, épinglage au-dessus ou sur la couche du bureau, alignement magnétique, opacité et zoom par widget, profils d'espace de travail, widgets empaquetés et masquage adapté à l'écran transforment un bureau Windows standard en un espace de travail plus utile."
 		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
 				"alt": "Dossiers d'interface"
+			},
+			{
+				"src": "/app_screenshots/page_gallery.png",
+				"alt": "HTWind Galerie - Installer des widgets de la communauté"
 			},
 			{
 				"src": "/app_screenshots/page_settings.png",

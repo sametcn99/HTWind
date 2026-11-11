@@ -61,6 +61,52 @@
         </Grid>
       </ui:Card>
 
+      <!-- Language -->
+      <ui:Card Margin="0,0,0,8"
+          Padding="16,12">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+
+          <ui:SymbolIcon
+            Symbol="Globe24"
+            FontSize="20"
+            VerticalAlignment="Center"
+            Margin="0,0,14,0"/>
+
+          <StackPanel Grid.Column="1"
+              VerticalAlignment="Center">
+            <TextBlock
+              Text="{loc:Loc MainWindow_Language}"
+              FontSize="14"
+              FontWeight="SemiBold"/>
+            <TextBlock
+              Text="{loc:Loc MainWindow_LanguageDescription}"
+              FontSize="12"
+              Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+              TextWrapping="Wrap"/>
+          </StackPanel>
+
+          <ComboBox
+            x:Name="LanguageComboBox"
+            Grid.Column="2"
+            Width="170"
+            VerticalAlignment="Center"
+            SelectedValuePath="Tag"
+            SelectionChanged="LanguageComboBox_SelectionChanged"
+            SelectedValue="{Binding SelectedCultureName, Mode=OneWay}">
+            <ComboBoxItem Content="English" Tag="en-US"/>
+            <ComboBoxItem Content="Türkçe" Tag="tr-TR"/>
+            <ComboBoxItem Content="Deutsch" Tag="de-DE"/>
+            <ComboBoxItem Content="Français" Tag="fr-FR"/>
+            <ComboBoxItem Content="Español" Tag="es-ES"/>
+          </ComboBox>
+        </Grid>
+      </ui:Card>
+
       <!-- Run on Startup -->
       <ui:Card Margin="0,0,0,8"
           Padding="16,12">

@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using HTWind.Model;
+using HTWind.Services.Application;
 
 namespace HTWind.Services.Widget;
 
@@ -11,11 +12,12 @@ public sealed partial class WidgetStateStore : IWidgetStateStore
     private static readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
     private static readonly WidgetStateJsonContext _jsonContext = new(_jsonOptions);
 
-    private readonly string _stateFilePath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "HTWind",
-        "widgets-state.json"
-    );
+    private readonly string _stateFilePath;
+
+    public WidgetStateStore(string? basePath = null)
+    {
+        _stateFilePath = HTWindPathProvider.GetStateFilePath(basePath);
+    }
 
     public bool HasStateFile()
     {
@@ -67,7 +69,9 @@ public sealed partial class WidgetStateStore : IWidgetStateStore
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_stateFilePath)!);
             var json = JsonSerializer.Serialize(snapshot, _jsonContext.WidgetStateSnapshot);
-            File.WriteAllText(_stateFilePath, json);
+
+            // Atomic write so an abrupt shutdown or power loss cannot corrupt the state file.
+            HTWind.Services.Application.AtomicFile.WriteAllText(_stateFilePath, json);
         }
         catch
         {

@@ -68,6 +68,113 @@ public partial class MainWindow : FluentWindow
 
         _isNavigationReady = true;
         NavigateUsingItem(HomeNavItem, "Home");
+        RebuildProfilesTrayMenu();
+    }
+
+    private void RebuildProfilesTrayMenu()
+    {
+        var profilesMenu = ProfilesTrayMenuItem;
+        if (profilesMenu is null)
+        {
+            return;
+        }
+
+        var menuItems = new List<object>();
+
+        foreach (var profileName in _widgetManager.GetWorkspaceProfileNames())
+        {
+            var profileItem = new System.Windows.Controls.MenuItem
+            {
+                Header = profileName,
+                Tag = profileName
+            };
+            profileItem.Click += WorkspaceProfileMenuItem_Click;
+            menuItems.Add(profileItem);
+        }
+
+        var saveItem = new System.Windows.Controls.MenuItem
+        {
+            Header = Localization.LocalizationService.Get("MainWindow_SaveProfile")
+        };
+        saveItem.Click += SaveWorkspaceProfileMenuItem_Click;
+        menuItems.Add(saveItem);
+
+        if (_widgetManager.GetWorkspaceProfileNames().Count > 0)
+        {
+            var deleteItem = new System.Windows.Controls.MenuItem
+            {
+                Header = Localization.LocalizationService.Get("MainWindow_DeleteProfile")
+            };
+            deleteItem.Click += DeleteWorkspaceProfileMenuItem_Click;
+            menuItems.Add(deleteItem);
+        }
+
+        profilesMenu.Items.Clear();
+        foreach (var item in menuItems)
+        {
+            profilesMenu.Items.Add(item);
+        }
+    }
+
+    private void WorkspaceProfileMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not System.Windows.Controls.MenuItem { Tag: string profileName })
+        {
+            return;
+        }
+
+        if (_widgetManager.ApplyWorkspaceProfile(profileName))
+        {
+            RebuildProfilesTrayMenu();
+        }
+    }
+
+    private void SaveWorkspaceProfileMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        var inputWindow = new ProfileNameInputWindow
+        {
+            Owner = this,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+        };
+
+        if (inputWindow.ShowDialog() != true)
+        {
+            return;
+        }
+
+        var profileName = inputWindow.ProfileName;
+        if (string.IsNullOrWhiteSpace(profileName))
+        {
+            return;
+        }
+
+        _widgetManager.CaptureWorkspaceProfile(profileName);
+        RebuildProfilesTrayMenu();
+    }
+
+    private void DeleteWorkspaceProfileMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        var profiles = _widgetManager.GetWorkspaceProfileNames();
+        if (profiles.Count == 0)
+        {
+            return;
+        }
+
+        var selector = new ProfileNameInputWindow
+        {
+            Owner = this,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            IsDeletionMode = true,
+            ExistingProfileNames = profiles
+        };
+
+        if (selector.ShowDialog() != true || string.IsNullOrWhiteSpace(selector.ProfileName))
+        {
+            return;
+        }
+
+        _widgetManager.DeleteWorkspaceProfile(selector.ProfileName);
+        RebuildProfilesTrayMenu();
     }
 
     private void HomeNavItem_Click(object sender, RoutedEventArgs e)
@@ -78,6 +185,16 @@ public partial class MainWindow : FluentWindow
         }
 
         NavigateUsingItem(HomeNavItem, "Home");
+    }
+
+    private void GalleryNavItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (!_isNavigationReady)
+        {
+            return;
+        }
+
+        NavigateUsingItem(GalleryNavItem, "Gallery");
     }
 
     private void SettingsNavItem_Click(object sender, RoutedEventArgs e)
@@ -114,6 +231,11 @@ public partial class MainWindow : FluentWindow
             HomeNavItem.Deactivate(NavigationView);
         }
 
+        if (!ReferenceEquals(activeItem, GalleryNavItem))
+        {
+            GalleryNavItem.Deactivate(NavigationView);
+        }
+
         if (!ReferenceEquals(activeItem, SettingsNavItem))
         {
             SettingsNavItem.Deactivate(NavigationView);
@@ -134,6 +256,7 @@ public partial class MainWindow : FluentWindow
             page = tag switch
             {
                 "Home" => CreateHomePage(),
+                "Gallery" => new GalleryPage(_widgetManager),
                 "Settings" => CreateSettingsPage(),
                 "About" => new AboutPage(),
                 _ => null
@@ -252,6 +375,7 @@ public partial class MainWindow : FluentWindow
         }
 
         _themeService.ApplyTheme(option);
+        _widgetManager.SetPreferredTheme(option);
     }
 
     protected override void OnClosed(EventArgs e)

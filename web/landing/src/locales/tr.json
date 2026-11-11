@@ -48,7 +48,8 @@
 		"proofPoints": [
 			"WebView2 ile islenen HTML, CSS ve JavaScript widget'lari",
 			"Varlik destekli ve cok widget'li kurulumlar icin manifest tabanli paketler",
-			"Teshis ve masaustu is akislari icin kontrollu PowerShell eylemleri"
+			"Widget başına yetkilendirmeli kontrollü PowerShell eylemleri",
+			"Sistem ölçümleri, ses, medya kontrolü, depolama ve tema için yerel host API'leri"
 		],
 		"githubButton": "GitHub'da gor",
 		"releaseNotesButton": "Surum notlari",
@@ -243,24 +244,34 @@
 			},
 			{
 				"value": "PowerShell API",
-				"label": "Sunucu tarafli otomasyon koprusu",
+				"label": "Sandbox'lı salt-okunur mod ile widget başına izinler",
+				"spanTwo": true
+			},
+			{
+				"value": "Yerel Host API'leri",
+				"label": "Sistem ölçümleri, ses seviyeleri, medya oturumları, depolama ve tema köprüleri — sıfır process ile",
+				"spanTwo": true
+			},
+			{
+				"value": "Çalışma Alanı Profilleri",
+				"label": "Tepsi menüsünden tam widget dizilimlerini kaydet ve arasında geçiş yap",
 				"spanTwo": true
 			}
 		],
 		"featureCards": [
 			{
 				"title": "Masaustunde HTML Widget'lari",
-				"description": "HTML, CSS ve JavaScript ile masaustu widget'lari olusturun; sonra bunlari tek dosya ve paketli klasor destegiyle yerel his veren bir Windows sunucusunda calistirin.",
+				"description": "HTML, CSS ve JavaScript ile masaüstü widget'ları oluştur. Yerleşik editör, çok dosyalı paketleri sekmeler halinde açar; canlı önizleme (hot reload) ve hata/loglar için çalışma zamanı konsolu sunar.",
 				"icon": "html"
 			},
 			{
 				"title": "PowerShell Entegrasyonu",
-				"description": "Widget katmanini guvensiz bir kabuga cevirmeden teshis, otomasyon ve sistem gorevleri icin onayli PowerShell eylemlerini sunucu API'leri uzerinden calistirin.",
+				"description": "Açık bir widget başına yetki (salt-okunur, tam ya da reddet) verdiğinde PowerShell'i süreç içi motorla çalıştır. Salt-okunur mod kısıtlı bir sandbox'ta koşar; her çağrı izole edilir ve süre sınırlıdır.",
 				"icon": "powershell"
 			},
 			{
 				"title": "Windows'a Yerel His",
-				"description": "Tepsi davranisi, ustte sabitleme kontrolleri, durum saklama ve tam ekran ya da buyutulmus uygulamalar icin ekran farkindalikli gizleme sayesinde modern Windows is akislariyla uyumlu kalin.",
+				"description": "Tepsi davranışı, üstte tutma veya masaüstü katmanına sabitleme, manyetik pencere hizalama, widget başına opaklık ve yakınlaştırma, çalışma alanı profilleri ve ekrana duyarlı gizleme ile widget'lar Windows'a doğal hissettirir.",
 				"icon": "windows"
 			}
 		],
@@ -322,11 +333,20 @@
 			},
 			{
 				"question": "HTWind PowerShell otomasyonunu destekliyor mu?",
-				"answer": "Evet. HTWind, teshis ve kontrollu masaustu eylemleri icin onayli PowerShell komutlarini calistirabilen sunucu tarafli API'ler icerir."
+				"answer": "Evet. Widget'lar PowerShell'i süreç içi motorla çalıştırabilir; ancak her widget için önce açık bir yetki gerekir: salt-okunur (sandbox), tam erişim veya reddet. Seçim widget başına hatırlanır."
+			},
+			{
+				"question": "Widget'lar için hangi yerel host API'leri var?",
+				"answer": "Widget'lar system.metrics (CPU, bellek, diskler, ağ, pil), audio.visualizer (gerçek zamanlı ses FFT'si), media.session (çalan medya bilgisi ve kontrol), storage.get/set (kalıcı widget ayarları) ve theme.get/onChanged (canlı tema ve vurgu renkleri) API'lerini çağırabilir — hiç process başlatmadan.",
+				"spanTwoColumns": true
 			},
 			{
 				"question": "Tam ekran veya buyutulmus uygulamalari kullanirken widget'lar otomatik gizlenebilir mi?",
-				"answer": "Evet. Ayarlar bolumunden tam ekran gizleme ve ayri bir buyutulmus uygulama gizleme modu etkinlestirebilirsiniz. Her ikisi de ekran bazinda calisir ve kaydedilen gorunurluk durumunu degistirmeden widget pencerelerini gecici olarak kapatir."
+				"answer": "Evet. Ayarlar'dan tam ekran gizlemeyi ve ayrı bir maksimize uygulama gizlemeyi etkinleştirebilirsiniz. İkisi de ekran başına çalışır: widget pencereleri anında gizlenir ve askıya alınır, durumları korunur ve kayıtlı görünürlük durumunu değiştirmeden otomatik geri getirilir."
+			},
+			{
+				"question": "Farklı widget dizilimlerini kaydedebilir miyim?",
+				"answer": "Evet. Çalışma alanı profilleri mevcut widget kurulumunu — görünürlük, konumlar, boyutlar, kilitleme/sabitleme modları, opaklık ve yakınlaştırma — adlandırılmış bir düzen olarak kaydeder; tepsi menüsünden istediğiniz zaman geçiş yapabilirsiniz."
 			},
 			{
 				"question": "HTWind acik kaynak mi?",
@@ -339,12 +359,16 @@
 		],
 		"overviewParagraphs": [
 			"HTWind, yerel Windows davranisini esnek web icerigiyle birlestirir. HTML widget'lari WebView2 ile islenir; bu da calisirken gorunur kalan masaustu araclari gelistirmeyi kolaylastirir.",
-			"Uygulama, hafif ama genisletilebilir bir widget katmani isteyen kullanicilar icin gelistirildi: tepsi entegrasyonu, ustte sabitleme kontrolleri, durum saklama, paketlenmis widget'lar ve ekran farkindalikli gizleme; standart bir Windows masaustunu daha kullanisli bir calisma alanina donusturur."
+			"Uygulama, hafif ama genişletilebilir bir widget katmanı isteyen kullanıcılar için tasarlandı: tepsi entegrasyonu, üstte tutma veya masaüstü katmanına sabitleme, manyetik hizalama, widget başına opaklık ve yakınlaştırma, çalışma alanı profilleri, paketli widget'lar ve ekrana duyarlı gizleme, standart bir Windows masaüstünü daha kullanışlı bir çalışma alanına dönüştürür."
 		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
 				"alt": "HTWind Ana Sayfa - Widget Kutuphanesi"
+			},
+			{
+				"src": "/app_screenshots/page_gallery.png",
+				"alt": "HTWind Galerisi - Topluluk widget'larını kur"
 			},
 			{
 				"src": "/app_screenshots/page_settings.png",

@@ -105,6 +105,12 @@ public sealed class WidgetExportService : IWidgetExportService
             : exportRootPath;
         Directory.CreateDirectory(contentRootPath);
 
+        var exportJsonOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true
+        };
+
         foreach (var sourceReference in sourceReferences)
         {
             var itemDirectoryName = useWorkspaceSubdirectory
@@ -116,19 +122,32 @@ public sealed class WidgetExportService : IWidgetExportService
             var itemDestinationRoot = useWorkspaceSubdirectory
                 ? Path.Combine(contentRootPath, itemDirectoryName)
                 : exportRootPath;
+            Directory.CreateDirectory(itemDestinationRoot);
 
-            if (!string.IsNullOrWhiteSpace(sourceReference.WidgetRootPath) && Directory.Exists(sourceReference.WidgetRootPath))
+            var widgetRootPath = sourceReference.WidgetRootPath;
+            var hasWidgetRoot = !string.IsNullOrWhiteSpace(widgetRootPath) && Directory.Exists(widgetRootPath);
+
+            // Scope the export strictly to this widget's own entry file plus its declared or
+            // referenced assets; shared folders (e.g. BuiltInTemplates) must not leak sibling
+            // widgets into the package.
+            var exportFiles = hasWidgetRoot
+                ? WidgetManifestHelper.CollectWidgetExportFiles(sourceReference.EntryFilePath, widgetRootPath, exportJsonOptions)
+                : [];
+            if (exportFiles.Count == 0)
             {
-                WidgetManifestHelper.CopyWidgetContent(sourceReference.WidgetRootPath, itemDestinationRoot);
+                exportFiles = [sourceReference.EntryFilePath];
             }
-            else
+
+            var widgetRootForRelativePaths = hasWidgetRoot
+                ? widgetRootPath!
+                : Path.GetDirectoryName(sourceReference.EntryFilePath) ?? string.Empty;
+
+            foreach (var sourceFilePath in exportFiles)
             {
-                Directory.CreateDirectory(itemDestinationRoot);
-                File.Copy(
-                    sourceReference.EntryFilePath,
-                    Path.Combine(itemDestinationRoot, Path.GetFileName(sourceReference.EntryFilePath)),
-                    overwrite: false
-                );
+                var relativeFilePath = Path.GetRelativePath(widgetRootForRelativePaths, sourceFilePath);
+                var destinationFilePath = Path.Combine(itemDestinationRoot, relativeFilePath);
+                Directory.CreateDirectory(Path.GetDirectoryName(destinationFilePath)!);
+                File.Copy(sourceFilePath, destinationFilePath, overwrite: false);
             }
 
             var entryFile = Path.GetFileName(sourceReference.EntryFilePath);
@@ -139,7 +158,11 @@ public sealed class WidgetExportService : IWidgetExportService
                 Name = Path.GetFileNameWithoutExtension(sourceReference.WidgetName),
                 RelativePath = itemRelativePath,
                 EntryFile = WidgetManifestHelper.NormalizeRelativePath(entryFile),
-                Assets = WidgetManifestHelper.CollectAssetPaths(itemDestinationRoot, entryFile)
+                Assets = exportFiles
+                    .Where(path => !string.Equals(path, sourceReference.EntryFilePath, StringComparison.OrdinalIgnoreCase))
+                    .Select(path => WidgetManifestHelper.NormalizeRelativePath(Path.GetRelativePath(widgetRootForRelativePaths, path)))
+                    .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                    .ToList()
             };
 
             packageManifest.Widgets.Add(packageItem);

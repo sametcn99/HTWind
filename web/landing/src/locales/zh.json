@@ -48,7 +48,8 @@
 		"proofPoints": [
 			"通过 WebView2 渲染的 HTML、CSS 和 JavaScript 小组件",
 			"支持资源型和多小组件场景的 manifest 包",
-			"用于诊断和桌面工作流的受控 PowerShell 操作"
+			"带有逐组件权限的受控 PowerShell 操作",
+			"用于系统指标、音频、媒体控制、存储和主题的原生宿主 API"
 		],
 		"githubButton": "在 GitHub 查看",
 		"releaseNotesButton": "发行说明",
@@ -243,24 +244,34 @@
 			},
 			{
 				"value": "PowerShell API",
-				"label": "宿主侧自动化桥接",
+				"label": "逐组件权限，附带沙盒只读模式",
+				"spanTwo": true
+			},
+			{
+				"value": "原生宿主 API",
+				"label": "系统指标、音频电平、媒体会话、存储和主题桥接，零进程开销",
+				"spanTwo": true
+			},
+			{
+				"value": "工作区配置",
+				"label": "从托盘菜单保存并切换完整的组件布局",
 				"spanTwo": true
 			}
 		],
 		"featureCards": [
 			{
 				"title": "桌面 HTML 小组件",
-				"description": "使用 HTML、CSS 和 JavaScript 构建桌面小组件，然后在接近原生体验的 Windows 宿主中运行，支持单文件和打包文件夹。",
+				"description": "使用 HTML、CSS 和 JavaScript 构建桌面组件。内置编辑器以标签页打开多文件包，提供实时预览（热重载）以及用于错误和日志的运行时控制台。",
 				"icon": "html"
 			},
 			{
 				"title": "PowerShell 集成",
-				"description": "通过宿主 API 运行经过批准的 PowerShell 操作用于诊断、自动化和系统任务，同时避免把小组件层变成不安全的 shell。",
+				"description": "在为每个组件显式授予权限（只读、完全或拒绝）后，通过进程内引擎运行 PowerShell。只读模式在受限沙盒中运行；每次调用相互隔离并有时间限制。",
 				"icon": "powershell"
 			},
 			{
 				"title": "原生 Windows 体验",
-				"description": "通过托盘行为、置顶控制、状态持久化以及针对全屏或最大化应用的显示感知抑制，与现代 Windows 工作流保持一致。",
+				"description": "托盘行为、置顶或固定到桌面层、磁性窗口吸附、逐组件不透明度和缩放、工作区配置以及感知屏幕的隐藏，让组件保持 Windows 原生体验。",
 				"icon": "windows"
 			}
 		],
@@ -322,11 +333,20 @@
 			},
 			{
 				"question": "HTWind 支持 PowerShell 自动化吗？",
-				"answer": "支持。HTWind 包含宿主侧 API，可以执行经过批准的 PowerShell 命令，用于诊断和受控的桌面操作。"
+				"answer": "可以。组件可通过进程内引擎运行 PowerShell，但每个组件都需要先获得显式授权：只读（沙盒）、完全访问或拒绝。该选择会按组件分别记住。"
+			},
+			{
+				"question": "组件可以使用哪些原生宿主 API？",
+				"answer": "组件可以调用 system.metrics（CPU、内存、磁盘、网络、电池）、audio.visualizer（实时音频 FFT）、media.session（正在播放的信息与控制）、storage.get/set（持久的组件设置）以及 theme.get/onChanged（实时主题和强调色）——全部无需启动任何进程。",
+				"spanTwoColumns": true
 			},
 			{
 				"question": "当我使用全屏或最大化应用时，小组件会自动隐藏吗？",
-				"answer": "会。在设置中你可以启用全屏抑制以及单独的最大化应用抑制模式。两者都按显示器工作，并会在不改变保存的可见状态的情况下临时关闭小组件窗口。"
+				"answer": "可以。在设置中，你可以启用全屏隐藏和单独的最大化应用隐藏模式。两者均按屏幕工作：组件窗口立即隐藏并挂起，保留自身状态，并在不更改已保存可见性状态的情况下自动恢复。"
+			},
+			{
+				"question": "我可以保存不同的组件布局吗？",
+				"answer": "可以。工作区配置会将当前组件设置——可见性、位置、大小、锁定和固定模式、不透明度和缩放——保存为命名布局，你可以随时从托盘菜单切换。"
 			},
 			{
 				"question": "HTWind 是开源的吗？",
@@ -339,12 +359,16 @@
 		],
 		"overviewParagraphs": [
 			"HTWind 将原生 Windows 行为与灵活的 Web 内容结合起来。HTML 小组件通过 WebView2 渲染，因此可以轻松构建在工作时保持可见的桌面工具。",
-			"这个应用面向希望拥有轻量但可扩展小组件层的用户：托盘集成、置顶控制、状态持久化、打包小组件以及显示感知抑制，都能帮助把普通 Windows 桌面变成更有用的工作空间。"
+			"这款应用面向想要轻量但可扩展组件层的用户：托盘集成、置顶或桌面层固定、磁性吸附、逐组件不透明度和缩放、工作区配置、打包组件以及感知屏幕的隐藏，将标准 Windows 桌面变成更实用的工作空间。"
 		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
 				"alt": "HTWind 首页 - 小组件库"
+			},
+			{
+				"src": "/app_screenshots/page_gallery.png",
+				"alt": "HTWind 画廊 - 安装社区组件"
 			},
 			{
 				"src": "/app_screenshots/page_settings.png",

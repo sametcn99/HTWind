@@ -64,6 +64,9 @@
   <data name="MainWindow_WidgetActions" xml:space="preserve">
     <value>Widget actions</value>
   </data>
+  <data name="MainWindow_ToggleSettings" xml:space="preserve">
+    <value>Show or hide widget settings</value>
+  </data>
   <data name="MainWindow_EmptyTitle" xml:space="preserve">
     <value>No widgets added yet</value>
   </data>
@@ -424,5 +427,141 @@
   </data>
   <data name="CreateWithEditorWindow_DefaultFileName" xml:space="preserve">
     <value>my-widget.html</value>
+  </data>
+
+  <data name="MainWindow_GalleryTab" xml:space="preserve">
+    <value>Gallery</value>
+  </data>
+  <data name="Gallery_Header" xml:space="preserve">
+    <value>Community Gallery</value>
+  </data>
+  <data name="Gallery_Description" xml:space="preserve">
+    <value>Install widgets from a URL (.htwind / .zip archive or a single HTML file) or from a local file.</value>
+  </data>
+  <data name="Gallery_InstallUrlTitle" xml:space="preserve">
+    <value>Install from URL</value>
+  </data>
+  <data name="Gallery_InstallUrlDescription" xml:space="preserve">
+    <value>Paste a direct link to a .htwind/.zip package or a widget HTML file.</value>
+  </data>
+  <data name="Gallery_UrlLabel" xml:space="preserve">
+    <value>Widget URL</value>
+  </data>
+  <data name="Gallery_InstallUrl" xml:space="preserve">
+    <value>Install from URL</value>
+  </data>
+  <data name="Gallery_InstallFileTitle" xml:space="preserve">
+    <value>Install from file</value>
+  </data>
+  <data name="Gallery_InstallFileDescription" xml:space="preserve">
+    <value>Choose a local .htwind/.zip package or a widget HTML file.</value>
+  </data>
+  <data name="Gallery_InstallFile" xml:space="preserve">
+    <value>Install from file...</value>
+  </data>
+  <data name="Gallery_Downloading" xml:space="preserve">
+    <value>Downloading widget...</value>
+  </data>
+  <data name="Gallery_Installing" xml:space="preserve">
+    <value>Installing widget...</value>
+  </data>
+  <data name="Gallery_InstallSuccess" xml:space="preserve">
+    <value>Widget installed: {0}</value>
+  </data>
+  <data name="Gallery_InstallFailed" xml:space="preserve">
+    <value>Installation failed: {0}</value>
+  </data>
+  <data name="Gallery_InvalidUrl" xml:space="preserve">
+    <value>Please enter a valid http(s) URL.</value>
+  </data>
+  <data name="Gallery_UnsupportedFile" xml:space="preserve">
+    <value>Only .htwind/.zip archives and .html files are supported.</value>
+  </data>
+  <data name="Gallery_ArchiveEmpty" xml:space="preserve">
+    <value>The archive does not contain an htwind.widget.json manifest or an HTML widget.</value>
+  </data>
+  <data name="MainWindow_ProfilesMenu" xml:space="preserve">
+    <value>Layout profiles</value>
+  </data>
+  <data name="MainWindow_SaveProfile" xml:space="preserve">
+    <value>Save current layout...</value>
+  </data>
+  <data name="MainWindow_DeleteProfile" xml:space="preserve">
+    <value>Delete a profile...</value>
+  </data>
+  <data name="ProfileWindow_Title" xml:space="preserve">
+    <value>Layout profile</value>
+  </data>
+  <data name="ProfileWindow_NamePrompt" xml:space="preserve">
+    <value>Profile name (e.g. Work, Game, Stream)</value>
+  </data>
+  <data name="ProfileWindow_DeletePrompt" xml:space="preserve">
+    <value>Select the layout profile to delete.</value>
+  </data>
+  <data name="ProfileWindow_ConfirmSave" xml:space="preserve">
+    <value>Save profile</value>
+  </data>
+  <data name="ProfileWindow_ConfirmDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="MainWindow_Settings" xml:space="preserve">
+    <value>Widget settings...</value>
+  </data>
+  <data name="MainWindow_Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="MainWindow_LanguageDescription" xml:space="preserve">
+    <value>Saved to the app state and applied at startup. Takes full effect after a restart.</value>
+  </data>
+  <data name="WidgetSettings_Title" xml:space="preserve">
+    <value>Widget settings</value>
+  </data>
+  <data name="WidgetSettings_NoSchema" xml:space="preserve">
+    <value>This widget has no configurable settings. Add a settingsSchema field to htwind.widget.json to enable settings.</value>
+  </data>
+  <data name="WidgetSettings_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="WidgetSettings_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="MainWindow_SendToBack" xml:space="preserve">
+    <value>Send to back</value>
+  </data>
+  <data name="MainWindow_SendToBackHint" xml:space="preserve">
+    <value>Pin the widget to the desktop layer, behind normal windows (above desktop icons).</value>
+  </data>
+  <data name="MainWindow_Opacity" xml:space="preserve">
+    <value>Opacity</value>
+  </data>
+  <data name="MainWindow_Zoom" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
+  <data name="PowerShellPermissionDialog_Title" xml:space="preserve">
+    <value>PowerShell permission</value>
+  </data>
+  <data name="PowerShellPermissionDialog_Header" xml:space="preserve">
+    <value>PowerShell access requested</value>
+  </data>
+  <data name="PowerShellPermissionDialog_Description" xml:space="preserve">
+    <value>This widget wants to run PowerShell commands on your system. Choose the level of access. Your decision is remembered per widget.</value>
+  </data>
+  <data name="PowerShellPermissionDialog_ReadOnly" xml:space="preserve">
+    <value>Read-only</value>
+  </data>
+  <data name="PowerShellPermissionDialog_ReadOnlyHint" xml:space="preserve">
+    <value>Sandboxed execution limited to read-only queries (Get-*, Test-*, ...).</value>
+  </data>
+  <data name="PowerShellPermissionDialog_Full" xml:space="preserve">
+    <value>Full access</value>
+  </data>
+  <data name="PowerShellPermissionDialog_FullHint" xml:space="preserve">
+    <value>Run any script without restrictions.</value>
+  </data>
+  <data name="PowerShellPermissionDialog_Deny" xml:space="preserve">
+    <value>Deny</value>
+  </data>
+  <data name="PowerShellPermissionDialog_DenyHint" xml:space="preserve">
+    <value>Block PowerShell execution for this widget.</value>
   </data>
 </root>

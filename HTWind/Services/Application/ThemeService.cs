@@ -1,4 +1,7 @@
 using System.Windows;
+using System.Windows.Media;
+
+using HTWind.Services.WebView;
 
 using Wpf.Ui.Appearance;
 
@@ -7,12 +10,15 @@ namespace HTWind.Services.Application;
 public class ThemeService : IThemeService
 {
     private readonly Window _window;
+    private readonly IWidgetHostApiService? _widgetHostApiService;
     private bool _isWatching;
+    private bool _isApplicationThemeHooked;
     private RoutedEventHandler? _pendingLoadedHandler;
 
-    public ThemeService(Window window)
+    public ThemeService(Window window, IWidgetHostApiService? widgetHostApiService = null)
     {
         _window = window ?? throw new ArgumentNullException(nameof(window));
+        _widgetHostApiService = widgetHostApiService;
     }
 
     public ThemeOption CurrentTheme { get; private set; } = ThemeOption.Device;
@@ -20,6 +26,8 @@ public class ThemeService : IThemeService
     public void ApplyTheme(ThemeOption option)
     {
         CurrentTheme = option;
+
+        EnsureApplicationThemeHooked();
 
         switch (option)
         {
@@ -42,6 +50,57 @@ public class ThemeService : IThemeService
                 StopWatchingSystemTheme();
                 ApplicationThemeManager.Apply(ApplicationTheme.Dark);
                 break;
+        }
+
+        PublishThemeChanged();
+    }
+
+    private static void OnApplicationThemeManagerChanged(ApplicationTheme currentApplicationTheme, Color systemAccent)
+    {
+        _ = currentApplicationTheme;
+        _ = systemAccent;
+
+        // Static hook cannot reach an instance; broadcast through the shared service list.
+        foreach (var service in ActiveServices)
+        {
+            service.PublishThemeChanged();
+        }
+    }
+
+    private static readonly List<ThemeService> ActiveServices = [];
+    private static readonly object ActiveServicesSync = new();
+
+    private void PublishThemeChanged()
+    {
+        try
+        {
+            _widgetHostApiService?.PublishThemeChanged();
+        }
+        catch
+        {
+        }
+    }
+
+    private void EnsureApplicationThemeHooked()
+    {
+        if (_isApplicationThemeHooked)
+        {
+            return;
+        }
+
+        try
+        {
+            ApplicationThemeManager.Changed += OnApplicationThemeManagerChanged;
+            lock (ActiveServicesSync)
+            {
+                ActiveServices.Add(this);
+            }
+
+            _isApplicationThemeHooked = true;
+        }
+        catch
+        {
+            // Theme change notification is best-effort.
         }
     }
 

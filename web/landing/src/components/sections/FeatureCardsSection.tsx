@@ -11,11 +11,21 @@ import { useAppStyles } from "../../styles/appStyles";
 function renderIcon(icon: FeatureCardItem["icon"]) {
 	switch (icon) {
 		case "html":
-			return <WindowWrench24Regular fontSize={24} aria-hidden="true" focusable="false" />;
+			return (
+				<WindowWrench24Regular
+					fontSize={24}
+					aria-hidden="true"
+					focusable="false"
+				/>
+			);
 		case "powershell":
-			return <Rocket24Regular fontSize={24} aria-hidden="true" focusable="false" />;
+			return (
+				<Rocket24Regular fontSize={24} aria-hidden="true" focusable="false" />
+			);
 		case "windows":
-			return <Desktop24Regular fontSize={24} aria-hidden="true" focusable="false" />;
+			return (
+				<Desktop24Regular fontSize={24} aria-hidden="true" focusable="false" />
+			);
 	}
 }
 

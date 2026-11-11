@@ -48,7 +48,8 @@
 		"proofPoints": [
 			"HTML, CSS en JavaScript-widgets gerenderd met WebView2",
 			"Pakketten op basis van manifesten voor geïntegreerde multi-widget opstellingen",
-			"Gecontroleerde PowerShell-acties voor diagnostiek en automatisering"
+			"Gecontroleerde PowerShell-acties met machtigingen per widget",
+			"Native host-API's voor systeemstatistieken, audio, mediabediening, opslag en thema's"
 		],
 		"githubButton": "Bekijk op GitHub",
 		"releaseNotesButton": "Release-opmerkingen",
@@ -176,18 +177,48 @@
 	},
 	"content": {
 		"widgets": [
-			{ "id": "clock", "label": "klok" },
-			{ "id": "weather", "label": "weerbericht" },
-			{ "id": "network-tools", "label": "netwerken" },
-			{ "id": "process-manager", "label": "taakbeheer" },
-			{ "id": "clipboard-studio", "label": "klembord" },
-			{ "id": "file-explorer", "label": "bestanden" },
-			{ "id": "dns-lookup", "label": "dns pingen" },
-			{ "id": "powershell-console", "label": "terminal console" }
+			{
+				"id": "clock",
+				"label": "klok"
+			},
+			{
+				"id": "weather",
+				"label": "weerbericht"
+			},
+			{
+				"id": "network-tools",
+				"label": "netwerken"
+			},
+			{
+				"id": "process-manager",
+				"label": "taakbeheer"
+			},
+			{
+				"id": "clipboard-studio",
+				"label": "klembord"
+			},
+			{
+				"id": "file-explorer",
+				"label": "bestanden"
+			},
+			{
+				"id": "dns-lookup",
+				"label": "dns pingen"
+			},
+			{
+				"id": "powershell-console",
+				"label": "terminal console"
+			}
 		],
 		"highlights": [
-			{ "value": "20+", "label": "Standaard demo pakketten" },
-			{ "value": "Hot Reload", "label": "Test veranderingen in real-time" },
+			{
+				"value": "20+",
+				"label": "Standaard demo pakketten"
+			},
+			{
+				"value": "Hot Reload",
+				"label": "Test veranderingen in real-time"
+			},
 			{
 				"value": "WebView2 Codec",
 				"label": "Gemaakt op robuuste Microsoft modules"
@@ -213,24 +244,34 @@
 			},
 			{
 				"value": "PowerShell Command",
-				"label": "Commando's uitvoeren via beveiligde JS verbindingen",
+				"label": "Machtigingen per widget met een sandboxed alleen-lezenmodus",
+				"spanTwo": true
+			},
+			{
+				"value": "Native host-API's",
+				"label": "Systeemstatistieken, audioniveaus, mediasessies, opslag en themabridges zonder processen",
+				"spanTwo": true
+			},
+			{
+				"value": "Werkruimteprofielen",
+				"label": "Bewaar en wissel volledige widgetindelingen via het systeemvakmenu",
 				"spanTwo": true
 			}
 		],
 		"featureCards": [
 			{
 				"title": "Breng HTML naar je Beeldscherm",
-				"description": "Programmeur vriendelijk in HTML en CSS. HTWind verwijdert de browser vensterranden en vertoont je elementen naadloos in beeld.",
+				"description": "Bouw desktopwidgets met HTML, CSS en JavaScript. De ingebouwde editor opent multifile-pakketten in tabbladen met live voorbeeld (hot reload) en een runtimeconsole voor fouten en logs.",
 				"icon": "html"
 			},
 			{
 				"title": "Verlengde Systeem Rechten",
-				"description": "Via de geavanceerde PowerShell bridge implementatie kan de host C# de acties toestaan die vereist zijn voor je admin tools.",
+				"description": "Voer PowerShell uit via de in-process engine nadat je expliciet toestemming per widget geeft (alleen lezen, volledig of weigeren). De alleen-lezenmodus draait in een beperkte sandbox; elke aanroep is geïsoleerd en tijdgebonden.",
 				"icon": "powershell"
 			},
 			{
 				"title": "Flexibele Windows Formaten",
-				"description": "Elastische instellingen onthouden coördinaten en voorkomen overlap; zet dingen vast aan schermen en herstel na slaapstand.",
+				"description": "Systeemvakgedrag, vastzetten bovenop of op de bureaubladlaag, magnetisch uitlijnen van vensters, transparantie en zoom per widget, werkruimteprofielen en schermbewust verbergen laten widgets native aanvoelen in Windows.",
 				"icon": "windows"
 			}
 		],
@@ -267,7 +308,8 @@
 		"widgetPackageSteps": [
 			"Plaats de htwind app map met alle resources inclusief htwind.widget.json in een root container.",
 			"Codeer het object pad voor waar uw startscherm '.index.html' opent.",
-			"Exporteer dit pakket overal via email, verplaatst bestanden in de setup om ze permanent goed op pad te positioneren."
+			"Exporteer dit pakket overal via email, verplaatst bestanden in de setup om ze permanent goed op pad te positioneren.",
+			"Importeer het manifest in HTWind, of exporteer een bestaande widget of werkruimte om een herbruikbare pakketindeling te genereren."
 		],
 		"communitySharingSteps": [
 			"Creëer op Reddit een nieuw topic met plaatjes of GIF.",
@@ -291,11 +333,20 @@
 			},
 			{
 				"question": "Hoe onderdruk ik de app als ik game?",
-				"answer": "Voor fullscreen-applicaties bestaat de functie 'Supress for Fullscreen' mode die widgets slim in de taskbar verstopt totdat u terug bent op uw normale werkplek."
+				"answer": "Ja. Widgets kunnen PowerShell uitvoeren via de in-process engine, maar elke widget heeft eerst expliciete toestemming nodig: alleen lezen (sandbox), volledige toegang of weigeren. De keuze wordt per widget onthouden."
+			},
+			{
+				"question": "Welke native host-API's zijn beschikbaar voor widgets?",
+				"answer": "Widgets kunnen system.metrics (CPU, geheugen, schijven, netwerk, batterij), audio.visualizer (realtime audio-FFT), media.session (nu-speelt-info en bediening), storage.get/set (persistente widgetinstellingen) en theme.get/onChanged (live thema en accentkleuren) aanroepen — allemaal zonder processen te starten.",
+				"spanTwoColumns": true
 			},
 			{
 				"question": "Is het niet een RAM vreter?",
-				"answer": "Zolang u CSS-intensiteit in de hand houdt bedraagt het net als een stille browser-tab bijna helemaal geen capaciteit om op te renderen."
+				"answer": "Ja. In Instellingen kun je onderdrukking bij volledig scherm en een aparte modus voor gemaximaliseerde apps inschakelen. Beide werken per scherm: widgetvensters worden direct verborgen en gepauzeerd, behouden hun status en worden automatisch hersteld zonder de opgeslagen zichtbaarheidsstatus te wijzigen."
+			},
+			{
+				"question": "Kan ik verschillende widgetindelingen opslaan?",
+				"answer": "Ja. Werkruimteprofielen slaan de huidige widgetconfiguratie — zichtbaarheid, posities, afmetingen, vergrendel- en vastzetmodi, transparantie en zoom — op als een benoemde indeling die je altijd via het systeemvakmenu kunt oproepen."
 			},
 			{
 				"question": "Helpt HTWind me met powershell scripts?",
@@ -308,12 +359,16 @@
 		],
 		"overviewParagraphs": [
 			"De ontbrekende verbinding tussen naadloos, simpel vormdelen vanuit moderne UI-theorie en echte native desktop efficiëntie.",
-			"Hierbij verlicht het alledaagse IT rompslomp door actuele elementen visueel paraat aan het uiteinde van je werk te presenteren."
+			"De app is gebouwd voor gebruikers die een lichte maar uitbreidbare widgetlaag willen: systeemvakintegratie, vastzetten bovenop of op de bureaubladlaag, magnetisch uitlijnen, transparantie en zoom per widget, werkruimteprofielen, verpakte widgets en schermbewust verbergen veranderen een standaard Windows-bureaublad in een nuttigere werkruimte."
 		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
 				"alt": "Bekijk widget instellingen"
+			},
+			{
+				"src": "/app_screenshots/page_gallery.png",
+				"alt": "HTWind Galerij - Communitywidgets installeren"
 			},
 			{
 				"src": "/app_screenshots/page_settings.png",

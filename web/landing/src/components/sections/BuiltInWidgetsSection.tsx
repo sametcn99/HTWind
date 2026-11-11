@@ -44,7 +44,11 @@ export function BuiltInWidgetsSection() {
 				</Body1>
 				<Body1 className={styles.featureDescription}>
 					{messages.sections.widgets.promptPrefix}{" "}
-					<Link href={WIDGET_PROMPT_URL} target="_blank" rel="noopener noreferrer">
+					<Link
+						href={WIDGET_PROMPT_URL}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
 						{messages.sections.widgets.promptLabel}
 					</Link>{" "}
 					{messages.sections.widgets.promptConnector}{" "}

@@ -4,11 +4,12 @@ namespace HTWind.Services.Application;
 
 public sealed class DeveloperModeService : IDeveloperModeService
 {
-    private readonly string _stateFilePath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "HTWind",
-        "developer-mode.enabled"
-    );
+    private readonly string _stateFilePath;
+
+    public DeveloperModeService(string? basePath = null)
+    {
+        _stateFilePath = HTWindPathProvider.GetDeveloperModeFilePath(basePath);
+    }
 
     public event EventHandler? Changed;
 

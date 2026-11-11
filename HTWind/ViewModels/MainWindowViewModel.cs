@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -15,6 +16,7 @@ namespace HTWind.ViewModels;
 public sealed class MainWindowViewModel : INotifyPropertyChanged
 {
     private readonly IDeveloperModeService _developerModeService;
+    private readonly IDialogService _dialogService;
     private readonly IFileDialogService _fileDialogService;
     private readonly IStartupRegistrationService _startupRegistrationService;
     private readonly IWidgetManager _widgetManager;
@@ -23,13 +25,16 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         IFileDialogService fileDialogService,
         IWidgetManager widgetManager,
         IStartupRegistrationService startupRegistrationService,
-        IDeveloperModeService developerModeService
+        IDeveloperModeService developerModeService,
+        ThemeOption initialTheme = ThemeOption.Device,
+        IDialogService? dialogService = null
     )
     {
         _fileDialogService = fileDialogService ?? throw new ArgumentNullException(nameof(fileDialogService));
         _widgetManager = widgetManager ?? throw new ArgumentNullException(nameof(widgetManager));
         _startupRegistrationService = startupRegistrationService ?? throw new ArgumentNullException(nameof(startupRegistrationService));
         _developerModeService = developerModeService ?? throw new ArgumentNullException(nameof(developerModeService));
+        _dialogService = dialogService ?? MessageBoxDialogService.Instance;
 
         AddWidgetCommand = new RelayCommand(_ => AddWidget());
         ExportAllWidgetsCommand = new RelayCommand(_ => ExportAllWidgets());
@@ -40,6 +45,8 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         EditWidgetCommand = new RelayCommand(model => OpenEditor(model as WidgetModel));
         ExportWidgetCommand = new RelayCommand(model => ExportWidget(model as WidgetModel));
         RemoveWidgetCommand = new RelayCommand(model => RemoveWidget(model as WidgetModel));
+        OpenWidgetSettingsCommand = new RelayCommand(model => OpenWidgetSettings(model as WidgetModel));
+        _selectedThemeOption = initialTheme;
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -48,19 +55,22 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
 
     public ThemeOption SelectedThemeOption
     {
-        get;
+        get => _selectedThemeOption;
         set
         {
-            if (field == value)
+            if (_selectedThemeOption == value)
             {
                 return;
             }
 
-            field = value;
+            _selectedThemeOption = value;
             OnPropertyChanged();
             ThemeRequested?.Invoke(this, value);
+            _widgetManager.SetPreferredTheme(value);
         }
-    } = ThemeOption.Device;
+    }
+
+    private ThemeOption _selectedThemeOption;
 
     public bool IsRunOnStartupEnabled
     {
@@ -68,6 +78,30 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         set
         {
             _startupRegistrationService.SetEnabled(value);
+            OnPropertyChanged();
+        }
+    }
+
+    public string SelectedCultureName
+    {
+        get => Localization.LocalizationService.CurrentCulture.Name;
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value) || Localization.LocalizationService.CurrentCulture.Name == value)
+            {
+                return;
+            }
+
+            try
+            {
+                Localization.LocalizationService.SetCulture(value);
+            }
+            catch (CultureNotFoundException)
+            {
+                return;
+            }
+
+            _widgetManager.SetPreferredCulture(value);
             OnPropertyChanged();
         }
     }
@@ -119,6 +153,8 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     public ICommand ResetAllWidgetsCommand { get; }
 
     public ICommand RemoveWidgetCommand { get; }
+
+    public ICommand OpenWidgetSettingsCommand { get; }
 
     public event EventHandler<ThemeOption>? ThemeRequested;
 
@@ -179,11 +215,9 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     {
         if (Widgets.Count == 0)
         {
-            System.Windows.MessageBox.Show(
+            _dialogService.ShowInformation(
                 Localization.LocalizationService.Get("MainWindow_WidgetExportAllEmpty"),
-                Localization.LocalizationService.Get("MainWindow_WidgetExportErrorTitle"),
-                MessageBoxButton.OK,
-                MessageBoxImage.Information
+                Localization.LocalizationService.Get("MainWindow_WidgetExportErrorTitle")
             );
             return;
         }
@@ -201,14 +235,12 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
                 Localization.LocalizationService.Get("MainWindow_WidgetWorkspaceExportDefaultName")
             );
 
-            System.Windows.MessageBox.Show(
+            _dialogService.ShowInformation(
                 string.Format(
                     Localization.LocalizationService.Get("MainWindow_WidgetExportSuccess"),
                     exportedPath
                 ),
-                Localization.LocalizationService.Get("MainWindow_WidgetExportSuccessTitle"),
-                MessageBoxButton.OK,
-                MessageBoxImage.Information
+                Localization.LocalizationService.Get("MainWindow_WidgetExportSuccessTitle")
             );
         }
         catch (Exception ex)
@@ -271,6 +303,16 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         _widgetManager.RemoveWidget(model);
     }
 
+    private void OpenWidgetSettings(WidgetModel? model)
+    {
+        if (model is null)
+        {
+            return;
+        }
+
+        _widgetManager.OpenWidgetSettings(model);
+    }
+
     private void ExportWidget(WidgetModel? model)
     {
         if (model is null)
@@ -286,14 +328,12 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         try
         {
             var exportedPath = _widgetManager.ExportWidget(model, directoryPath);
-            System.Windows.MessageBox.Show(
+            _dialogService.ShowInformation(
                 string.Format(
                     Localization.LocalizationService.Get("MainWindow_WidgetExportSuccess"),
                     exportedPath
                 ),
-                Localization.LocalizationService.Get("MainWindow_WidgetExportSuccessTitle"),
-                MessageBoxButton.OK,
-                MessageBoxImage.Information
+                Localization.LocalizationService.Get("MainWindow_WidgetExportSuccessTitle")
             );
         }
         catch (Exception ex)
@@ -309,7 +349,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    private static void ShowDetailedError(string title, string summary, Exception exception)
+    private void ShowDetailedError(string title, string summary, Exception exception)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(title);
         ArgumentException.ThrowIfNullOrWhiteSpace(summary);
@@ -332,13 +372,11 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
             detailLines.Distinct(StringComparer.Ordinal)
         );
 
-        System.Windows.MessageBox.Show(
+        _dialogService.ShowWarning(
             string.IsNullOrWhiteSpace(detailText)
                 ? summary
                 : $"{summary}{Environment.NewLine}{Environment.NewLine}{detailText}",
-            title,
-            MessageBoxButton.OK,
-            MessageBoxImage.Warning
+            title
         );
     }
 

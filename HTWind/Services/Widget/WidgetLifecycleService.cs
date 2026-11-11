@@ -97,6 +97,9 @@ public sealed class WidgetLifecycleService : IWidgetLifecycleService
                     IsVisible = state.IsVisible,
                     IsLocked = state.IsLocked,
                     IsPinned = state.IsPinned,
+                    PinMode = WidgetPinModeExtensions.FromPersistedValue(state.PinMode, state.IsPinned),
+                    WidgetOpacityPercent = state.WidgetOpacityPercent ?? 100,
+                    ZoomFactorPercent = state.ZoomFactorPercent ?? 100,
                     Left = state.Left,
                     Top = state.Top,
                     WidgetWidth = state.WidgetWidth,
@@ -108,6 +111,7 @@ public sealed class WidgetLifecycleService : IWidgetLifecycleService
                         .ToList()
                 };
 
+                model.RefreshFileTimestamps();
                 Widgets.Add(model);
 
                 if (model.IsVisible)
@@ -237,9 +241,12 @@ public sealed class WidgetLifecycleService : IWidgetLifecycleService
             FilePath = managedReference.EntryFilePath,
             IsVisible = isVisible,
             IsLocked = false,
-            IsPinned = false
+            IsPinned = false,
+            WidgetOpacityPercent = 100,
+            ZoomFactorPercent = 100
         };
 
+        model.RefreshFileTimestamps();
         Widgets.Add(model);
 
         if (model.IsVisible)

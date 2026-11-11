@@ -113,9 +113,9 @@ function App() {
 					{messages.a11y.skipToContent}
 				</a>
 				<main id="main-content" className={styles.shell}>
-				<header>
-					<Banner />
-				</header>
+					<header>
+						<Banner />
+					</header>
 					<HeroSection
 						isLoadingRelease={isLoadingRelease}
 						releaseText={releaseText}

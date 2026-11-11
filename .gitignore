@@ -434,3 +434,7 @@ FodyWeavers.xsd
 /HTWind/obj
 /dist
 /out
+
+# Test output directories
+TestResults/
+

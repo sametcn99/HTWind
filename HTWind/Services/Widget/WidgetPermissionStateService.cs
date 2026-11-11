@@ -3,29 +3,37 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using HTWind.Model;
+using HTWind.Services.Application;
 using Microsoft.Web.WebView2.Core;
 
 namespace HTWind.Services.Widget;
 
 public sealed partial class WidgetPermissionStateService : IWidgetPermissionStateService
 {
+    private const string PowerShellPermissionKindName = "PowerShellExecution";
+
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
     private static readonly PermissionStateJsonContext JsonContext = new(JsonOptions);
 
     private readonly object _sync = new();
-    private readonly string _stateFilePath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "HTWind",
-        "widget-permissions.json"
-    );
+    private readonly string _stateFilePath;
+
+    public WidgetPermissionStateService(string? basePath = null)
+    {
+        _stateFilePath = HTWindPathProvider.GetPermissionsFilePath(basePath);
+    }
 
     private Dictionary<string, CoreWebView2PermissionState>? _decisions;
+    private Dictionary<string, PowerShellExecutionDecision>? _powerShellDecisions;
 
     public void ClearAll()
     {
         lock (_sync)
         {
             _decisions = new Dictionary<string, CoreWebView2PermissionState>(
+                StringComparer.OrdinalIgnoreCase
+            );
+            _powerShellDecisions = new Dictionary<string, PowerShellExecutionDecision>(
                 StringComparer.OrdinalIgnoreCase
             );
 
@@ -81,21 +89,58 @@ public sealed partial class WidgetPermissionStateService : IWidgetPermissionStat
         }
     }
 
+    public bool TryGetPowerShellDecision(
+        string widgetFilePath,
+        out PowerShellExecutionDecision decision
+    )
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(widgetFilePath);
+
+        lock (_sync)
+        {
+            EnsureLoaded();
+            return _powerShellDecisions!.TryGetValue(
+                ResolveIdentityPath(widgetFilePath),
+                out decision
+            );
+        }
+    }
+
+    public void SavePowerShellDecision(
+        string widgetFilePath,
+        PowerShellExecutionDecision decision
+    )
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(widgetFilePath);
+
+        lock (_sync)
+        {
+            EnsureLoaded();
+            _powerShellDecisions![ResolveIdentityPath(widgetFilePath)] = decision;
+            SaveUnsafe();
+        }
+    }
+
     private void EnsureLoaded()
     {
-        if (_decisions is not null)
+        if (_decisions is not null && _powerShellDecisions is not null)
         {
             return;
         }
 
-        _decisions = LoadFromDisk();
+        var (decisions, powerShellDecisions) = LoadFromDisk();
+        _decisions = decisions;
+        _powerShellDecisions = powerShellDecisions;
     }
 
-    private Dictionary<string, CoreWebView2PermissionState> LoadFromDisk()
+    private (Dictionary<string, CoreWebView2PermissionState>, Dictionary<string, PowerShellExecutionDecision>) LoadFromDisk()
     {
+        var decisions = new Dictionary<string, CoreWebView2PermissionState>(StringComparer.OrdinalIgnoreCase);
+        var powerShellDecisions = new Dictionary<string, PowerShellExecutionDecision>(StringComparer.OrdinalIgnoreCase);
+
         if (!File.Exists(_stateFilePath))
         {
-            return new Dictionary<string, CoreWebView2PermissionState>(StringComparer.OrdinalIgnoreCase);
+            return (decisions, powerShellDecisions);
         }
 
         try
@@ -103,14 +148,33 @@ public sealed partial class WidgetPermissionStateService : IWidgetPermissionStat
             var json = File.ReadAllText(_stateFilePath);
             var records = JsonSerializer.Deserialize(json, JsonContext.ListPermissionDecisionRecord)
                 ?? [];
-            var results = new Dictionary<string, CoreWebView2PermissionState>(
-                StringComparer.OrdinalIgnoreCase
-            );
 
             foreach (var record in records)
             {
                 if (string.IsNullOrWhiteSpace(record.WidgetFilePath))
                 {
+                    continue;
+                }
+
+                if (
+                    string.Equals(
+                        record.PermissionKind,
+                        PowerShellPermissionKindName,
+                        StringComparison.OrdinalIgnoreCase
+                    )
+                )
+                {
+                    if (
+                        Enum.TryParse<PowerShellExecutionDecision>(
+                            record.State,
+                            ignoreCase: true,
+                            out var parsedDecision
+                        )
+                    )
+                    {
+                        powerShellDecisions[record.WidgetFilePath] = parsedDecision;
+                    }
+
                     continue;
                 }
 
@@ -144,14 +208,14 @@ public sealed partial class WidgetPermissionStateService : IWidgetPermissionStat
                     continue;
                 }
 
-                results[BuildKey(record.WidgetFilePath, parsedKind)] = parsedState;
+                decisions[BuildKey(record.WidgetFilePath, parsedKind)] = parsedState;
             }
 
-            return results;
+            return (decisions, powerShellDecisions);
         }
         catch
         {
-            return new Dictionary<string, CoreWebView2PermissionState>(StringComparer.OrdinalIgnoreCase);
+            return (decisions, powerShellDecisions);
         }
     }
 
@@ -159,15 +223,32 @@ public sealed partial class WidgetPermissionStateService : IWidgetPermissionStat
     {
         try
         {
-            var records = _decisions!
-                .Select(entry => ToRecord(entry.Key, entry.Value))
-                .Where(record => record is not null)
-                .Cast<PermissionDecisionRecord>()
-                .ToList();
+            var records = new List<PermissionDecisionRecord>();
+
+            foreach (var entry in _decisions!)
+            {
+                var record = ToRecord(entry.Key, entry.Value);
+                if (record is not null)
+                {
+                    records.Add(record);
+                }
+            }
+
+            foreach (var entry in _powerShellDecisions!)
+            {
+                records.Add(new PermissionDecisionRecord
+                {
+                    WidgetFilePath = entry.Key,
+                    PermissionKind = PowerShellPermissionKindName,
+                    State = entry.Value.ToString()
+                });
+            }
 
             Directory.CreateDirectory(Path.GetDirectoryName(_stateFilePath)!);
             var json = JsonSerializer.Serialize(records, JsonContext.ListPermissionDecisionRecord);
-            File.WriteAllText(_stateFilePath, json);
+
+            // Atomic write so a crash mid-save cannot corrupt the permission store.
+            HTWind.Services.Application.AtomicFile.WriteAllText(_stateFilePath, json);
         }
         catch
         {

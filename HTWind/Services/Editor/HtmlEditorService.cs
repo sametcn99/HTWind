@@ -8,8 +8,26 @@ using Microsoft.Web.WebView2.Wpf;
 
 namespace HTWind.Services.Editor;
 
+public sealed class EditorDocumentState
+{
+    public string Name { get; init; } = string.Empty;
+
+    public string Language { get; init; } = "plaintext";
+
+    public bool IsDirty { get; init; }
+}
+
 public sealed class HtmlEditorService : IHtmlEditorService
 {
+    public const string EditorHostName = "editor.htwind.local";
+    private const string EditorHostPageName = "htwind-editor.html";
+
+    private static readonly JsonSerializerOptions DocumentStateJsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+
     private readonly IWebViewEnvironmentProvider _webViewEnvironmentProvider;
 
     public HtmlEditorService(IWebViewEnvironmentProvider webViewEnvironmentProvider)
@@ -33,10 +51,49 @@ public sealed class HtmlEditorService : IHtmlEditorService
         await editorWebView.EnsureCoreWebView2Async(env);
         editorWebView.CoreWebView2.WebMessageReceived += webMessageReceivedHandler;
 
+        // Monaco is served from the app bundle over a virtual host so the editor works fully
+        // offline (no CDN dependency).
+        var editorRoot = EnsureEditorContentRoot();
+        editorWebView.CoreWebView2.SetVirtualHostNameToFolderMapping(
+            EditorHostName,
+            editorRoot,
+            CoreWebView2HostResourceAccessKind.Allow);
+
         var readyTask = WaitEditorReadyAsync(editorWebView.CoreWebView2);
-        editorWebView.NavigateToString(GetMonacoHostHtml());
+        editorWebView.CoreWebView2.Navigate($"https://{EditorHostName}/{EditorHostPageName}");
         await readyTask;
-        await PushFileContentToEditorAsync(editorWebView, filePath);
+        await SetEditorDocumentAsync(editorWebView, filePath);
+    }
+
+    public async Task SetEditorDocumentAsync(WebView2 editorWebView, string filePath)
+    {
+        ArgumentNullException.ThrowIfNull(editorWebView);
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+
+        var content = await File.ReadAllTextAsync(filePath, Encoding.UTF8);
+        var encoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(content));
+        var name = Path.GetFileName(filePath);
+        var language = GetLanguageForFile(filePath);
+        await editorWebView.ExecuteScriptAsync(
+            $"window.setEditorDocument({EscapeJs(name)}, '{encoded}', {EscapeJs(language)});");
+    }
+
+    public async Task<IReadOnlyList<EditorDocumentState>> GetEditorDocumentStatesAsync(WebView2 editorWebView)
+    {
+        ArgumentNullException.ThrowIfNull(editorWebView);
+
+        var scriptResult = await editorWebView.ExecuteScriptAsync(
+            "window.getDocumentStates ? window.getDocumentStates() : '[]';");
+        var json = JsonSerializer.Deserialize<string>(scriptResult) ?? "[]";
+
+        try
+        {
+            return JsonSerializer.Deserialize<List<EditorDocumentState>>(json, DocumentStateJsonOptions) ?? [];
+        }
+        catch
+        {
+            return [];
+        }
     }
 
     public async Task<string> GetEditorContentAsync(WebView2 editorWebView)
@@ -44,8 +101,17 @@ public sealed class HtmlEditorService : IHtmlEditorService
         ArgumentNullException.ThrowIfNull(editorWebView);
 
         var scriptResult = await editorWebView.ExecuteScriptAsync(
-            "window.getEditorContent ? window.getEditorContent() : '';"
-        );
+            "window.getEditorContent ? window.getEditorContent() : '';");
+        return JsonSerializer.Deserialize<string>(scriptResult) ?? string.Empty;
+    }
+
+    public async Task<string> GetEditorDocumentContentAsync(WebView2 editorWebView, string documentName)
+    {
+        ArgumentNullException.ThrowIfNull(editorWebView);
+        ArgumentException.ThrowIfNullOrWhiteSpace(documentName);
+
+        var scriptResult = await editorWebView.ExecuteScriptAsync(
+            $"window.getDocumentContent ? window.getDocumentContent({EscapeJs(documentName)}) : '';");
         return JsonSerializer.Deserialize<string>(scriptResult) ?? string.Empty;
     }
 
@@ -54,8 +120,18 @@ public sealed class HtmlEditorService : IHtmlEditorService
         ArgumentNullException.ThrowIfNull(editorWebView);
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
 
-        var content = await GetEditorContentAsync(editorWebView);
+        var content = await GetEditorDocumentContentAsync(editorWebView, Path.GetFileName(filePath));
         await File.WriteAllTextAsync(filePath, content, Encoding.UTF8);
+        await MarkEditorDocumentSavedAsync(editorWebView, Path.GetFileName(filePath));
+    }
+
+    public async Task MarkEditorDocumentSavedAsync(WebView2 editorWebView, string documentName)
+    {
+        ArgumentNullException.ThrowIfNull(editorWebView);
+        ArgumentException.ThrowIfNullOrWhiteSpace(documentName);
+
+        await editorWebView.ExecuteScriptAsync(
+            $"window.markDocumentSaved && window.markDocumentSaved({EscapeJs(documentName)});");
     }
 
     public bool TryReadContentChangedPayload(string webMessageAsJson, out string htmlContent)
@@ -89,9 +165,132 @@ public sealed class HtmlEditorService : IHtmlEditorService
         }
     }
 
+    public bool TryReadContentChangedDocumentName(string webMessageAsJson, out string? documentName)
+    {
+        documentName = null;
+
+        try
+        {
+            using var document = JsonDocument.Parse(webMessageAsJson);
+            var root = document.RootElement;
+
+            if (
+                !root.TryGetProperty("type", out var typeElement)
+                || !string.Equals(typeElement.GetString(), "contentChanged", StringComparison.Ordinal)
+            )
+            {
+                return false;
+            }
+
+            if (root.TryGetProperty("name", out var nameElement) && nameElement.ValueKind == JsonValueKind.String)
+            {
+                documentName = nameElement.GetString();
+            }
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public void ReleaseEditorEnvironment()
     {
         _webViewEnvironmentProvider.ReleaseEditorEnvironment();
+    }
+
+    public static string GetLanguageForFile(string filePath)
+    {
+        return Path.GetExtension(filePath).ToLowerInvariant() switch
+        {
+            ".html" or ".htm" => "html",
+            ".css" => "css",
+            ".js" or ".mjs" => "javascript",
+            ".ts" => "typescript",
+            ".json" => "json",
+            ".xml" => "xml",
+            ".md" => "markdown",
+            ".yaml" or ".yml" => "yaml",
+            _ => "plaintext"
+        };
+    }
+
+    private static string EscapeJs(string value)
+    {
+        return JsonSerializer.Serialize(value);
+    }
+
+    /// <summary>
+    ///     Resolves the folder served over the editor virtual host: the bundled Monaco build in
+    ///     the app output directory, or a generated fallback editor when the bundle is missing.
+    /// </summary>
+    private static string EnsureEditorContentRoot()
+    {
+        var bundledRoot = Path.Combine(AppContext.BaseDirectory, "EditorMonaco");
+        if (File.Exists(Path.Combine(bundledRoot, "vs", "loader.js"))
+            && File.Exists(Path.Combine(bundledRoot, EditorHostPageName)))
+        {
+            return bundledRoot;
+        }
+
+        var fallbackRoot = HTWind.Services.Application.HTWindPathProvider.GetEditorFallbackDirectory();
+        Directory.CreateDirectory(fallbackRoot);
+
+        var fallbackPagePath = Path.Combine(fallbackRoot, EditorHostPageName);
+        if (!File.Exists(fallbackPagePath))
+        {
+            File.WriteAllText(fallbackPagePath, BuildFallbackHostHtml(), Encoding.UTF8);
+        }
+
+        return fallbackRoot;
+    }
+
+    private static string BuildFallbackHostHtml()
+    {
+        return """
+               <!DOCTYPE html>
+               <html>
+               <head>
+                 <meta charset="utf-8" />
+                 <style>
+                   html, body, #fallback {
+                     width: 100%; height: 100%; margin: 0; padding: 0; box-sizing: border-box;
+                     border: none; resize: none; padding: 12px; background: #1e1e1e; color: #d4d4d4;
+                     font: 14px Consolas, 'Courier New', monospace; overflow: auto;
+                   }
+                 </style>
+               </head>
+               <body>
+                 <textarea id="fallback"></textarea>
+                 <script>
+                   let fallbackTimer = null;
+                   window.isEditorReady = function () { return true; };
+                   window.setEditorDocument = function (name, base64, language) {
+                     const bytes = Uint8Array.from(atob(base64 || ''), c => c.charCodeAt(0));
+                     document.getElementById('fallback').value = new TextDecoder().decode(bytes);
+                   };
+                   window.getActiveDocumentName = function () { return null; };
+                   window.getDocumentStates = function () { return JSON.stringify([{ name: 'fallback', language: 'plaintext', dirty: false }]); };
+                   window.getDocumentContent = function () { return document.getElementById('fallback').value; };
+                   window.getDocumentContentBase64 = function () { return btoa(unescape(encodeURIComponent(document.getElementById('fallback').value))); };
+                   window.markDocumentSaved = function () { };
+                   window.getEditorContent = function () { return document.getElementById('fallback').value; };
+                   function publish() {
+                     if (!window.chrome || !window.chrome.webview || !window.chrome.webview.postMessage) { return; }
+                     window.chrome.webview.postMessage({ type: 'contentChanged', name: null, content: document.getElementById('fallback').value });
+                   }
+                   document.getElementById('fallback').addEventListener('input', function () {
+                     if (fallbackTimer) { clearTimeout(fallbackTimer); }
+                     fallbackTimer = setTimeout(publish, 180);
+                   });
+                   if (window.chrome && window.chrome.webview && window.chrome.webview.postMessage) {
+                     window.chrome.webview.postMessage({ type: 'editorReady' });
+                   }
+                 </script>
+               </body>
+               </html>
+               """;
     }
 
     private static async Task WaitEditorReadyAsync(CoreWebView2 coreWebView)
@@ -152,246 +351,4 @@ public sealed class HtmlEditorService : IHtmlEditorService
             return false;
         }
     }
-
-    private static async Task PushFileContentToEditorAsync(WebView2 editorWebView, string filePath)
-    {
-        var content = await File.ReadAllTextAsync(filePath, Encoding.UTF8);
-        var encoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(content));
-        await editorWebView.ExecuteScriptAsync($"window.setEditorContent('{encoded}');");
-    }
-
-    private static string GetMonacoHostHtml()
-    {
-        return """
-               <!DOCTYPE html>
-               <html>
-               <head>
-                 <meta charset="utf-8" />
-                 <style>
-                   html, body, #container {
-                     width: 100%;
-                     height: 100%;
-                     margin: 0;
-                     padding: 0;
-                     overflow: hidden;
-                     background: #1e1e1e;
-                   }
-                   #fallback {
-                     display: none;
-                     width: 100%;
-                     height: 100%;
-                     box-sizing: border-box;
-                     border: none;
-                     resize: none;
-                     padding: 12px;
-                     background: #1e1e1e;
-                     color: #d4d4d4;
-                     font: 14px Consolas, 'Courier New', monospace;
-                   }
-                 </style>
-                 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.min.js"></script>
-               </head>
-               <body>
-                 <div id="container"></div>
-                 <textarea id="fallback"></textarea>
-
-                 <script>
-                   let editor = null;
-                   let useFallback = false;
-                   let publishTimer = null;
-
-                   function b64ToUtf8(b64) {
-                     const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-                     return new TextDecoder().decode(bytes);
-                   }
-
-                   window.isEditorReady = function () {
-                     return editor !== null || useFallback;
-                   };
-
-                   window.setEditorContent = function (base64) {
-                     const content = b64ToUtf8(base64 || '');
-                     if (useFallback) {
-                       document.getElementById('fallback').value = content;
-                       return;
-                     }
-                     if (editor) {
-                       editor.setValue(content);
-                     }
-                   };
-
-                   window.getEditorContent = function () {
-                     if (useFallback) {
-                       return document.getElementById('fallback').value;
-                     }
-                     return editor ? editor.getValue() : '';
-                   };
-
-                   function publishContentChanged() {
-                     if (!window.chrome || !window.chrome.webview || !window.chrome.webview.postMessage) {
-                       return;
-                     }
-
-                     window.chrome.webview.postMessage({
-                       type: 'contentChanged',
-                       content: window.getEditorContent()
-                     });
-                   }
-
-                   function schedulePublish() {
-                     if (publishTimer) {
-                       clearTimeout(publishTimer);
-                     }
-
-                     publishTimer = setTimeout(function () {
-                       publishContentChanged();
-                     }, 180);
-                   }
-
-                   function configureLanguageServices() {
-                     monaco.languages.html.htmlDefaults.setOptions({
-                       validate: true,
-                       format: {
-                         tabSize: 2,
-                         insertSpaces: true,
-                         wrapLineLength: 120
-                       },
-                       suggest: {
-                         html5: true
-                       }
-                     });
-
-                     monaco.languages.css.cssDefaults.setOptions({
-                       validate: true,
-                       lint: {
-                         unknownProperties: 'warning',
-                         duplicateProperties: 'warning',
-                         emptyRules: 'warning',
-                         important: 'ignore'
-                       }
-                     });
-
-                     monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
-                     monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-                       allowNonTsExtensions: true,
-                       target: monaco.languages.typescript.ScriptTarget.ES2020,
-                       checkJs: true,
-                       noEmit: true
-                     });
-                     monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-                       noSemanticValidation: false,
-                       noSyntaxValidation: false
-                     });
-                   }
-
-                   function validateHtmlStructure() {
-                     if (!editor || useFallback) {
-                       return;
-                     }
-
-                     const value = editor.getValue();
-                     const model = editor.getModel();
-                     if (!model) {
-                       return;
-                     }
-
-                     const parser = new DOMParser();
-                     const parsed = parser.parseFromString(value, 'text/html');
-                     const parserError = parsed.querySelector('parsererror');
-                     if (!parserError) {
-                       monaco.editor.setModelMarkers(model, 'HTWind-html-parse', []);
-                       return;
-                     }
-
-                     const text = parserError.textContent || 'HTML parse error';
-                     const lineMatch = text.match(/line\s*(\d+)/i);
-                     const colMatch = text.match(/column\s*(\d+)/i);
-                     const line = lineMatch ? Number(lineMatch[1]) : 1;
-                     const column = colMatch ? Number(colMatch[1]) : 1;
-
-                     monaco.editor.setModelMarkers(model, 'HTWind-html-parse', [
-                       {
-                         severity: monaco.MarkerSeverity.Error,
-                         message: text,
-                         startLineNumber: line,
-                         startColumn: column,
-                         endLineNumber: line,
-                         endColumn: column + 1
-                       }
-                     ]);
-                   }
-
-                   function scheduleValidation() {
-                     if (!editor || useFallback) {
-                       return;
-                     }
-
-                     setTimeout(validateHtmlStructure, 0);
-                   }
-
-                   function onEditorContentChanged() {
-                     schedulePublish();
-                     scheduleValidation();
-                   }
-
-                   function notifyEditorReady() {
-                     if (!window.chrome || !window.chrome.webview || !window.chrome.webview.postMessage) {
-                       return;
-                     }
-
-                     window.chrome.webview.postMessage({ type: 'editorReady' });
-                   }
-
-                   function activateFallback() {
-                     useFallback = true;
-                     document.getElementById('container').style.display = 'none';
-                     const fallback = document.getElementById('fallback');
-                     fallback.style.display = 'block';
-                     fallback.addEventListener('input', schedulePublish);
-                     notifyEditorReady();
-                   }
-
-                   if (typeof require === 'function') {
-                     require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs' } });
-                     require(['vs/editor/editor.main'], function () {
-                       configureLanguageServices();
-                       editor = monaco.editor.create(document.getElementById('container'), {
-                         value: '',
-                         language: 'html',
-                         theme: 'vs-dark',
-                         automaticLayout: true,
-                         minimap: { enabled: true },
-                         scrollBeyondLastLine: false,
-                         quickSuggestions: {
-                           other: true,
-                           comments: false,
-                           strings: true
-                         },
-                         suggestOnTriggerCharacters: true,
-                         wordBasedSuggestions: 'currentDocument',
-                         parameterHints: { enabled: true },
-                         autoClosingBrackets: 'always',
-                         autoClosingQuotes: 'always',
-                         formatOnPaste: true,
-                         formatOnType: true
-                       });
-                       editor.onDidChangeModelContent(onEditorContentChanged);
-                       scheduleValidation();
-                       notifyEditorReady();
-                     }, activateFallback);
-                   } else {
-                     activateFallback();
-                   }
-
-                   setTimeout(function () {
-                     if (!editor && !useFallback) {
-                       activateFallback();
-                     }
-                   }, 4000);
-                 </script>
-               </body>
-               </html>
-               """;
-    }
-
 }

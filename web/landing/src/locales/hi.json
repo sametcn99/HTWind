@@ -48,7 +48,8 @@
 		"proofPoints": [
 			"WebView2 ke sath render hone wale HTML, CSS aur JavaScript widgets",
 			"Asset-backed aur multi-widget setups ke liye manifest-based packages",
-			"Diagnostics aur desktop workflows ke liye controlled PowerShell actions"
+			"प्रति-विजेट अनुमतियों के साथ नियंत्रित PowerShell क्रियाएँ",
+			"सिस्टम मेट्रिक्स, ऑडियो, मीडिया नियंत्रण, स्टोरेज और थीमिंग के लिए नेटिव होस्ट API"
 		],
 		"githubButton": "GitHub par dekhen",
 		"releaseNotesButton": "Release notes",
@@ -243,24 +244,34 @@
 			},
 			{
 				"value": "PowerShell API",
-				"label": "Host-side automation bridge",
+				"label": "सैंडबॉक्स्ड रीड-ओनली मोड के साथ प्रति-विजेट अनुमतियाँ",
+				"spanTwo": true
+			},
+			{
+				"value": "नेटिव होस्ट API",
+				"label": "सिस्टम मेट्रिक्स, ऑडियो स्तर, मीडिया सेशन, स्टोरेज और थीम ब्रिज — बिना किसी प्रोसेस के",
+				"spanTwo": true
+			},
+			{
+				"value": "वर्कस्पेस प्रोफ़ाइल",
+				"label": "ट्रे मेनू से पूरी विजेट लेआउट सहेजें और बदलें",
 				"spanTwo": true
 			}
 		],
 		"featureCards": [
 			{
 				"title": "Desktop par HTML Widgets",
-				"description": "HTML, CSS aur JavaScript se desktop widgets banaiye, phir unhe single files aur packaged folders support ke sath native-feeling Windows host me chalaiye.",
+				"description": "HTML, CSS और JavaScript से डेस्कटॉप विजेट बनाएँ। इनबिल्ट एडिटर मल्टी-फ़ाइल पैकेज को टैब में खोलता है, लाइव प्रीव्यू (हॉट रीलोड) और त्रुटियों-लॉग के लिए रनटाइम कंसोल के साथ।",
 				"icon": "html"
 			},
 			{
 				"title": "PowerShell Integration",
-				"description": "Diagnostics, automation aur system tasks ke liye approved PowerShell actions ko host APIs se chalaiye, bina widget layer ko unsafe shell banaye.",
+				"description": "स्पष्ट प्रति-विजेट अनुमति (रीड-ओनली, फुल या डिनाय) देने के बाद PowerShell इन-प्रोसेस इंजन से चलता है। रीड-ओनली मोड प्रतिबंधित सैंडबॉक्स में चलता है; हर कॉल आइसोलेटेड और समय-सीमित होता है।",
 				"icon": "powershell"
 			},
 			{
 				"title": "Windows Native Feel",
-				"description": "Tray behavior, pin-on-top controls, state persistence aur fullscreen ya maximized apps ke liye display-aware suppression ke zariye modern Windows workflows ke sath aligned rahiye.",
+				"description": "ट्रे व्यवहार, टॉप या डेस्कटॉप-लेयर पर पिन, मैग्नेटिक विंडो स्नैपिंग, प्रति-विजेट ओपैसिटी और ज़ूम, वर्कस्पेस प्रोफ़ाइल और स्क्रीन-जागरूक छिपाना — विजेट Windows के नेटिव लगते हैं।",
 				"icon": "windows"
 			}
 		],
@@ -322,11 +333,20 @@
 			},
 			{
 				"question": "Kya HTWind PowerShell automation support karta hai?",
-				"answer": "Haan. HTWind me host-side APIs shamil hain jo diagnostics aur controlled desktop actions ke liye approved PowerShell commands chala sakti hain."
+				"answer": "हाँ। विजेट PowerShell को इन-प्रोसेस इंजन से चला सकते हैं, लेकिन हर विजेट को पहले स्पष्ट अनुमति चाहिए: रीड-ओनली (सैंडबॉक्स्ड), फुल एक्सेस या डिनाय। यह चुनाव प्रति-विजेट याद रखा जाता है।"
+			},
+			{
+				"question": "विजेट के लिए कौन-से नेटिव होस्ट API उपलब्ध हैं?",
+				"answer": "विजेट system.metrics (CPU, मेमोरी, डिस्क, नेटवर्क, बैटरी), audio.visualizer (रियल-टाइम ऑडियो FFT), media.session (नो-प्लेइंग जानकारी और नियंत्रण), storage.get/set (स्थायी विजेट सेटिंग्स) और theme.get/onChanged (लाइव थीम और एक्सेंट रंग) कॉल कर सकते हैं — बिना कोई प्रोसेस शुरू किए।",
+				"spanTwoColumns": true
 			},
 			{
 				"question": "Kya widgets fullscreen ya maximized apps use karte waqt auto-hide ho sakte hain?",
-				"answer": "Haan. Settings me aap fullscreen suppression aur alag maximized-app suppression mode enable kar sakte hain. Dono per-display kaam karte hain aur saved visibility state ko badle bina widget windows ko temporary close kar dete hain."
+				"answer": "हाँ। सेटिंग्स में आप फुलस्क्रीन सप्रेशन और अलग मैक्सिमाइज़्ड-ऐप सप्रेशन सक्षम कर सकते हैं। दोनों प्रति-स्क्रीन काम करते हैं: विजेट विंडो तुरंत छिप जाती हैं और निलंबित हो जाती हैं, उनकी स्थिति बनी रहती है, और सहेजी गई दृश्यता बदले बिना स्वतः बहाल हो जाती हैं।"
+			},
+			{
+				"question": "क्या मैं अलग-अलग विजेट लेआउट सहेज सकता हूँ?",
+				"answer": "हाँ। वर्कस्पेस प्रोफ़ाइल मौजूदा विजेट सेटअप — दृश्यता, स्थिति, आकार, लॉक/पिन मोड, ओपैसिटी और ज़ूम — को नामित लेआउट के रूप में सहेजते हैं जिसे आप कभी भी ट्रे मेनू से बदल सकते हैं।"
 			},
 			{
 				"question": "Kya HTWind open source hai?",
@@ -339,12 +359,16 @@
 		],
 		"overviewParagraphs": [
 			"HTWind native Windows behavior ko flexible web content ke sath jodta hai. HTML widgets WebView2 ke through render hote hain, jisse aise desktop tools banana asaan hota hai jo kaam karte waqt visible rahen.",
-			"Yeh app un users ke liye bani hai jo lightweight lekin extensible widget layer chahte hain: tray integration, pin-on-top controls, state persistence, packaged widgets aur display-aware suppression milkar ek standard Windows desktop ko zyada useful workspace me badal dete hain."
+			"यह ऐप हल्के लेकिन विस्तारयोग्य विजेट लेयर चाहने वाले उपयोगकर्ताओं के लिए बना है: ट्रे इंटीग्रेशन, टॉप या डेस्कटॉप-लेयर पिनिंग, मैग्नेटिक स्नैपिंग, प्रति-विजेट ओपैसिटी और ज़ूम, वर्कस्पेस प्रोफ़ाइल, पैकेज्ड विजेट और स्क्रीन-जागरूक छिपाना एक सामान्य Windows डेस्कटॉप को अधिक उपयोगी वर्कस्पेस में बदल देते हैं।"
 		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
 				"alt": "HTWind Home - Widget Library"
+			},
+			{
+				"src": "/app_screenshots/page_gallery.png",
+				"alt": "HTWind गैलरी - कम्युनिटी विजेट इंस्टॉल करें"
 			},
 			{
 				"src": "/app_screenshots/page_settings.png",

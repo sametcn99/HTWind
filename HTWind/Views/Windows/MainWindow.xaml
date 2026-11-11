@@ -34,6 +34,10 @@
         <ContextMenu>
           <MenuItem Header="{loc:Loc MainWindow_Show}"
               Click="TrayIcon_Show_Click"/>
+          <MenuItem
+            x:Name="ProfilesTrayMenuItem"
+            Header="{loc:Loc MainWindow_ProfilesMenu}"/>
+          <Separator/>
           <MenuItem Header="{loc:Loc MainWindow_Exit}"
               Click="TrayIcon_Exit_Click"/>
         </ContextMenu>
@@ -61,6 +65,13 @@
           Icon="{ui:SymbolIcon Home24}"
           Tag="Home"
           Click="HomeNavItem_Click"/>
+        <ui:NavigationViewItem
+          x:Name="GalleryNavItem"
+          Margin="0,2,0,2"
+          Content="{loc:Loc MainWindow_GalleryTab}"
+          Icon="{ui:SymbolIcon ArrowDownload24}"
+          Tag="Gallery"
+          Click="GalleryNavItem_Click"/>
         <ui:NavigationViewItem
           x:Name="SettingsNavItem"
           Margin="0,2,0,2"

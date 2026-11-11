@@ -14,6 +14,7 @@ public sealed class ApplicationBootstrapper : IApplicationBootstrapper
     private readonly IThemeService _themeService;
     private readonly IWidgetManager _widgetManager;
     private readonly IWidgetTemplateService _widgetTemplateService;
+    private readonly ThemeOption _initialThemeOption;
     private bool _isBackgroundInitializationStarted;
 
     public ApplicationBootstrapper(
@@ -21,20 +22,21 @@ public sealed class ApplicationBootstrapper : IApplicationBootstrapper
         IWidgetTemplateService widgetTemplateService,
         IBuiltInWidgetInitializationStateService builtInWidgetInitializationStateService,
         IThemeService themeService,
-        MainWindow mainWindow
-    )
+        MainWindow mainWindow,
+        ThemeOption initialThemeOption = ThemeOption.Device)
     {
         _widgetManager = widgetManager ?? throw new ArgumentNullException(nameof(widgetManager));
         _widgetTemplateService = widgetTemplateService ?? throw new ArgumentNullException(nameof(widgetTemplateService));
         _builtInWidgetInitializationStateService = builtInWidgetInitializationStateService ?? throw new ArgumentNullException(nameof(builtInWidgetInitializationStateService));
         _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
         _mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
+        _initialThemeOption = initialThemeOption;
     }
 
     public void Initialize()
     {
         _mainWindow.SetThemeService(_themeService);
-        _themeService.ApplyTheme(ThemeOption.Device);
+        _themeService.ApplyTheme(_initialThemeOption);
 
         _mainWindow.Show();
         StartBackgroundInitialization();
@@ -101,12 +103,14 @@ public sealed class ApplicationBootstrapper : IApplicationBootstrapper
             return;
         }
 
+        // Batch add: one debounced state save for the entire initial set instead of one per widget.
+        var templatePaths = new List<string>();
         foreach (BuiltInWidgetType templateType in Enum.GetValues(typeof(BuiltInWidgetType)))
         {
-            var templatePath = _widgetTemplateService.CreateTemplateFile(templateType);
-            _widgetManager.AddWidget(templatePath, false);
+            templatePaths.Add(_widgetTemplateService.CreateTemplateFile(templateType));
         }
 
+        _widgetManager.AddWidgets(templatePaths, isVisible: false);
         _builtInWidgetInitializationStateService.MarkInitialized();
     }
 

@@ -48,7 +48,8 @@
 		"proofPoints": [
 			"Render widget trên nền tảng WebView2 tốc độ cao cho HTML, CSS, JavaScript",
 			"Các gói package dựa trên tập tin manifest cho phép nhóm file hình ảnh và thư mục",
-			"Hỗ trợ giao thức PowerShell nội bộ giải quyết bài toán truy xuất hệ thống"
+			"Hành động PowerShell có kiểm soát với quyền theo từng widget",
+			"API máy chủ gốc cho số liệu hệ thống, âm thanh, điều khiển đa phương tiện, lưu trữ và chủ đề"
 		],
 		"githubButton": "Xem dự án trên GitHub",
 		"releaseNotesButton": "Ghi chú cập nhật",
@@ -176,17 +177,44 @@
 	},
 	"content": {
 		"widgets": [
-			{ "id": "clock", "label": "đồng hồ" },
-			{ "id": "weather", "label": "thời tiết" },
-			{ "id": "network-tools", "label": "thông số mạng" },
-			{ "id": "process-manager", "label": "quản lý ứng dụng" },
-			{ "id": "clipboard-studio", "label": "khay nhớ tạm" },
-			{ "id": "file-explorer", "label": "trình xem file" },
-			{ "id": "dns-lookup", "label": "địa chỉ dns" },
-			{ "id": "powershell-console", "label": "trạm điều khiển" }
+			{
+				"id": "clock",
+				"label": "đồng hồ"
+			},
+			{
+				"id": "weather",
+				"label": "thời tiết"
+			},
+			{
+				"id": "network-tools",
+				"label": "thông số mạng"
+			},
+			{
+				"id": "process-manager",
+				"label": "quản lý ứng dụng"
+			},
+			{
+				"id": "clipboard-studio",
+				"label": "khay nhớ tạm"
+			},
+			{
+				"id": "file-explorer",
+				"label": "trình xem file"
+			},
+			{
+				"id": "dns-lookup",
+				"label": "địa chỉ dns"
+			},
+			{
+				"id": "powershell-console",
+				"label": "trạm điều khiển"
+			}
 		],
 		"highlights": [
-			{ "value": "20+", "label": "Các tập tin demo ban đầu" },
+			{
+				"value": "20+",
+				"label": "Các tập tin demo ban đầu"
+			},
 			{
 				"value": "Làm mới mã tự động",
 				"label": "Tái hiển thị widget ngay sau khi bạn gõ Control+S để Save mã HTML."
@@ -216,24 +244,34 @@
 			},
 			{
 				"value": "Thông dịch máy trạm",
-				"label": "Trả giá trị về hệ thống thông qua PowerShell không bị đánh cắp.",
+				"label": "Quyền theo từng widget với chế độ chỉ đọc trong sandbox",
+				"spanTwo": true
+			},
+			{
+				"value": "API máy chủ gốc",
+				"label": "Số liệu hệ thống, mức âm thanh, phiên đa phương tiện, lưu trữ và cầu nối chủ đề mà không cần tiến trình",
+				"spanTwo": true
+			},
+			{
+				"value": "Hồ sơ không gian làm việc",
+				"label": "Lưu và chuyển đổi toàn bộ bố cục widget từ menu khay",
 				"spanTwo": true
 			}
 		],
 		"featureCards": [
 			{
 				"title": "Chuyển Đổi HTML Tới Tận Desktop",
-				"description": "Lập trình widget đơn giản bằng HTML, CSS, JavaScript và loại bỏ viền của Chrome thành những khung giao diện xuyên thấu 100%.",
+				"description": "Xây dựng widget màn hình nền bằng HTML, CSS và JavaScript. Trình soạn thảo tích hợp mở các gói nhiều tệp theo thẻ với bản xem trước trực tiếp (tải lại nóng) và bảng điều khiển runtime cho lỗi và nhật ký.",
 				"icon": "html"
 			},
 			{
 				"title": "Song Hành Cùng Terminal",
-				"description": "Gọi lệnh CMD hoặc PowerShell không qua app trung gian. Nhận kết quả trực tiếp từ Javascript để trả ra giao diện dashboard quản lý VPS.",
+				"description": "Chạy PowerShell qua engine trong tiến trình sau khi cấp quyền rõ ràng cho từng widget (chỉ đọc, đầy đủ hoặc từ chối). Chế độ chỉ đọc chạy trong sandbox hạn chế; mỗi lệnh gọi được cô lập và giới hạn thời gian.",
 				"icon": "powershell"
 			},
 			{
 				"title": "API Desktop Cốt Lõi",
-				"description": "Sử dụng đầy đủ sự tiện lợi từ thuộc tính nhớ màn hình đa luồng, làm khung Always On Top, và cơ cấu tiết kiệm RAM khi idle.",
+				"description": "Hành vi khay hệ thống, ghim trên cùng hoặc trên lớp màn hình nền, bám dính cửa sổ theo kiểu từ tính, độ mờ và thu phóng theo từng widget, hồ sơ không gian làm việc và ẩn thông minh theo màn hình giúp widget cảm giác vốn dĩ của Windows.",
 				"icon": "windows"
 			}
 		],
@@ -270,7 +308,8 @@
 		"widgetPackageSteps": [
 			"Lập thư mục hệ thống trống và để tệp cấu hình htwind.json vào đó.",
 			"Liên kết các đường dẫn code .HTML như index, app, config về đó.",
-			"Mở thư mục lên kéo nén và gửi vô giao diện Add Manager của ứng dụng."
+			"Mở thư mục lên kéo nén và gửi vô giao diện Add Manager của ứng dụng.",
+			"Nhập manifest vào HTWind, hoặc xuất một widget hoặc không gian làm việc hiện có để tạo bố cục gói có thể tái sử dụng."
 		],
 		"communitySharingSteps": [
 			"Vào mục GitHub hay Forum để show 1 bức ảnh ứng dụng sau tùy biến.",
@@ -294,11 +333,20 @@
 			},
 			{
 				"question": "Khi muốn ẩn widget lúc làm việc quan trọng?",
-				"answer": "Ngầm hiểu rằng máy bạn có thể đang bật các thể loại game bắn súng hoặc xem phim, nó sẽ có tính năng Hide When Fullscreen."
+				"answer": "Có. Widget có thể chạy PowerShell qua engine trong tiến trình, nhưng mỗi widget cần quyền rõ ràng trước: chỉ đọc (sandbox), truy cập đầy đủ hoặc từ chối. Lựa chọn được ghi nhớ theo từng widget."
+			},
+			{
+				"question": "Những API máy chủ gốc nào có sẵn cho widget?",
+				"answer": "Widget có thể gọi system.metrics (CPU, bộ nhớ, ổ đĩa, mạng, pin), audio.visualizer (FFT âm thanh thời gian thực), media.session (thông tin và điều khiển phát), storage.get/set (cài đặt widget bền vững) và theme.get/onChanged (chủ đề và màu nhấn trực tiếp) — tất cả mà không khởi chạy tiến trình nào.",
+				"spanTwoColumns": true
 			},
 			{
 				"question": "Nếu file có virus qua PS1?",
-				"answer": "Đây là lý thuyết vì sao Sandbox luôn hỏi phép bảo mật khi lần đầu widget kích hoạt. Đành rằng bạn không cho, mã đó sẽ câm nín hoàn toàn."
+				"answer": "Có. Trong Cài đặt, bạn có thể bật ẩn khi toàn màn hình và chế độ riêng cho ứng dụng phóng to. Cả hai hoạt động theo từng màn hình: cửa sổ widget được ẩn và tạm dừng ngay lập tức, giữ nguyên trạng thái và tự động khôi phục mà không thay đổi trạng thái hiển thị đã lưu."
+			},
+			{
+				"question": "Tôi có thể lưu các bố cục widget khác nhau không?",
+				"answer": "Có. Hồ sơ không gian làm việc lưu thiết lập widget hiện tại — hiển thị, vị trí, kích thước, chế độ khóa và ghim, độ mờ và thu phóng — thành một bố cục có tên mà bạn có thể chuyển đổi từ menu khay bất cứ lúc nào."
 			},
 			{
 				"question": "Làm thế nào cho nó khởi tạo cùng Windows?",
@@ -311,12 +359,16 @@
 		],
 		"overviewParagraphs": [
 			"Rút ngắn khoảng cách xa xỉ của nền lập trình desktop truyền thống với trải nghiệm làm web phong thái thiết kế mở.",
-			"Tính linh động về cài đặt và sự ổn định cao độ khi cắm máy sẽ thay đổi cách bạn tương tác thông tin hằng ngày."
+			"Ứng dụng dành cho người dùng muốn một lớp widget nhẹ nhưng mở rộng được: tích hợp khay hệ thống, ghim trên cùng hoặc trên lớp màn hình nền, bám dính từ tính, độ mờ và thu phóng theo từng widget, hồ sơ không gian làm việc, widget đóng gói và ẩn thông minh theo màn hình biến màn hình Windows chuẩn thành không gian làm việc hữu ích hơn."
 		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
 				"alt": "Giao diện chọn Widget tải sẵn"
+			},
+			{
+				"src": "/app_screenshots/page_gallery.png",
+				"alt": "Thư viện HTWind - Cài đặt widget cộng đồng"
 			},
 			{
 				"src": "/app_screenshots/page_settings.png",

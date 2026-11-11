@@ -1,3 +1,6 @@
 <Solution>
   <Project Path="HTWind/HTWind.csproj" />
+  <Project Path="tests/HTWind.UnitTests/HTWind.UnitTests.csproj" />
+  <Project Path="tests/HTWind.RuntimeTests/HTWind.RuntimeTests.csproj" />
+  <Project Path="tests/HTWind.E2ETests/HTWind.E2ETests.csproj" />
 </Solution>

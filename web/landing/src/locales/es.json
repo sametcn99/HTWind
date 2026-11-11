@@ -48,7 +48,8 @@
 		"proofPoints": [
 			"Widgets en HTML, CSS y JavaScript renderizados con WebView2",
 			"Paquetes basados en manifiestos para configuraciones múltiples y con assets",
-			"Acciones de PowerShell controladas para diagnósticos y automatización"
+			"Acciones controladas de PowerShell con permisos por widget",
+			"APIs nativas del host para métricas del sistema, audio, control de medios, almacenamiento y temas"
 		],
 		"githubButton": "Ver en GitHub",
 		"releaseNotesButton": "Notas de la versión",
@@ -243,24 +244,34 @@
 			},
 			{
 				"value": "API de PowerShell",
-				"label": "Puente de automatización del lado del host",
+				"label": "Permisos por widget con un modo de solo lectura aislado",
+				"spanTwo": true
+			},
+			{
+				"value": "APIs nativas del host",
+				"label": "Métricas del sistema, niveles de audio, sesiones de medios, almacenamiento y puentes de tema sin procesos",
+				"spanTwo": true
+			},
+			{
+				"value": "Perfiles de espacio de trabajo",
+				"label": "Guarda y cambia distribuciones completas de widgets desde el menú de la bandeja",
 				"spanTwo": true
 			}
 		],
 		"featureCards": [
 			{
 				"title": "Widgets HTML en el Escritorio",
-				"description": "Construye widgets de escritorio con HTML, CSS y JavaScript, luego ejecútalos en un host de Windows nativo con soporte para archivos únicos y empaquetados.",
+				"description": "Crea widgets de escritorio con HTML, CSS y JavaScript. El editor integrado abre paquetes de varios archivos en pestañas con vista previa en vivo (recarga en caliente) y una consola de ejecución para errores y registros.",
 				"icon": "html"
 			},
 			{
 				"title": "Integración con PowerShell",
-				"description": "Ejecuta acciones aprobadas a través de las APIs del host para diagnósticos y automatización, sin convertir la capa de widgets en un entorno inseguro.",
+				"description": "Ejecuta PowerShell con el motor in-process tras conceder permiso explícito por widget (solo lectura, total o denegar). El modo de solo lectura funciona en un sandbox restringido; cada llamada está aislada y limitada en el tiempo.",
 				"icon": "powershell"
 			},
 			{
 				"title": "Sensación Nativa de Windows",
-				"description": "Mantente alineado con los flujos de trabajo de Windows: comportamiento en bandeja, controles de fijación superior, retención del estado y supresión de widgets al usar pantalla completa.",
+				"description": "Comportamiento de bandeja, anclar arriba o en la capa del escritorio, ajuste magnético de ventanas, opacidad y zoom por widget, perfiles de espacio de trabajo y supresión consciente de la pantalla hacen que los widgets se sientan nativos de Windows.",
 				"icon": "windows"
 			}
 		],
@@ -322,11 +333,20 @@
 			},
 			{
 				"question": "¿Soporta HTWind automatización por PowerShell?",
-				"answer": "Sí, a través de APIs de host autorizadas que puedes llamar desde el widget."
+				"answer": "Sí. Los widgets pueden ejecutar PowerShell con el motor in-process, pero cada widget necesita primero un permiso explícito: solo lectura (en sandbox), acceso total o denegar. La elección se recuerda por widget."
+			},
+			{
+				"question": "¿Qué APIs nativas del host están disponibles para los widgets?",
+				"answer": "Los widgets pueden llamar a system.metrics (CPU, memoria, discos, red, batería), audio.visualizer (FFT de audio en tiempo real), media.session (información y control de reproducción), storage.get/set (ajustes persistentes por widget) y theme.get/onChanged (tema y color de acento en vivo), todo sin crear procesos.",
+				"spanTwoColumns": true
 			},
 			{
 				"question": "¿Pueden ocultarse los widgets con aplicaciones en pantalla completa?",
-				"answer": "Sí, en la Configuración puedes activar modos que los ocultan cuando otras aplicaciones se maximizan."
+				"answer": "Sí. En Configuración puedes activar la supresión de pantalla completa y un modo separado para aplicaciones maximizadas. Ambos funcionan por pantalla: las ventanas de widgets se ocultan y suspenden al instante, conservan su estado y se restauran automáticamente sin cambiar el estado de visibilidad guardado."
+			},
+			{
+				"question": "¿Puedo guardar diferentes distribuciones de widgets?",
+				"answer": "Sí. Los perfiles de espacio de trabajo guardan la configuración actual de widgets —visibilidad, posiciones, tamaños, modos de bloqueo y anclaje, opacidad y zoom— como una distribución con nombre que puedes cambiar desde el menú de la bandeja en cualquier momento."
 			},
 			{
 				"question": "¿HTWind es de código abierto?",
@@ -339,12 +359,16 @@
 		],
 		"overviewParagraphs": [
 			"HTWind combina la experiencia nativa de Windows con la agilidad de los widgets web en WebView2, permitiéndote tener siempre a la vista tus herramientas.",
-			"Desde el ícono en bandeja hasta la ocultación reactiva y persistencia del estado, HTWind busca convertir tu escritorio tradicional de Windows en un espacio de trabajo productivo y personalizado."
+			"La app está pensada para quienes quieren una capa de widgets ligera pero extensible: integración en la bandeja, anclar arriba o en la capa del escritorio, ajuste magnético, opacidad y zoom por widget, perfiles de espacio de trabajo, widgets empaquetados y supresión consciente de la pantalla convierten un escritorio de Windows estándar en un espacio de trabajo más útil."
 		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
 				"alt": "Inicio de HTWind - Biblioteca de widgets"
+			},
+			{
+				"src": "/app_screenshots/page_gallery.png",
+				"alt": "HTWind Galería - Instalar widgets de la comunidad"
 			},
 			{
 				"src": "/app_screenshots/page_settings.png",

@@ -4,11 +4,12 @@ namespace HTWind.Services.Application;
 
 public sealed class ExecutionRiskConsentService : IExecutionRiskConsentService
 {
-    private readonly string _consentFilePath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "HTWind",
-        "risk-consent.accepted"
-    );
+    private readonly string _consentFilePath;
+
+    public ExecutionRiskConsentService(string? basePath = null)
+    {
+        _consentFilePath = HTWindPathProvider.GetRiskConsentFilePath(basePath);
+    }
 
     public bool HasAccepted()
     {

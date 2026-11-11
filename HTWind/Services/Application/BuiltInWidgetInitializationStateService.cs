@@ -4,11 +4,12 @@ namespace HTWind.Services.Application;
 
 public sealed class BuiltInWidgetInitializationStateService : IBuiltInWidgetInitializationStateService
 {
-    private readonly string _stateFilePath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "HTWind",
-        "built-in-widgets.initialized"
-    );
+    private readonly string _stateFilePath;
+
+    public BuiltInWidgetInitializationStateService(string? basePath = null)
+    {
+        _stateFilePath = HTWindPathProvider.GetBuiltInWidgetsInitializationFilePath(basePath);
+    }
 
     public bool HasInitialized()
     {

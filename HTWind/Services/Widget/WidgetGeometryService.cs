@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
 
 using HTWind.Model;
 
@@ -8,17 +9,24 @@ namespace HTWind.Services.Widget;
 public sealed class WidgetGeometryService : IWidgetGeometryService
 {
     private const int MonitorDefaultToNearest = 2;
+    private const int MonitorDefaultToNull = 0;
+    private const int MonitorDpiTypeEffectiveDpi = 0;
     private static readonly TimeSpan MonitorCacheDuration = TimeSpan.FromMilliseconds(750);
     private static readonly object MonitorCacheSync = new();
     private static DateTimeOffset MonitorCacheExpiresAtUtc = DateTimeOffset.MinValue;
     private static Dictionary<string, Rect> MonitorCache =
         new(StringComparer.OrdinalIgnoreCase);
+    private static Dictionary<string, double> MonitorScaleCache =
+        new(StringComparer.OrdinalIgnoreCase);
 
     [DllImport("user32.dll")]
-    private static extern IntPtr MonitorFromPoint(NativePoint pt, int dwFlags);
+    private static extern IntPtr MonitorFromWindow(IntPtr hwnd, int dwFlags);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MonitorInfoEx lpmi);
+
+    [DllImport("shcore.dll")]
+    private static extern int GetDpiForMonitor(IntPtr hMonitor, int dpiType, ref uint dpiX, ref uint dpiY);
 
     [DllImport("user32.dll")]
     private static extern bool EnumDisplayMonitors(
@@ -227,15 +235,35 @@ public sealed class WidgetGeometryService : IWidgetGeometryService
         IReadOnlyDictionary<string, Rect> connectedMonitors
     )
     {
+        return ResolveBestAvailableMonitorName(
+            model.PreferredMonitorDeviceName,
+            model.MonitorPlacements,
+            model.MonitorDeviceName,
+            connectedMonitors
+        );
+    }
+
+    /// <summary>
+    ///     Pure monitor priority resolution: preferred monitor (when connected), then the
+    ///     freshest seen placement of a connected monitor, then the last-known monitor (when
+    ///     connected), otherwise null (caller falls back to the primary display center).
+    /// </summary>
+    internal static string? ResolveBestAvailableMonitorName(
+        string? preferredMonitorDeviceName,
+        IReadOnlyList<WidgetMonitorPlacement> monitorPlacements,
+        string? monitorDeviceName,
+        IReadOnlyDictionary<string, Rect> connectedMonitors
+    )
+    {
         if (
-            !string.IsNullOrWhiteSpace(model.PreferredMonitorDeviceName)
-            && connectedMonitors.ContainsKey(model.PreferredMonitorDeviceName)
+            !string.IsNullOrWhiteSpace(preferredMonitorDeviceName)
+            && connectedMonitors.ContainsKey(preferredMonitorDeviceName)
         )
         {
-            return model.PreferredMonitorDeviceName;
+            return preferredMonitorDeviceName;
         }
 
-        var fallback = model.MonitorPlacements
+        var fallback = monitorPlacements
             .Where(placement =>
                 !string.IsNullOrWhiteSpace(placement.MonitorDeviceName)
                 && connectedMonitors.ContainsKey(placement.MonitorDeviceName!)
@@ -249,11 +277,11 @@ public sealed class WidgetGeometryService : IWidgetGeometryService
         }
 
         if (
-            !string.IsNullOrWhiteSpace(model.MonitorDeviceName)
-            && connectedMonitors.ContainsKey(model.MonitorDeviceName)
+            !string.IsNullOrWhiteSpace(monitorDeviceName)
+            && connectedMonitors.ContainsKey(monitorDeviceName)
         )
         {
-            return model.MonitorDeviceName;
+            return monitorDeviceName;
         }
 
         return null;
@@ -322,7 +350,17 @@ public sealed class WidgetGeometryService : IWidgetGeometryService
         {
             MonitorCacheExpiresAtUtc = DateTimeOffset.MinValue;
             MonitorCache.Clear();
+            MonitorScaleCache.Clear();
         }
+    }
+
+    /// <summary>
+    ///     Work areas of all connected monitors in WPF device-independent pixels. Used by the
+    ///     magnetic snap logic in the widget window.
+    /// </summary>
+    internal static IReadOnlyList<Rect> GetWorkAreasForSnapping()
+    {
+        return GetConnectedMonitors().Values.ToList();
     }
 
     private static Dictionary<string, Rect> GetConnectedMonitors()
@@ -336,6 +374,7 @@ public sealed class WidgetGeometryService : IWidgetGeometryService
         }
 
         var monitors = new Dictionary<string, Rect>(StringComparer.OrdinalIgnoreCase);
+        var scaleCache = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
 
         EnumDisplayMonitors(
             IntPtr.Zero,
@@ -348,11 +387,18 @@ public sealed class WidgetGeometryService : IWidgetGeometryService
                     return true;
                 }
 
-                monitors[info.SzDevice] = new Rect(
+                var scale = GetMonitorScale(monitor, info.SzDevice);
+                scaleCache[info.SzDevice] = scale;
+
+                // Win32 returns physical pixels; convert to WPF DIPs so every value compared or
+                // assigned against window.Left/Top/Width/Height stays correct under
+                // PerMonitorV2 scaling (125%/150%/200%).
+                monitors[info.SzDevice] = ConvertPhysicalRectToDip(
                     info.RcWork.Left,
                     info.RcWork.Top,
                     info.RcWork.Right - info.RcWork.Left,
-                    info.RcWork.Bottom - info.RcWork.Top
+                    info.RcWork.Bottom - info.RcWork.Top,
+                    scale
                 );
 
                 return true;
@@ -363,10 +409,42 @@ public sealed class WidgetGeometryService : IWidgetGeometryService
         lock (MonitorCacheSync)
         {
             MonitorCache = new Dictionary<string, Rect>(monitors, StringComparer.OrdinalIgnoreCase);
+            MonitorScaleCache = scaleCache;
             MonitorCacheExpiresAtUtc = DateTimeOffset.UtcNow.Add(MonitorCacheDuration);
         }
 
         return monitors;
+    }
+
+    private static double GetMonitorScale(IntPtr hMonitor, string monitorDeviceName)
+    {
+        lock (MonitorCacheSync)
+        {
+            if (MonitorScaleCache.TryGetValue(monitorDeviceName, out var cachedScale))
+            {
+                return cachedScale;
+            }
+        }
+
+        var dpiX = 0u;
+        var dpiY = 0u;
+        try
+        {
+            if (GetDpiForMonitor(hMonitor, MonitorDpiTypeEffectiveDpi, ref dpiX, ref dpiY) == 0 && dpiX > 0)
+            {
+                var scale = dpiX / 96.0;
+                if (scale > 0)
+                {
+                    return scale;
+                }
+            }
+        }
+        catch
+        {
+            // Fall through to the 100% default below.
+        }
+
+        return 1.0;
     }
 
     private static void CenterWindowOnWorkArea(WidgetWindow window, Rect? workArea)
@@ -379,9 +457,12 @@ public sealed class WidgetGeometryService : IWidgetGeometryService
             return;
         }
 
-        var target = workArea.Value;
-        window.Left = target.Left + ((target.Width - window.Width) / 2);
-        window.Top = target.Top + ((target.Height - window.Height) / 2);
+        var centered = CenterRectInWorkArea(
+            new Rect(window.Left, window.Top, window.Width, window.Height),
+            workArea.Value
+        );
+        window.Left = centered.Left;
+        window.Top = centered.Top;
     }
 
     private static void ClampWindowToWorkArea(WidgetWindow window, Rect? workArea)
@@ -391,38 +472,79 @@ public sealed class WidgetGeometryService : IWidgetGeometryService
             return;
         }
 
-        var target = workArea.Value;
+        var clamped = ClampRectToWorkArea(
+            new Rect(window.Left, window.Top, window.Width, window.Height),
+            workArea.Value
+        );
+        window.Left = clamped.Left;
+        window.Top = clamped.Top;
+        window.Width = clamped.Width;
+        window.Height = clamped.Height;
+    }
 
-        if (window.Width > target.Width)
-        {
-            window.Width = target.Width;
-        }
+    /// <summary>Pure clamping: keeps the rect inside the work area, shrinking first if needed.</summary>
+    internal static Rect ClampRectToWorkArea(Rect rect, Rect workArea)
+    {
+        var width = rect.Width > workArea.Width ? workArea.Width : rect.Width;
+        var height = rect.Height > workArea.Height ? workArea.Height : rect.Height;
+        var maxLeft = workArea.Right - width;
+        var maxTop = workArea.Bottom - height;
 
-        if (window.Height > target.Height)
-        {
-            window.Height = target.Height;
-        }
+        return new Rect(
+            Math.Min(Math.Max(rect.Left, workArea.Left), maxLeft),
+            Math.Min(Math.Max(rect.Top, workArea.Top), maxTop),
+            width,
+            height
+        );
+    }
 
-        var maxLeft = target.Right - window.Width;
-        var maxTop = target.Bottom - window.Height;
-
-        window.Left = Math.Min(Math.Max(window.Left, target.Left), maxLeft);
-        window.Top = Math.Min(Math.Max(window.Top, target.Top), maxTop);
+    /// <summary>Pure centering: places the rect in the middle of the work area.</summary>
+    internal static Rect CenterRectInWorkArea(Rect rect, Rect workArea)
+    {
+        return new Rect(
+            workArea.Left + ((workArea.Width - rect.Width) / 2),
+            workArea.Top + ((workArea.Height - rect.Height) / 2),
+            rect.Width,
+            rect.Height
+        );
     }
 
     private static bool IsOnAnyScreen(double left, double top, double width, double height)
     {
-        var right = left + width;
-        var bottom = top + height;
-        var virtualLeft = SystemParameters.VirtualScreenLeft;
-        var virtualTop = SystemParameters.VirtualScreenTop;
-        var virtualRight = virtualLeft + SystemParameters.VirtualScreenWidth;
-        var virtualBottom = virtualTop + SystemParameters.VirtualScreenHeight;
+        var virtualScreenBounds = new Rect(
+            SystemParameters.VirtualScreenLeft,
+            SystemParameters.VirtualScreenTop,
+            SystemParameters.VirtualScreenWidth,
+            SystemParameters.VirtualScreenHeight
+        );
 
-        return right > virtualLeft
-               && left < virtualRight
-               && bottom > virtualTop
-               && top < virtualBottom;
+        return IsRectOnAnyScreen(new Rect(left, top, width, height), virtualScreenBounds);
+    }
+
+    /// <summary>Pure on-screen test: does the rect overlap the given virtual screen bounds?</summary>
+    internal static bool IsRectOnAnyScreen(Rect rect, Rect virtualScreenBounds)
+    {
+        var right = rect.Left + rect.Width;
+        var bottom = rect.Top + rect.Height;
+
+        return right > virtualScreenBounds.Left
+               && rect.Left < virtualScreenBounds.Right
+               && bottom > virtualScreenBounds.Top
+               && rect.Top < virtualScreenBounds.Bottom;
+    }
+
+    /// <summary>
+    ///     Pure physical-pixel to device-independent-pixel conversion so monitor rectangles
+    ///     returned by Win32 can be converted (and unit tested) without P/Invoke.
+    /// </summary>
+    internal static Rect ConvertPhysicalRectToDip(int left, int top, int width, int height, double scale)
+    {
+        if (scale <= 0)
+        {
+            scale = 1.0;
+        }
+
+        return new Rect(left / scale, top / scale, width / scale, height / scale);
     }
 
     private static Rect? ResolveTargetMonitorWorkArea(string? monitorDeviceName)
@@ -452,11 +574,13 @@ public sealed class WidgetGeometryService : IWidgetGeometryService
                     )
                 )
                 {
-                    result = new Rect(
+                    var scale = GetMonitorScale(monitor, info.SzDevice);
+                    result = ConvertPhysicalRectToDip(
                         info.RcWork.Left,
                         info.RcWork.Top,
                         info.RcWork.Right - info.RcWork.Left,
-                        info.RcWork.Bottom - info.RcWork.Top
+                        info.RcWork.Bottom - info.RcWork.Top,
+                        scale
                     );
                     return false;
                 }
@@ -471,27 +595,24 @@ public sealed class WidgetGeometryService : IWidgetGeometryService
 
     private static string? GetMonitorDeviceName(WidgetWindow window)
     {
-        var centerX = window.Left + (window.Width / 2);
-        var centerY = window.Top + (window.Height / 2);
-        var monitor = MonitorFromPoint(
-            new NativePoint { X = (int)Math.Round(centerX), Y = (int)Math.Round(centerY) },
-            MonitorDefaultToNearest
-        );
-        if (monitor == IntPtr.Zero)
+        // Resolve the monitor from the window handle so no physical/DIP coordinate conversion is
+        // needed before the monitor (and its DPI) is known.
+        try
+        {
+            var windowHandle = new WindowInteropHelper(window).EnsureHandle();
+            var monitor = MonitorFromWindow(windowHandle, MonitorDefaultToNearest);
+            if (monitor == IntPtr.Zero)
+            {
+                return null;
+            }
+
+            var info = new MonitorInfoEx { CbSize = Marshal.SizeOf<MonitorInfoEx>() };
+            return GetMonitorInfo(monitor, ref info) ? info.SzDevice : null;
+        }
+        catch
         {
             return null;
         }
-
-        var info = new MonitorInfoEx { CbSize = Marshal.SizeOf<MonitorInfoEx>() };
-        return GetMonitorInfo(monitor, ref info) ? info.SzDevice : null;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct NativePoint
-    {
-        public int X;
-
-        public int Y;
     }
 
     [StructLayout(LayoutKind.Sequential)]

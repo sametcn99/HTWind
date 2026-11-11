@@ -48,7 +48,8 @@
 		"proofPoints": [
 			"Wsparcie renderu HTML, CSS i nowoczesnego JS na architekturze WebView2",
 			"Skonstruowane instalacje JSON z paczkami i zasobami z trybem Offline",
-			"Bezpieczne pomosty PowerShell przyspieszające monitoring komputera w tle"
+			"Kontrolowane akcje PowerShell z uprawnieniami dla każdego widżetu",
+			"Natywne API hosta dla metryk systemu, dźwięku, sterowania multimediami, pamięci i motywów"
 		],
 		"githubButton": "Wejdź na stronę GitHub",
 		"releaseNotesButton": "Zmiany najnowszego wydania",
@@ -216,15 +217,15 @@
 			},
 			{
 				"value": "Gorący powiew kodów HTML natychmiast odświeżony przyciskiem save dla live kodowania widget form w locie interfejs renderu w procesach zapisu",
-				"label": ""
+				"label": "Podgląd na żywo podczas edytowania widżetów"
 			},
 			{
 				"value": "Motor Chromium z platform u deweloper bazy technologii Windows Core we wzbogacone Edge proces C++ bazy",
-				"label": ""
+				"label": "Natywny stos renderowania Windows"
 			},
 			{
 				"value": "Technologia w pełnych darmowści format otwartego GPL projektu o licencyjna autorskiej wolność form w użyci programu open",
-				"label": ""
+				"label": "Projekt na licencji GPL 3.0"
 			},
 			{
 				"value": "Ukryć przy odpaleni do Gier (Supresja)",
@@ -243,24 +244,34 @@
 			},
 			{
 				"value": "Interfejsu C Systemowego PowerShell",
-				"label": "Odpalasz pliki system skryptowania powłoki",
+				"label": "Uprawnienia dla każdego widżetu z trybem tylko do odczytu w piaskownicy",
+				"spanTwo": true
+			},
+			{
+				"value": "Natywne API hosta",
+				"label": "Metryki systemu, poziomy dźwięku, sesje multimedialne, pamięć i mostki motywu bez procesów",
+				"spanTwo": true
+			},
+			{
+				"value": "Profile obszaru roboczego",
+				"label": "Zapisuj i przełączaj pełne układy widżetów z menu zasobnika",
 				"spanTwo": true
 			}
 		],
 		"featureCards": [
 			{
 				"title": "Html W Formatu Na Nakładkę Desktop Platform środowisk System.",
-				"description": "Zestaw sobie przez język web z wolność kompozycji kod od wyświetlanie grafik nakładając od ekran systemu baz przeglądarek Chrome proces i form okna powłok okienna wizyt C# system komendy narzędzia powłoki API desktop Windows Systemowym HTWIND framework projekt C",
+				"description": "Twórz widżety pulpitu w HTML, CSS i JavaScript. Wbudowany edytor otwiera pakiety wieloplikowe w kartach z podglądem na żywo (hot reload) i konsolą wykonawczą dla błędów i logów.",
 				"icon": "html"
 			},
 			{
 				"title": "Wykorzystaj środowisko API do Powershell skrypt system Windows narzędzia C",
-				"description": "API dające pewnych systemowi nakład środowisk od zapytania JSON w form C z plik Powershell do zwracanej informacji JSON jako odpowiedź zwrotowa ze strony kod systemowego w bezpieczny izolowanym i ograniczonym trybu okienna zapytanych komend platform do operacji na komputer PC API okna komunikacja Windows",
+				"description": "Uruchamiaj PowerShell przez silnik w procesie po jawnym przyznaniu uprawnień dla widżetu (tylko odczyt, pełne lub odmowa). Tryb tylko do odczytu działa w ograniczonej piaskownicy; każde wywołanie jest izolowane i ograniczone czasowo.",
 				"icon": "powershell"
 			},
 			{
 				"title": "Wymuszenie form powłok form Windows okna natywne.",
-				"description": "Tryb zawsze pozostających na system okna powłok wizyt, ustawienie i zapamiętywania z użyciu wsparciu ustawiania format wielu ekran parametry w trybu zachowaj zapamiętywani do powłok C#, API tryby wyświetl nakład komendy.",
+				"description": "Zachowanie zasobnika, przypinanie na wierzchu lub do warstwy pulpitu, magnetyczne przyciąganie okien, przezroczystość i zoom dla każdego widżetu, profile obszaru roboczego i świadome ukrywanie ekranu sprawiają, że widżety są natywne dla Windows.",
 				"icon": "windows"
 			}
 		],
@@ -297,7 +308,8 @@
 		"widgetPackageSteps": [
 			"Konstruł folder powłok u pakowania systemu plików pod obiekt JSON HTWIND w pliku konfig.",
 			"Zlokalizuj dla aplikacja htwind od indeksowany html index pliku adres powłoki i foldera konfig JSON w folder API podział instalacja pakowania konfiguracji programu C",
-			"Zaimportuje plikiem przeciągania na panel API GUI dewelopera w oknie w zarządzanie z poziomu pod platform GUI aplikacji projekt API dla HTWIND Windows z instalacjami i powłok"
+			"Zaimportuje plikiem przeciągania na panel API GUI dewelopera w oknie w zarządzanie z poziomu pod platform GUI aplikacji projekt API dla HTWIND Windows z instalacjami i powłok",
+			"Zaimportuj manifest do HTWind albo wyeksportuj istniejący widżet lub obszar roboczy, aby wygenerować układ pakietu wielokrotnego użytku."
 		],
 		"communitySharingSteps": [
 			"Stawia posta pod forum za serwis zdjęcia z form od widget html modyfikacjom na platform system",
@@ -321,11 +333,20 @@
 			},
 			{
 				"question": "Nie przykrywa za okno gry z pulpit platform na system okna powłoki u okna pulpit PC?",
-				"answer": "Jest suppress w GUI od tryb opcje u chowanie od powłok na system podczas do uruchomionych u aplikacjami na gracz systemu w trybach pełnego okno ekran"
+				"answer": "Tak. Widżety mogą uruchamiać PowerShell przez silnik w procesie, ale każdy widżet wymaga najpierw jawnego uprawnienia: tylko odczyt (piaskownica), pełny dostęp lub odmowa. Wybór jest zapamiętywany dla każdego widżetu."
+			},
+			{
+				"question": "Jakie natywne API hosta są dostępne dla widżetów?",
+				"answer": "Widżety mogą wywoływać system.metrics (CPU, pamięć, dyski, sieć, bateria), audio.visualizer (FFT dźwięku w czasie rzeczywistym), media.session (informacje i sterowanie odtwarzaniem), storage.get/set (trwałe ustawienia widżetu) oraz theme.get/onChanged (motyw i kolor akcentu na żywo) — wszystko bez uruchamiania procesów.",
+				"spanTwoColumns": true
 			},
 			{
 				"question": "Czy zabieranie CPU i RAM maszynami pod aplikacją dużo pamięci na platform system plików na operacyjny system na pulpit z Windows platform w instalacyjnymi widgetu API u okien programy od komputer?",
-				"answer": "Minimalistycznym i oszczędności do RAM platform z silnika do API okien WebView2 systemu C na aplikacje wieloma okna instalacja widget na panel PC"
+				"answer": "Tak. W Ustawieniach możesz włączyć ukrywanie przy pełnym ekranie oraz osobny tryb ukrywania przy zmaksymalizowanych aplikacjach. Oba działają dla każdego ekranu: okna widżetów są natychmiast ukrywane i wstrzymywane, zachowują swój stan i są automatycznie przywracane bez zmiany zapisanego stanu widoczności."
+			},
+			{
+				"question": "Czy mogę zapisywać różne układy widżetów?",
+				"answer": "Tak. Profile obszaru roboczego zapisują bieżącą konfigurację widżetów — widoczność, pozycje, rozmiary, tryby blokady i przypinania, przezroczystość i zoom — jako nazwany układ, który możesz przywołać z menu zasobnika w dowolnej chwili."
 			},
 			{
 				"question": "Z PS1 PowerShell system w komenda API u okna widget u skrypt w aplikacjami Windows platform dewelopera aplikacji czy system działa API okna do skryptów instalacja u użytkownik dla okna pulpit platform PC?",
@@ -338,12 +359,16 @@
 		],
 		"overviewParagraphs": [
 			"Narzędziem dla program do aplikacji widget w html systemu na pulpit platform w system Windows by modyfikacji od pulpit okna z wolnością na konfiguracja kodu na projekt od web dewelopera instalacji aplikacji do PC Windows",
-			"Pobierz z instalacji na narzędziom w panel na pulpit z modyfikacją plików u API systemu okna na do pracy od użytkownik u aplikacji deweloper w system Windows instalacja platform PC z projekt od okna GUI"
+			"Aplikacja jest przeznaczona dla użytkowników, którzy chcą lekkiej, ale rozszerzalnej warstwy widżetów: integracja z zasobnikiem, przypinanie na wierzchu lub do warstwy pulpitu, magnetyczne przyciąganie, przezroczystość i zoom dla każdego widżetu, profile obszaru roboczego, pakowane widżety i świadome ukrywanie ekranu zamieniają standardowy pulpit Windows w bardziej użyteczną przestrzeń pracy."
 		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
 				"alt": "Widok ekran z okien zarządzani aplikacjami z system widget"
+			},
+			{
+				"src": "/app_screenshots/page_gallery.png",
+				"alt": "Galeria HTWind - Instaluj widżety społeczności"
 			},
 			{
 				"src": "/app_screenshots/page_settings.png",

@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 
 using HTWind.Model;
+using HTWind.Services.Application;
 
 namespace HTWind.Services.Widget;
 
@@ -14,11 +15,12 @@ public sealed class WidgetImportService : IWidgetImportService
         WriteIndented = true
     };
 
-    private readonly string _widgetsDataDirectory = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "HTWind",
-        "Widgets"
-    );
+    private readonly string _widgetsDataDirectory;
+
+    public WidgetImportService(string? basePath = null)
+    {
+        _widgetsDataDirectory = HTWindPathProvider.GetWidgetsDirectory(basePath);
+    }
 
     public string WidgetsDataDirectory => _widgetsDataDirectory;
 

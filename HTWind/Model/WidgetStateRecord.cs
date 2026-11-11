@@ -14,6 +14,12 @@ public sealed class WidgetStateRecord
 
     public bool IsPinned { get; set; }
 
+    public string? PinMode { get; set; }
+
+    public double? WidgetOpacityPercent { get; set; }
+
+    public double? ZoomFactorPercent { get; set; }
+
     public double? Left { get; set; }
 
     public double? Top { get; set; }

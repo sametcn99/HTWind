@@ -5,25 +5,38 @@ using HTWind.Model;
 
 namespace HTWind.Services.Widget;
 
+/// <summary>
+///     Event-driven fullscreen/maximized suppression monitor. Instead of polling every 400 ms it
+///     installs WinEvent hooks (EVENT_SYSTEM_FOREGROUND + EVENT_OBJECT_LOCATIONCHANGE) and only
+///     re-evaluates the suppression state when the foreground window changes or a window
+///     moves/resizes, marshaled onto the UI thread via the dispatcher.
+/// </summary>
 public sealed class WidgetSuppressionMonitor : IWidgetSuppressionMonitor, IDisposable
 {
-    private const int FullscreenSuppressionCheckIntervalMilliseconds = 400;
+    private const uint EventSystemForeground = 0x0003;
+    private const uint EventObjectLocationChange = 0x800B;
+    private const uint WinEventOutOfContext = 0;
+    private const int ObjectIdWindow = 0;
     private const int FullscreenBoundsTolerancePixels = 2;
     private const uint MonitorDefaultToNull = 0;
+    private const int ReconcileCoalesceMilliseconds = 50;
 
-    private readonly DispatcherTimer _suppressionTimer;
-    private readonly EventHandler _suppressionTickHandler;
+    private readonly Dispatcher _dispatcher;
+    private readonly WinEventDelegate _winEventCallbackDelegate;
     private Action? _reconcileCallback;
+    private IntPtr _foregroundHook;
+    private IntPtr _locationHook;
+    private DateTimeOffset _nextReconcileAllowedAtUtc = DateTimeOffset.MinValue;
+    private bool _isReconcileQueued;
+    private string? _lastSuppressionMonitorDeviceName;
     private bool _isDisposed;
 
     public WidgetSuppressionMonitor()
     {
-        _suppressionTimer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromMilliseconds(FullscreenSuppressionCheckIntervalMilliseconds)
-        };
-        _suppressionTickHandler = SuppressionTimer_Tick;
-        _suppressionTimer.Tick += _suppressionTickHandler;
+        _dispatcher = Dispatcher.CurrentDispatcher;
+        // The delegate must be kept alive for the lifetime of the hooks (native code holds a
+        // function pointer to it).
+        _winEventCallbackDelegate = WinEventCallback;
     }
 
     public bool IsFullscreenSuppressionEnabled { get; set; } = true;
@@ -32,13 +45,15 @@ public sealed class WidgetSuppressionMonitor : IWidgetSuppressionMonitor, IDispo
     public void Start(Action reconcileCallback)
     {
         _reconcileCallback = reconcileCallback ?? throw new ArgumentNullException(nameof(reconcileCallback));
-        _suppressionTimer.Start();
+        EnsureHooksInstalled();
     }
 
     public void Stop()
     {
-        _suppressionTimer.Stop();
+        UnhookWinEventSafe(ref _foregroundHook);
+        UnhookWinEventSafe(ref _locationHook);
         _reconcileCallback = null;
+        _lastSuppressionMonitorDeviceName = null;
     }
 
     public bool ShouldSuppressWidget(WidgetModel model)
@@ -62,15 +77,106 @@ public sealed class WidgetSuppressionMonitor : IWidgetSuppressionMonitor, IDispo
         }
 
         Stop();
-        _suppressionTimer.Tick -= _suppressionTickHandler;
         _isDisposed = true;
     }
 
-    private void SuppressionTimer_Tick(object? sender, EventArgs e)
+    private void EnsureHooksInstalled()
     {
-        _ = sender;
-        _ = e;
-        _reconcileCallback?.Invoke();
+        if (_foregroundHook != IntPtr.Zero)
+        {
+            return;
+        }
+
+        // The hooks are installed on the UI thread (which pumps messages) so the
+        // WINEVENT_OUTOFCONTEXT callbacks are delivered on that same thread.
+        _foregroundHook = SetWinEventHook(
+            EventSystemForeground,
+            EventSystemForeground,
+            IntPtr.Zero,
+            _winEventCallbackDelegate,
+            0,
+            0,
+            WinEventOutOfContext);
+
+        _locationHook = SetWinEventHook(
+            EventObjectLocationChange,
+            EventObjectLocationChange,
+            IntPtr.Zero,
+            _winEventCallbackDelegate,
+            0,
+            0,
+            WinEventOutOfContext);
+    }
+
+    private void WinEventCallback(
+        IntPtr hWinEventHook,
+        uint eventType,
+        IntPtr hwnd,
+        int idObject,
+        int idChild,
+        uint dwEventThread,
+        uint dwmsEventTime)
+    {
+        _ = hWinEventHook;
+        _ = dwEventThread;
+        _ = dwmsEventTime;
+
+        if (hwnd == IntPtr.Zero || idObject != ObjectIdWindow || idChild != 0)
+        {
+            return;
+        }
+
+        // LOCATIONCHANGE fires for every window move/resize on the system; coalesce the
+        // evaluations so a single reconcile runs per short burst of events.
+        var now = DateTimeOffset.UtcNow;
+        if (now < _nextReconcileAllowedAtUtc)
+        {
+            if (_isReconcileQueued)
+            {
+                return;
+            }
+
+            _isReconcileQueued = true;
+            _ = _dispatcher.BeginInvoke(
+                DispatcherPriority.Background,
+                new Action(ReconcileIfChanged));
+            return;
+        }
+
+        _nextReconcileAllowedAtUtc = now.AddMilliseconds(ReconcileCoalesceMilliseconds);
+        _isReconcileQueued = false;
+
+        var dispatcher = System.Windows.Application.Current?.Dispatcher ?? _dispatcher;
+        if (dispatcher.CheckAccess())
+        {
+            ReconcileIfChanged();
+        }
+        else
+        {
+            _ = dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(ReconcileIfChanged));
+        }
+    }
+
+    private void ReconcileIfChanged()
+    {
+        _isReconcileQueued = false;
+
+        if (_reconcileCallback is null || _isDisposed)
+        {
+            return;
+        }
+
+        var suppressionMonitorDeviceName = GetActiveSuppressionMonitorDeviceName();
+        if (string.Equals(
+                suppressionMonitorDeviceName,
+                _lastSuppressionMonitorDeviceName,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        _lastSuppressionMonitorDeviceName = suppressionMonitorDeviceName;
+        _reconcileCallback();
     }
 
     private static bool ShouldSuppressWidgetForMonitor(
@@ -185,6 +291,24 @@ public sealed class WidgetSuppressionMonitor : IWidgetSuppressionMonitor, IDispo
         return null;
     }
 
+    private void UnhookWinEventSafe(ref IntPtr hook)
+    {
+        if (hook == IntPtr.Zero)
+        {
+            return;
+        }
+
+        try
+        {
+            UnhookWinEvent(hook);
+        }
+        catch
+        {
+        }
+
+        hook = IntPtr.Zero;
+    }
+
     [DllImport("user32.dll")]
     private static extern IntPtr GetForegroundWindow();
 
@@ -213,6 +337,29 @@ public sealed class WidgetSuppressionMonitor : IWidgetSuppressionMonitor, IDispo
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MonitorInfoEx monitorInfo);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr SetWinEventHook(
+        uint eventMin,
+        uint eventMax,
+        IntPtr hmodWinEventProc,
+        WinEventDelegate proc,
+        uint idProcess,
+        uint idThread,
+        uint dwFlags);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool UnhookWinEvent(IntPtr hWinEventHook);
+
+    private delegate void WinEventDelegate(
+        IntPtr hWinEventHook,
+        uint eventType,
+        IntPtr hwnd,
+        int idObject,
+        int idChild,
+        uint dwEventThread,
+        uint dwmsEventTime);
 
     [StructLayout(LayoutKind.Sequential)]
     private struct NativeRect

@@ -42,8 +42,12 @@ function upsertMetaArray(
 	dataFlag: string,
 ) {
 	document.head
-		.querySelectorAll(`meta[${baseSelector}][data-${dataFlag}="true"]`)
-		.forEach((node) => node.remove());
+		.querySelectorAll(
+			`meta[${baseSelector}][data-${dataFlag}="true"], meta[data-${dataFlag}="true"]`,
+		)
+		.forEach((node) => {
+			node.remove();
+		});
 
 	for (const value of values) {
 		const node = document.createElement("meta");
@@ -97,7 +101,8 @@ export function useHeadMetadata(locale: LocaleCode, messages: LocaleMessages) {
 		});
 		upsertMeta('meta[name="robots"]', {
 			name: "robots",
-			content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
+			content:
+				"index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
 		});
 		upsertMeta('meta[property="og:type"]', {
 			property: "og:type",
@@ -128,9 +133,8 @@ export function useHeadMetadata(locale: LocaleCode, messages: LocaleMessages) {
 			"property",
 			SUPPORTED_LOCALES.filter(
 				(supportedLocale) => supportedLocale !== locale,
-			).map(
-				(supportedLocale) =>
-					INTL_LOCALE_MAP[supportedLocale].replace("-", "_"),
+			).map((supportedLocale) =>
+				INTL_LOCALE_MAP[supportedLocale].replace("-", "_"),
 			),
 			"og-locale-alternate",
 		);

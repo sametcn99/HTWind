@@ -286,22 +286,85 @@
                 <ColumnDefinition Width="Auto"/>
               </Grid.ColumnDefinitions>
 
-              <StackPanel Grid.Row="0"
-                  Grid.Column="0"
-                  Margin="0,0,10,6"
-                  VerticalAlignment="Center">
-                <TextBlock
-                  Text="{Binding DisplayName}"
-                  FontSize="15"
-                  FontWeight="SemiBold"
-                  TextTrimming="CharacterEllipsis"/>
-                <TextBlock
-                  Margin="0,0,0,0"
-                  Text="{Binding Name}"
-                  FontSize="12"
-                  Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                  TextTrimming="CharacterEllipsis"/>
-              </StackPanel>
+              <ToggleButton
+                x:Name="HeaderToggle"
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="-8,-4,-8,-4"
+                HorizontalContentAlignment="Stretch"
+                Cursor="Hand"
+                Focusable="True"
+                IsChecked="{Binding IsExpanded, Mode=TwoWay}"
+                ToolTip="{loc:Loc MainWindow_ToggleSettings}"
+                AutomationProperties.Name="{loc:Loc MainWindow_ToggleSettings}">
+                <ToggleButton.Template>
+                  <ControlTemplate TargetType="ToggleButton">
+                    <Border
+                      x:Name="HeaderBorder"
+                      Background="Transparent"
+                      CornerRadius="4"
+                      Padding="8,4">
+                      <ContentPresenter VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                      <Trigger Property="IsMouseOver" Value="True">
+                        <Setter TargetName="HeaderBorder" Property="Background"
+                            Value="{DynamicResource ControlFillColorSecondaryBrush}"/>
+                      </Trigger>
+                    </ControlTemplate.Triggers>
+                  </ControlTemplate>
+                </ToggleButton.Template>
+                <StackPanel Orientation="Horizontal">
+                  <!-- details/summary style affordance: chevron points right when collapsed, down when expanded -->
+                  <ui:SymbolIcon
+                    Symbol="ChevronRight24"
+                    FontSize="14"
+                    Margin="0,1,8,0"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+                    <ui:SymbolIcon.Style>
+                      <Style TargetType="ui:SymbolIcon">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding IsChecked, ElementName=HeaderToggle}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </ui:SymbolIcon.Style>
+                  </ui:SymbolIcon>
+                  <ui:SymbolIcon
+                    Symbol="ChevronDown24"
+                    FontSize="14"
+                    Margin="0,1,8,0"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+                    <ui:SymbolIcon.Style>
+                      <Style TargetType="ui:SymbolIcon">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding IsChecked, ElementName=HeaderToggle}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </ui:SymbolIcon.Style>
+                  </ui:SymbolIcon>
+                  <StackPanel VerticalAlignment="Center">
+                    <TextBlock
+                      Text="{Binding DisplayName}"
+                      FontSize="15"
+                      FontWeight="SemiBold"
+                      TextTrimming="CharacterEllipsis"/>
+                    <TextBlock
+                      Margin="0,0,0,0"
+                      Text="{Binding Name}"
+                      FontSize="12"
+                      Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                      TextTrimming="CharacterEllipsis"/>
+                  </StackPanel>
+                </StackPanel>
+              </ToggleButton>
 
               <ui:Button
                 Grid.Row="0"
@@ -315,6 +378,9 @@
                 Click="WidgetActionsButton_Click">
                 <ui:Button.ContextMenu>
                   <ContextMenu>
+                    <MenuItem
+                      Header="{loc:Loc MainWindow_Settings}"
+                      Click="WidgetSettingsMenuItem_Click"/>
                     <MenuItem
                       Header="{loc:Loc MainWindow_ResetPosition}"
                       Command="{Binding DataContext.ResetWidgetPositionCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
@@ -339,7 +405,20 @@
               <WrapPanel Grid.Row="1"
                   Grid.Column="0"
                   Grid.ColumnSpan="2"
-                  Margin="0,0,0,0">
+                  Margin="0,8,0,0">
+                <WrapPanel.Style>
+                  <Style TargetType="WrapPanel">
+                    <Setter Property="Visibility"
+                        Value="Collapsed"/>
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsExpanded}"
+                          Value="True">
+                        <Setter Property="Visibility"
+                            Value="Visible"/>
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </WrapPanel.Style>
                 <ui:ToggleSwitch
                   Margin="0,2,10,0"
                   VerticalAlignment="Center"
@@ -361,6 +440,71 @@
                   IsChecked="{Binding IsPinned}"
                   Command="{Binding DataContext.ChangePinStateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                   CommandParameter="{Binding}"/>
+
+                <ui:ToggleSwitch
+                  Margin="12,2,10,0"
+                  VerticalAlignment="Center"
+                  Content="{loc:Loc MainWindow_SendToBack}"
+                  IsChecked="{Binding IsSentToBackDesktopLayer}"
+                  ToolTip="{loc:Loc MainWindow_SendToBackHint}"/>
+
+                <StackPanel
+                  Margin="12,0,10,0"
+                  Orientation="Vertical"
+                  VerticalAlignment="Center">
+                  <TextBlock
+                    FontSize="11"
+                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                    Text="{loc:Loc MainWindow_Opacity}"/>
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="110"/>
+                      <ColumnDefinition Width="34"/>
+                    </Grid.ColumnDefinitions>
+                    <Slider
+                      Minimum="20"
+                      Maximum="100"
+                      VerticalAlignment="Center"
+                      Value="{Binding WidgetOpacityPercent}"
+                      ToolTip="{loc:Loc MainWindow_Opacity}"/>
+                    <TextBlock
+                      Grid.Column="1"
+                      Margin="6,0,0,0"
+                      VerticalAlignment="Center"
+                      FontSize="11"
+                      Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                      Text="{Binding WidgetOpacityPercent, StringFormat={}{0:0}%}"/>
+                  </Grid>
+                </StackPanel>
+
+                <StackPanel
+                  Margin="12,0,0,0"
+                  Orientation="Vertical"
+                  VerticalAlignment="Center">
+                  <TextBlock
+                    FontSize="11"
+                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                    Text="{loc:Loc MainWindow_Zoom}"/>
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="110"/>
+                      <ColumnDefinition Width="34"/>
+                    </Grid.ColumnDefinitions>
+                    <Slider
+                      Minimum="50"
+                      Maximum="200"
+                      VerticalAlignment="Center"
+                      Value="{Binding ZoomFactorPercent}"
+                      ToolTip="{loc:Loc MainWindow_Zoom}"/>
+                    <TextBlock
+                      Grid.Column="1"
+                      Margin="6,0,0,0"
+                      VerticalAlignment="Center"
+                      FontSize="11"
+                      Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                      Text="{Binding ZoomFactorPercent, StringFormat={}{0:0}%}"/>
+                  </Grid>
+                </StackPanel>
               </WrapPanel>
             </Grid>
           </ui:Card>

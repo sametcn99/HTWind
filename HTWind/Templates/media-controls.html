@@ -9,6 +9,9 @@
     html, body { width:100%; height:100%; margin:0; font-family:"Bahnschrift","Segoe UI",sans-serif; color:var(--text); background:transparent; }
     .card { width:100%; height:100%; box-sizing:border-box; padding:12px; border-radius:16px; border:1px solid var(--line); background:var(--bg); display:grid; grid-template-rows:auto auto auto 1fr auto; gap:8px; }
     .label { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+    .now-playing { display:grid; grid-template-columns:auto 1fr; gap:10px; align-items:center; min-height:0; }
+    .art { width:56px; height:56px; border-radius:10px; border:1px solid var(--line); background:rgba(255,255,255,.06); object-fit:cover; display:none; }
+    .track-info { min-width:0; }
     .title { font-size:1rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .artist { font-size:.86rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .controls { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
@@ -20,8 +23,13 @@
 <body>
   <div class="card">
     <div class="label">Media Controls</div>
-    <div id="title" class="title">No media session</div>
-    <div id="artist" class="artist">-</div>
+    <div class="now-playing">
+      <img id="art" class="art" alt="" />
+      <div class="track-info">
+        <div id="title" class="title">No media session</div>
+        <div id="artist" class="artist">-</div>
+      </div>
+    </div>
     <div class="controls">
       <button onclick="previousTrack()">Previous</button>
       <button class="primary" onclick="playPause()">Play/Pause</button>
@@ -31,6 +39,121 @@
   </div>
   <script>
     function pick(obj, camel, pascal) { return obj?.[camel] ?? obj?.[pascal]; }
+
+    const titleEl = document.getElementById("title");
+    const artistEl = document.getElementById("artist");
+    const metaEl = document.getElementById("meta");
+    const artEl = document.getElementById("art");
+
+    // Native zero-process media.session API (GSMTC); PowerShell SendKeys fallback below.
+    let nativeApiAvailable = null;
+    let isRefreshing = false;
+
+    function setMeta(text) { metaEl.textContent = text; }
+
+    async function refreshNowPlaying() {
+      if (isRefreshing) {
+        return;
+      }
+
+      isRefreshing = true;
+      try {
+        if (nativeApiAvailable !== false) {
+          try {
+            await refreshNativeNowPlaying();
+            nativeApiAvailable = true;
+            return;
+          } catch {
+            nativeApiAvailable = false;
+          }
+        }
+
+        await refreshNowPlayingWithPowerShell();
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    async function refreshNativeNowPlaying() {
+      const payload = await window.HTWind.invoke("media.session", { action: "get", includeArt: true, timeoutMs: 4000 });
+      const media = pick(payload, "media", "Media");
+
+      if (!media) {
+        titleEl.textContent = "No media session";
+        artistEl.textContent = "-";
+        artEl.style.display = "none";
+        return;
+      }
+
+      titleEl.textContent = pick(media, "title", "Title") || "Unknown track";
+      artistEl.textContent = pick(media, "artist", "Artist") || pick(payload, "sourceAppId", "SourceAppId") || "Unknown source";
+
+      const albumArt = pick(media, "albumArtDataUrl", "AlbumArtDataUrl");
+      if (albumArt) {
+        artEl.src = albumArt;
+        artEl.style.display = "block";
+      } else {
+        artEl.style.display = "none";
+      }
+    }
+
+    async function refreshNowPlayingWithPowerShell() {
+      try {
+        const media = await runPs("$p = Get-Process | Where-Object { $_.MainWindowTitle } | Select-Object -First 1; if ($null -eq $p) { $null } else { $parts = $p.MainWindowTitle -split ' - ', 2; [pscustomobject]@{ Title = if ($parts.Count -gt 0) { $parts[0] } else { $p.MainWindowTitle }; Artist = if ($parts.Count -gt 1) { $parts[1] } else { $p.ProcessName }; SourceAppUserModelId = $p.ProcessName } }", true);
+        if (!media) {
+          titleEl.textContent = "No media session";
+          artistEl.textContent = "-";
+          return;
+        }
+
+        titleEl.textContent = pick(media, "title", "Title") || "Unknown track";
+        artistEl.textContent = pick(media, "artist", "Artist") || pick(media, "sourceAppUserModelId", "SourceAppUserModelId") || "Unknown source";
+      } catch {
+        titleEl.textContent = "Media API error";
+      }
+    }
+
+    async function sendMediaAction(action, successText, fallbackText) {
+      setMeta(`${action}...`);
+      try {
+        if (nativeApiAvailable !== false) {
+          try {
+            const payload = await window.HTWind.invoke("media.session", { action, timeoutMs: 4000 });
+            const succeeded = pick(payload, "succeeded", "Succeeded");
+            if (succeeded) {
+              setMeta(successText);
+              refreshNowPlaying();
+              return;
+            }
+
+            if (payload && Object.keys(payload).length > 0) {
+              // Session exists but the transport rejected the command; fall through to keys.
+            }
+          } catch {
+            nativeApiAvailable = false;
+          }
+        }
+
+        const keyCodes = { toggle: 179, next: 176, previous: 177 };
+        const keyCode = keyCodes[action];
+        if (!keyCode) {
+          setMeta(fallbackText || "Not supported.");
+          return;
+        }
+
+        const r = await runPs(`$w = New-Object -ComObject WScript.Shell; $w.SendKeys([char]${keyCode}); [pscustomobject]@{ Succeeded = $true }`, true);
+        const ok = pick(r, "succeeded", "Succeeded");
+        setMeta(ok ? successText : (fallbackText || `${action} rejected.`));
+        refreshNowPlaying();
+      } catch (error) {
+        setMeta(`Error: ${error.message}`);
+      }
+    }
+
+    function playPause() { sendMediaAction("toggle", "Playback toggled.", "Play/Pause command rejected."); }
+    function nextTrack() { sendMediaAction("next", "Next track.", "Next not supported."); }
+    function previousTrack() { sendMediaAction("previous", "Previous track.", "Previous not supported."); }
+
     async function runPs(script, parseJson = false) {
       const executableScript = parseJson
         ? `$ProgressPreference='SilentlyContinue'; $ErrorActionPreference='Stop'; $__result = & { ${script} }; if ($null -eq $__result) { '{}' } else { $__result | ConvertTo-Json -Depth 24 -Compress }`
@@ -49,63 +172,6 @@
       if (!parseJson) return result;
       if (!stdout.trim()) return {};
       return JSON.parse(stdout);
-    }
-    const titleEl = document.getElementById("title");
-    const artistEl = document.getElementById("artist");
-    const metaEl = document.getElementById("meta");
-
-    function setMeta(text) { metaEl.textContent = text; }
-
-    async function refreshNowPlaying() {
-      try {
-        const media = await runPs("$p = Get-Process | Where-Object { $_.MainWindowTitle } | Select-Object -First 1; if ($null -eq $p) { $null } else { $parts = $p.MainWindowTitle -split ' - ', 2; [pscustomobject]@{ Title = if ($parts.Count -gt 0) { $parts[0] } else { $p.MainWindowTitle }; Artist = if ($parts.Count -gt 1) { $parts[1] } else { $p.ProcessName }; SourceAppUserModelId = $p.ProcessName } }", true);
-        if (!media) {
-          titleEl.textContent = "No media session";
-          artistEl.textContent = "-";
-          return;
-        }
-
-        titleEl.textContent = pick(media, "title", "Title") || "Unknown track";
-        artistEl.textContent = pick(media, "artist", "Artist") || pick(media, "sourceAppUserModelId", "SourceAppUserModelId") || "Unknown source";
-      } catch {
-        titleEl.textContent = "Media API error";
-      }
-    }
-
-    async function playPause() {
-      setMeta("Toggling playback...");
-      try {
-        const r = await runPs("$w = New-Object -ComObject WScript.Shell; $w.SendKeys([char]179); [pscustomobject]@{ Succeeded = $true }", true);
-        const ok = pick(r, "succeeded", "Succeeded");
-        setMeta(ok ? "Playback toggled." : "Play/Pause command rejected.");
-        refreshNowPlaying();
-      } catch (error) {
-        setMeta(`Error: ${error.message}`);
-      }
-    }
-
-    async function nextTrack() {
-      setMeta("Skipping next...");
-      try {
-        const r = await runPs("$w = New-Object -ComObject WScript.Shell; $w.SendKeys([char]176); [pscustomobject]@{ Succeeded = $true }", true);
-        const ok = pick(r, "succeeded", "Succeeded");
-        setMeta(ok ? "Next track." : "Next not supported.");
-        refreshNowPlaying();
-      } catch (error) {
-        setMeta(`Error: ${error.message}`);
-      }
-    }
-
-    async function previousTrack() {
-      setMeta("Going previous...");
-      try {
-        const r = await runPs("$w = New-Object -ComObject WScript.Shell; $w.SendKeys([char]177); [pscustomobject]@{ Succeeded = $true }", true);
-        const ok = pick(r, "succeeded", "Succeeded");
-        setMeta(ok ? "Previous track." : "Previous not supported.");
-        refreshNowPlaying();
-      } catch (error) {
-        setMeta(`Error: ${error.message}`);
-      }
     }
 
     refreshNowPlaying();

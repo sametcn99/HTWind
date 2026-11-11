@@ -1,5 +1,6 @@
 using System.IO;
 
+using HTWind.Services.Application;
 using Microsoft.Web.WebView2.Core;
 
 namespace HTWind.Services.WebView;
@@ -109,9 +110,7 @@ public sealed class WebViewEnvironmentProvider : IWebViewEnvironmentProvider
     private static string BuildUserDataFolder(string profileName)
     {
         var path = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "HTWind",
-            "WebView2",
+            HTWindPathProvider.GetWebView2RootDirectory(),
             profileName
         );
 

@@ -5,11 +5,11 @@
 	},
 	"seo": {
 		"title": "HTWind | Windows Desktop Widget Host",
-		"description": "HTWind is an open-source Windows desktop widget host for HTML widgets, manifest packages, and controlled PowerShell tooling.",
+		"description": "HTWind is an open-source Windows desktop widget host for HTML widgets, manifest packages, native host APIs, and controlled PowerShell tooling.",
 		"openGraphTitle": "HTWind | Windows Desktop Widget Host",
-		"openGraphDescription": "Build a cleaner Windows desktop with HTML widgets, package imports, and native-feeling workflow controls.",
+		"openGraphDescription": "Build a cleaner Windows desktop with HTML widgets, native host APIs for system metrics, audio, and media, and per-widget PowerShell permissions.",
 		"twitterTitle": "HTWind | Windows Desktop Widget Host",
-		"twitterDescription": "Open-source Windows widget host with HTML widgets, manifest packages, and PowerShell integration.",
+		"twitterDescription": "Open-source Windows widget host with HTML widgets, native host APIs, manifest packages, and per-widget PowerShell permissions.",
 		"imageAlt": "HTWind desktop screenshot with widgets on Windows",
 		"jsonLdDescription": "HTWind is a customizable HTML-based widget host for Windows desktops."
 	},
@@ -48,7 +48,8 @@
 		"proofPoints": [
 			"HTML, CSS, and JavaScript widgets rendered with WebView2",
 			"Manifest-based packages for asset-backed and multi-widget setups",
-			"Controlled PowerShell actions for diagnostics and desktop workflows"
+			"Controlled PowerShell actions with per-widget permissions",
+			"Native host APIs for system metrics, audio, media control, storage, and theming"
 		],
 		"githubButton": "View on GitHub",
 		"releaseNotesButton": "Release notes",
@@ -243,24 +244,34 @@
 			},
 			{
 				"value": "PowerShell API",
-				"label": "Host-side automation bridge",
+				"label": "Per-widget permissions with a sandboxed read-only mode",
+				"spanTwo": true
+			},
+			{
+				"value": "Native Host APIs",
+				"label": "System metrics, audio levels, media sessions, storage, and theme bridges with zero processes",
+				"spanTwo": true
+			},
+			{
+				"value": "Workspace Profiles",
+				"label": "Save and switch complete widget layouts from the tray menu",
 				"spanTwo": true
 			}
 		],
 		"featureCards": [
 			{
 				"title": "HTML Widgets on Desktop",
-				"description": "Build desktop widgets with HTML, CSS, and JavaScript, then run them in a native-feeling Windows host with support for single files and packaged folders.",
+				"description": "Build desktop widgets with HTML, CSS, and JavaScript. The built-in editor opens multi-file packages in tabs with live preview (hot reload) and a runtime console for errors and logs.",
 				"icon": "html"
 			},
 			{
 				"title": "PowerShell Integration",
-				"description": "Run approved PowerShell actions through host APIs for diagnostics, automation, and system tasks without turning the widget layer into an unsafe shell.",
+				"description": "Run PowerShell through an in-process engine after an explicit per-widget grant (read-only, full, or deny). Read-only mode runs in a constrained sandbox, and every call is isolated and time-limited.",
 				"icon": "powershell"
 			},
 			{
 				"title": "Windows Native Feel",
-				"description": "Stay aligned with modern Windows workflows through tray behavior, pin-on-top controls, state persistence, and display-aware suppression for fullscreen or maximized apps.",
+				"description": "Tray behavior, pin-on-top or desktop-layer pinning, magnetic window snapping, per-widget opacity and zoom, workspace profiles, and display-aware suppression keep widgets feeling native to Windows.",
 				"icon": "windows"
 			}
 		],
@@ -322,11 +333,20 @@
 			},
 			{
 				"question": "Does HTWind support PowerShell automation?",
-				"answer": "Yes. HTWind includes host-side APIs that can execute approved PowerShell commands for diagnostics and controlled desktop actions."
+				"answer": "Yes. Widgets can run PowerShell through the in-process engine, and each widget needs an explicit per-widget grant first: read-only (sandboxed), full access, or deny. The choice is remembered per widget."
+			},
+			{
+				"question": "Which native host APIs are available to widgets?",
+				"answer": "Widgets can call system.metrics (CPU, memory, disks, network, battery), audio.visualizer (real-time audio FFT), media.session (now-playing info and transport controls), storage.get/set (persistent per-widget settings), and theme.get/onChanged (live theme and accent colors) — all without spawning any processes.",
+				"spanTwoColumns": true
 			},
 			{
 				"question": "Can widgets auto-hide while I use fullscreen or maximized apps?",
-				"answer": "Yes. In Settings, you can enable fullscreen suppression and a separate maximized-app suppression mode. Both work per display and temporarily close widget windows without changing saved visibility state."
+				"answer": "Yes. In Settings, you can enable fullscreen suppression and a separate maximized-app suppression mode. Both work per display: widget windows are hidden and suspended instantly, keep their state, and are restored automatically without changing saved visibility state."
+			},
+			{
+				"question": "Can I save different widget layouts?",
+				"answer": "Yes. Workspace profiles save the current widget setup — visibility, positions, sizes, lock and pin modes, opacity, and zoom — as a named layout you can switch to from the tray menu at any time."
 			},
 			{
 				"question": "Is HTWind open source?",
@@ -339,12 +359,16 @@
 		],
 		"overviewParagraphs": [
 			"HTWind combines native Windows behavior with flexible web content. HTML widgets render through WebView2, which makes it straightforward to build desktop tools that stay visible while you work.",
-			"The app is built for users who want a lightweight but extensible widget layer: tray integration, pin-on-top controls, state persistence, packaged widgets, and display-aware suppression all help turn a standard Windows desktop into a more useful workspace."
+			"The app is built for users who want a lightweight but extensible widget layer: tray integration, pin-on-top or desktop-layer pinning, magnetic snapping, per-widget opacity and zoom, workspace profiles, packaged widgets, and display-aware suppression all help turn a standard Windows desktop into a more useful workspace."
 		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
 				"alt": "HTWind Home - Widget Library"
+			},
+			{
+				"src": "/app_screenshots/page_gallery.png",
+				"alt": "HTWind Gallery - Install community widgets"
 			},
 			{
 				"src": "/app_screenshots/page_settings.png",

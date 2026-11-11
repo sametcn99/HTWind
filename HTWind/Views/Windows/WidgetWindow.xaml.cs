@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -22,14 +23,31 @@ public partial class WidgetWindow : Window
 {
     private readonly IDeveloperModeService _developerModeService;
     private readonly IWidgetPermissionStateService _widgetPermissionStateService;
-    private const double MinWidgetWidth = 160;
-    private const double MinWidgetHeight = 100;
     private const int SharedInteractionStateIntervalMilliseconds = 180;
+    private const string LivePreviewFileSuffix = ".htwind-live-preview.html";
+    private const string LivePreviewHostName = "widget.preview.htwind";
+    private const uint EventSystemForeground = 0x0003;
+    private const uint WinEventOutOfContext = 0;
+    private const int ObjectIdWindow = 0;
+    private static readonly IntPtr HwndBottom = new(1);
+    private const uint SwpNoSize = 0x0001;
+    private const uint SwpNoMove = 0x0002;
+    private const uint SwpNoActivate = 0x0010;
+    private const uint SwpNoOwnerZOrder = 0x0200;
+    private const uint SwpZOrderFlags = SwpNoSize | SwpNoMove | SwpNoActivate | SwpNoOwnerZOrder;
     private readonly IWidgetHostApiService _widgetHostApiService;
     private readonly IWebViewEnvironmentProvider _webViewEnvironmentProvider;
     private static readonly HashSet<WidgetWindow> SharedInteractionStateWindows = [];
-    private static DispatcherTimer? SharedInteractionStateTimer;
+    private static DispatcherTimer? AltInteractionPollTimer;
+    private static bool IsDesktopFocusedCached;
+    private static IntPtr ForegroundWinEventHook;
+    private static readonly WinEventDelegate SharedWinEventCallbackDelegate = SharedWinEventCallback;
     private static readonly JsonSerializerOptions HostBridgeJsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNameCaseInsensitive = true
+    };
+    private static readonly JsonSerializerOptions ManifestJsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         PropertyNameCaseInsensitive = true
@@ -42,6 +60,7 @@ public partial class WidgetWindow : Window
     private bool _isSuspended;
     private bool _isWebViewReady;
     private bool _hasWidgetsEnvironmentLease;
+    private WidgetPinMode _appliedPinMode = WidgetPinMode.None;
 
     private bool _isResizing;
     private bool _isClosingOrClosed;
@@ -83,9 +102,12 @@ public partial class WidgetWindow : Window
         _developerModeService.Changed += DeveloperModeService_Changed;
 
         Loaded += WidgetWindow_Loaded;
+        Activated += WidgetWindow_Activated;
         StateChanged += WidgetWindow_StateChanged;
 
         UpdateOverlay();
+        ApplyWidgetOpacity();
+        ApplyPinMode(Model.PinMode);
         SetRuntimeVisibility(Model.IsVisible);
     }
 
@@ -104,20 +126,203 @@ public partial class WidgetWindow : Window
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
+    [DllImport("user32.dll")]
+    private static extern bool SetWindowPos(
+        IntPtr hWnd,
+        IntPtr hWndInsertAfter,
+        int x,
+        int y,
+        int cx,
+        int cy,
+        uint flags
+    );
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr SetWinEventHook(
+        uint eventMin,
+        uint eventMax,
+        IntPtr hmodWinEventProc,
+        WinEventDelegate proc,
+        uint idProcess,
+        uint idThread,
+        uint dwFlags
+    );
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool UnhookWinEvent(IntPtr hWinEventHook);
+
+    private delegate void WinEventDelegate(
+        IntPtr hWinEventHook,
+        uint eventType,
+        IntPtr hwnd,
+        int idObject,
+        int idChild,
+        uint dwEventThread,
+        uint dwmsEventTime
+    );
+
     private void WidgetWindow_Loaded(object sender, RoutedEventArgs e)
     {
         RegisterForSharedInteractionStateUpdates();
+        ApplyPinMode(Model.PinMode);
     }
 
-    private static void SharedInteractionStateTimer_Tick(object? sender, EventArgs e)
+    private void WidgetWindow_Activated(object? sender, EventArgs e)
+    {
+        // A widget pinned to the desktop layer must return behind normal windows even after the
+        // user briefly interacts with it.
+        if (_appliedPinMode == WidgetPinMode.Desktop)
+        {
+            _ = Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(ApplyDesktopLayer));
+        }
+    }
+
+    #region Shared desktop interaction monitoring (event-driven)
+
+    private static void SharedWinEventCallback(
+        IntPtr hWinEventHook,
+        uint eventType,
+        IntPtr hwnd,
+        int idObject,
+        int idChild,
+        uint dwEventThread,
+        uint dwmsEventTime
+    )
+    {
+        _ = hWinEventHook;
+        _ = hwnd;
+        _ = idChild;
+        _ = dwEventThread;
+        _ = dwmsEventTime;
+
+        if (eventType != EventSystemForeground || idObject != ObjectIdWindow)
+        {
+            return;
+        }
+
+        var dispatcher = System.Windows.Application.Current?.Dispatcher;
+        if (dispatcher is null)
+        {
+            return;
+        }
+
+        if (dispatcher.CheckAccess())
+        {
+            OnForegroundWindowChanged();
+        }
+        else
+        {
+            _ = dispatcher.BeginInvoke(new Action(OnForegroundWindowChanged));
+        }
+    }
+
+    private static void OnForegroundWindowChanged()
+    {
+        IsDesktopFocusedCached = IsDesktopFocused();
+
+        foreach (var window in SharedInteractionStateWindows.ToList())
+        {
+            window.OnForegroundWindowChangedForWindow();
+        }
+
+        UpdateAltInteractionPolling();
+    }
+
+    private void OnForegroundWindowChangedForWindow()
+    {
+        if (!IsLoaded || !IsVisible || !Model.IsLocked)
+        {
+            return;
+        }
+
+        if (_isDragging || _isResizing)
+        {
+            return;
+        }
+
+        RefreshDesktopInteractionState();
+    }
+
+    private static void UpdateAltInteractionPolling()
+    {
+        var isPollingNeeded =
+            IsDesktopFocusedCached
+            && SharedInteractionStateWindows.Any(window => window.IsInteractionPollingNeeded());
+
+        if (isPollingNeeded && AltInteractionPollTimer is null)
+        {
+            AltInteractionPollTimer = new DispatcherTimer(DispatcherPriority.Background)
+            {
+                Interval = TimeSpan.FromMilliseconds(SharedInteractionStateIntervalMilliseconds)
+            };
+            AltInteractionPollTimer.Tick += AltInteractionPollTimer_Tick;
+            AltInteractionPollTimer.Start();
+            return;
+        }
+
+        if (!isPollingNeeded && AltInteractionPollTimer is not null)
+        {
+            AltInteractionPollTimer.Stop();
+            AltInteractionPollTimer.Tick -= AltInteractionPollTimer_Tick;
+            AltInteractionPollTimer = null;
+        }
+    }
+
+    private bool IsInteractionPollingNeeded()
+    {
+        return IsLoaded && IsVisible && Model.IsLocked;
+    }
+
+    private static void AltInteractionPollTimer_Tick(object? sender, EventArgs e)
     {
         _ = sender;
         _ = e;
 
-        foreach (var window in SharedInteractionStateWindows)
+        // The poll timer only tracks the Alt key while the desktop itself is focused; focus
+        // changes arrive through the foreground WinEvent hook instead.
+        if (!IsDesktopFocusedCached || !SharedInteractionStateWindows.Any(w => w.IsInteractionPollingNeeded()))
+        {
+            UpdateAltInteractionPolling();
+            return;
+        }
+
+        foreach (var window in SharedInteractionStateWindows.ToList())
         {
             window.OnSharedInteractionStateTick();
         }
+    }
+
+    private static void EnsureForegroundHookInstalled()
+    {
+        if (ForegroundWinEventHook != IntPtr.Zero)
+        {
+            return;
+        }
+
+        ForegroundWinEventHook = SetWinEventHook(
+            EventSystemForeground,
+            EventSystemForeground,
+            IntPtr.Zero,
+            SharedWinEventCallbackDelegate,
+            0,
+            0,
+            WinEventOutOfContext);
+    }
+
+    private void RegisterForSharedInteractionStateUpdates()
+    {
+        EnsureForegroundHookInstalled();
+
+        SharedInteractionStateWindows.Add(this);
+        IsDesktopFocusedCached = IsDesktopFocused();
+        UpdateAltInteractionPolling();
+    }
+
+    private void UnregisterFromSharedInteractionStateUpdates()
+    {
+        SharedInteractionStateWindows.Remove(this);
+        UpdateAltInteractionPolling();
     }
 
     private void OnSharedInteractionStateTick()
@@ -145,37 +350,6 @@ public partial class WidgetWindow : Window
         }
 
         RefreshDesktopInteractionState();
-    }
-
-    private void RegisterForSharedInteractionStateUpdates()
-    {
-        if (SharedInteractionStateTimer is null)
-        {
-            SharedInteractionStateTimer = new DispatcherTimer(DispatcherPriority.Background)
-            {
-                Interval = TimeSpan.FromMilliseconds(SharedInteractionStateIntervalMilliseconds)
-            };
-            SharedInteractionStateTimer.Tick += SharedInteractionStateTimer_Tick;
-        }
-
-        SharedInteractionStateWindows.Add(this);
-        if (!SharedInteractionStateTimer.IsEnabled)
-        {
-            SharedInteractionStateTimer.Start();
-        }
-    }
-
-    private void UnregisterFromSharedInteractionStateUpdates()
-    {
-        SharedInteractionStateWindows.Remove(this);
-        if (SharedInteractionStateTimer is null || SharedInteractionStateWindows.Count > 0)
-        {
-            return;
-        }
-
-        SharedInteractionStateTimer.Stop();
-        SharedInteractionStateTimer.Tick -= SharedInteractionStateTimer_Tick;
-        SharedInteractionStateTimer = null;
     }
 
     private void WidgetWindow_StateChanged(object? sender, EventArgs e)
@@ -207,21 +381,30 @@ public partial class WidgetWindow : Window
         UpdateOverlay();
     }
 
+    #endregion
+
     private void Model_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(WidgetModel.IsLocked))
+        switch (e.PropertyName)
         {
-            UpdateOverlay();
-        }
-
-        if (e.PropertyName == nameof(WidgetModel.IsPinned))
-        {
-            Topmost = Model.IsPinned;
-        }
-
-        if (e.PropertyName == nameof(WidgetModel.IsVisible))
-        {
-            SetRuntimeVisibility(Model.IsVisible);
+            case nameof(WidgetModel.IsLocked):
+                UpdateOverlay();
+                UpdateAltInteractionPolling();
+                break;
+            case nameof(WidgetModel.IsPinned):
+            case nameof(WidgetModel.PinMode):
+                ApplyPinMode(Model.PinMode);
+                break;
+            case nameof(WidgetModel.IsVisible):
+                SetRuntimeVisibility(Model.IsVisible);
+                UpdateAltInteractionPolling();
+                break;
+            case nameof(WidgetModel.WidgetOpacityPercent):
+                ApplyWidgetOpacity();
+                break;
+            case nameof(WidgetModel.ZoomFactorPercent):
+                ApplyZoomFactor();
+                break;
         }
     }
 
@@ -252,9 +435,9 @@ public partial class WidgetWindow : Window
             WebViewHost.Margin = new Thickness(8, 28, 8, 8);
         }
 
-        if (Model.IsPinned != Topmost)
+        if (Topmost != (_appliedPinMode == WidgetPinMode.Topmost))
         {
-            Topmost = Model.IsPinned;
+            Topmost = _appliedPinMode == WidgetPinMode.Topmost;
         }
     }
 
@@ -280,7 +463,12 @@ public partial class WidgetWindow : Window
             ApplyDeveloperModePolicy();
             RegisterPermissionHandling();
             await RegisterHostBridgeAsync();
+            webView.CoreWebView2.DOMContentLoaded += CoreWebView2_DOMContentLoaded;
+            _widgetHostApiService.ThemeChanged += WidgetHostApiService_ThemeChanged;
             _isWebViewReady = true;
+
+            ApplyZoomFactor();
+            ApplyPinMode(Model.PinMode);
 
             if (Model.IsVisible && WindowState != WindowState.Minimized)
             {
@@ -308,6 +496,7 @@ public partial class WidgetWindow : Window
         if (isVisible)
         {
             Show();
+            ApplyPinMode(Model.PinMode);
             _ = ResumeExecutionAsync();
             return;
         }
@@ -340,17 +529,47 @@ public partial class WidgetWindow : Window
 
         if (_isWebViewReady && Model.IsVisible)
         {
-            webView.NavigateToString(htmlContent);
+            NavigateCurrentContent();
         }
     }
 
     public void ClearLivePreview()
     {
         _pendingLivePreviewHtml = null;
+        DeleteLivePreviewFile();
+
         if (_isWebViewReady && Model.IsVisible)
         {
             NavigateCurrentContent();
         }
+    }
+
+    /// <summary>Re-injects manifest settings into the widget document after they change.</summary>
+    public void ApplyInjectedSettings()
+    {
+        if (!_isWebViewReady || _isClosingOrClosed)
+        {
+            return;
+        }
+
+        _ = Dispatcher.BeginInvoke(
+            DispatcherPriority.Background,
+            new Action(async () =>
+            {
+                if (_isClosingOrClosed || !_isWebViewReady)
+                {
+                    return;
+                }
+
+                try
+                {
+                    await InjectSettingsScriptAsync();
+                }
+                catch
+                {
+                    // The document may be navigating; the next DOMContentLoaded re-injects.
+                }
+            }));
     }
 
     private async Task SuspendExecutionAsync()
@@ -433,6 +652,13 @@ public partial class WidgetWindow : Window
                 return;
             }
 
+            // Prefer a virtual-host navigation so multi-file packages keep relative assets and
+            // avoid the NavigateToString size limit (about:blank origin breaks styles.css/app.js).
+            if (TryNavigateLivePreview(_pendingLivePreviewHtml, livePreviewHash))
+            {
+                return;
+            }
+
             webView.NavigateToString(_pendingLivePreviewHtml);
             _isLastNavigationLivePreview = true;
             _lastLivePreviewHash = livePreviewHash;
@@ -454,6 +680,91 @@ public partial class WidgetWindow : Window
             _isLastNavigationLivePreview = false;
             _lastNavigatedFilePath = Model.FilePath;
             _lastLivePreviewHash = 0;
+        }
+    }
+
+    private bool TryNavigateLivePreview(string htmlContent, int livePreviewHash)
+    {
+        var widgetRootPath = GetWidgetRootDirectory();
+        if (widgetRootPath is null || webView.CoreWebView2 is null)
+        {
+            return false;
+        }
+
+        try
+        {
+            var previewFileName = GetLivePreviewFileName();
+            if (previewFileName is null)
+            {
+                return false;
+            }
+
+            var previewFilePath = Path.Combine(widgetRootPath, previewFileName);
+            File.WriteAllText(previewFilePath, htmlContent, Encoding.UTF8);
+
+            webView.CoreWebView2.SetVirtualHostNameToFolderMapping(
+                LivePreviewHostName,
+                widgetRootPath,
+                CoreWebView2HostResourceAccessKind.Allow);
+            webView.CoreWebView2.Navigate($"https://{LivePreviewHostName}/{previewFileName}");
+
+            _isLastNavigationLivePreview = true;
+            _lastLivePreviewHash = livePreviewHash;
+            _lastNavigatedFilePath = null;
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private void DeleteLivePreviewFile()
+    {
+        var widgetRootPath = GetWidgetRootDirectory();
+        var previewFileName = GetLivePreviewFileName();
+        if (widgetRootPath is null || previewFileName is null)
+        {
+            return;
+        }
+
+        try
+        {
+            var previewFilePath = Path.Combine(widgetRootPath, previewFileName);
+            if (File.Exists(previewFilePath))
+            {
+                File.Delete(previewFilePath);
+            }
+        }
+        catch
+        {
+        }
+    }
+
+    /// <summary>Per-widget preview file name so widgets sharing a folder never collide.</summary>
+    private string? GetLivePreviewFileName()
+    {
+        var entryFileName = Path.GetFileName(Model.FilePath);
+        return string.IsNullOrWhiteSpace(entryFileName) ? null : entryFileName + LivePreviewFileSuffix;
+    }
+
+    private string? GetWidgetRootDirectory()
+    {
+        if (string.IsNullOrWhiteSpace(Model.FilePath))
+        {
+            return null;
+        }
+
+        try
+        {
+            var directoryPath = Path.GetDirectoryName(Path.GetFullPath(Model.FilePath));
+            return string.IsNullOrWhiteSpace(directoryPath) || !Directory.Exists(directoryPath)
+                ? null
+                : directoryPath;
+        }
+        catch
+        {
+            return null;
         }
     }
 
@@ -496,8 +807,42 @@ public partial class WidgetWindow : Window
         var deltaX = currentScreen.X - _dragStartScreen.X;
         var deltaY = currentScreen.Y - _dragStartScreen.Y;
 
-        Left = _dragStartWindow.X + deltaX;
-        Top = _dragStartWindow.Y + deltaY;
+        var nextLeft = _dragStartWindow.X + deltaX;
+        var nextTop = _dragStartWindow.Y + deltaY;
+        ApplyMagneticSnapping(ref nextLeft, ref nextTop);
+
+        Left = nextLeft;
+        Top = nextTop;
+    }
+
+    private void ApplyMagneticSnapping(ref double left, ref double top)
+    {
+        var width = double.IsNaN(ActualWidth) || ActualWidth <= 0 ? Width : ActualWidth;
+        var height = double.IsNaN(ActualHeight) || ActualHeight <= 0 ? Height : ActualHeight;
+
+        (left, top) = WidgetWindowMath.SnapToScreenEdges(
+            left,
+            top,
+            width,
+            height,
+            WidgetGeometryService.GetWorkAreasForSnapping()
+        );
+
+        foreach (var other in SharedInteractionStateWindows)
+        {
+            if (ReferenceEquals(other, this) || !other.IsVisible)
+            {
+                continue;
+            }
+
+            var otherRect = new WidgetWindowRect(other.Left, other.Top, other.ActualWidth, other.ActualHeight);
+            if (!otherRect.IsValid)
+            {
+                continue;
+            }
+
+            (left, top) = WidgetWindowMath.SnapToOtherWidget(left, top, width, height, otherRect);
+        }
     }
 
     private void DragOverlay_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -515,6 +860,7 @@ public partial class WidgetWindow : Window
         }
 
         RefreshDesktopInteractionState();
+        ApplyPinMode(Model.PinMode);
     }
 
     private void TopLeftGrip_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -592,70 +938,20 @@ public partial class WidgetWindow : Window
 
     private void ApplyResize(double deltaX, double deltaY)
     {
-        var nextLeft = _resizeStartWindow.X;
-        var nextTop = _resizeStartWindow.Y;
-        var nextWidth = _resizeStartSize.Width;
-        var nextHeight = _resizeStartSize.Height;
+        var next = WidgetWindowMath.ApplyCornerResize(
+            _resizeMode,
+            _resizeStartWindow.X,
+            _resizeStartWindow.Y,
+            _resizeStartSize.Width,
+            _resizeStartSize.Height,
+            deltaX,
+            deltaY
+        );
 
-        if (
-            _resizeMode == CornerResizeMode.TopLeft
-            || _resizeMode == CornerResizeMode.BottomLeft
-        )
-        {
-            nextWidth = _resizeStartSize.Width - deltaX;
-            nextLeft = _resizeStartWindow.X + deltaX;
-        }
-
-        if (
-            _resizeMode == CornerResizeMode.TopRight
-            || _resizeMode == CornerResizeMode.BottomRight
-        )
-        {
-            nextWidth = _resizeStartSize.Width + deltaX;
-        }
-
-        if (_resizeMode == CornerResizeMode.TopLeft || _resizeMode == CornerResizeMode.TopRight)
-        {
-            nextHeight = _resizeStartSize.Height - deltaY;
-            nextTop = _resizeStartWindow.Y + deltaY;
-        }
-
-        if (
-            _resizeMode == CornerResizeMode.BottomLeft
-            || _resizeMode == CornerResizeMode.BottomRight
-        )
-        {
-            nextHeight = _resizeStartSize.Height + deltaY;
-        }
-
-        if (nextWidth < MinWidgetWidth)
-        {
-            nextWidth = MinWidgetWidth;
-            if (
-                _resizeMode == CornerResizeMode.TopLeft
-                || _resizeMode == CornerResizeMode.BottomLeft
-            )
-            {
-                nextLeft = _resizeStartWindow.X + (_resizeStartSize.Width - MinWidgetWidth);
-            }
-        }
-
-        if (nextHeight < MinWidgetHeight)
-        {
-            nextHeight = MinWidgetHeight;
-            if (
-                _resizeMode == CornerResizeMode.TopLeft
-                || _resizeMode == CornerResizeMode.TopRight
-            )
-            {
-                nextTop = _resizeStartWindow.Y + (_resizeStartSize.Height - MinWidgetHeight);
-            }
-        }
-
-        Left = nextLeft;
-        Top = nextTop;
-        Width = nextWidth;
-        Height = nextHeight;
+        Left = next.Left;
+        Top = next.Top;
+        Width = next.Width;
+        Height = next.Height;
     }
 
     private Point GetCursorScreenDip()
@@ -683,15 +979,19 @@ public partial class WidgetWindow : Window
 
         UnregisterFromSharedInteractionStateUpdates();
         Loaded -= WidgetWindow_Loaded;
+        Activated -= WidgetWindow_Activated;
         StateChanged -= WidgetWindow_StateChanged;
         Model.PropertyChanged -= Model_PropertyChanged;
         _developerModeService.Changed -= DeveloperModeService_Changed;
+        _widgetHostApiService.ThemeChanged -= WidgetHostApiService_ThemeChanged;
         if (webView.CoreWebView2 is not null)
         {
             webView.CoreWebView2.WebMessageReceived -= WebView_CoreWebView2_WebMessageReceived;
             webView.CoreWebView2.PermissionRequested -= WebView_CoreWebView2_PermissionRequested;
+            webView.CoreWebView2.DOMContentLoaded -= CoreWebView2_DOMContentLoaded;
         }
 
+        DeleteLivePreviewFile();
         webView.Dispose();
 
         if (_hasWidgetsEnvironmentLease)
@@ -746,6 +1046,7 @@ public partial class WidgetWindow : Window
         webView.CoreWebView2.WebMessageReceived -= WebView_CoreWebView2_WebMessageReceived;
         webView.CoreWebView2.WebMessageReceived += WebView_CoreWebView2_WebMessageReceived;
         await webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(GetHostBridgeScript());
+        await webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(GetConsoleHookScript());
     }
 
     private void RegisterPermissionHandling()
@@ -855,12 +1156,171 @@ public partial class WidgetWindow : Window
             : CoreWebView2PermissionState.Deny;
     }
 
+    #region Widget runtime console forwarding (used by the multi-file editor console panel)
+
+    internal static string GetConsoleHookScript()
+    {
+        return """
+               (() => {
+                   if (window.__htwindConsoleHooked) {
+                       return;
+                   }
+
+                   window.__htwindConsoleHooked = true;
+
+                   function send(level, args) {
+                       try {
+                           const text = Array.from(args).map((item) => {
+                               try {
+                                   return typeof item === 'string' ? item : JSON.stringify(item);
+                               } catch {
+                                   return String(item);
+                               }
+                           }).join(' ');
+
+                           if (window.chrome && window.chrome.webview && window.chrome.webview.postMessage) {
+                               window.chrome.webview.postMessage({ type: 'htwindConsole', level, message: text });
+                           }
+                       } catch {
+                       }
+                   }
+
+                   ['log', 'info', 'warn', 'error', 'debug'].forEach((level) => {
+                       const original = console[level] ? console[level].bind(console) : () => {};
+                       console[level] = function () {
+                           send(level, arguments);
+                           original.apply(null, arguments);
+                       };
+                   });
+
+                   window.addEventListener('error', (event) => {
+                       send('error', [`${event.message || 'Script error'} (${event.filename || ''}:${event.lineno || 0})`]);
+                   });
+
+                   window.addEventListener('unhandledrejection', (event) => {
+                       try {
+                           const reason = event.reason;
+                           send('error', [`Unhandled rejection: ${reason && reason.message ? reason.message : String(reason)}`]);
+                       } catch {
+                       }
+                   });
+               })();
+               """;
+    }
+
+    private bool TryHandleConsoleHookMessage(string webMessageAsJson)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(webMessageAsJson);
+            var root = document.RootElement;
+            if (
+                !root.TryGetProperty("type", out var typeElement)
+                || !string.Equals(typeElement.GetString(), "htwindConsole", StringComparison.Ordinal)
+            )
+            {
+                return false;
+            }
+
+            var level = root.TryGetProperty("level", out var levelElement) && levelElement.ValueKind == JsonValueKind.String
+                ? levelElement.GetString() ?? "log"
+                : "log";
+            var message = root.TryGetProperty("message", out var messageElement) && messageElement.ValueKind == JsonValueKind.String
+                ? messageElement.GetString() ?? string.Empty
+                : string.Empty;
+
+            WidgetRuntimeConsole.Publish(Model.Id, level, message);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    #endregion
+
+    private async void CoreWebView2_DOMContentLoaded(object? sender, CoreWebView2DOMContentLoadedEventArgs e)
+    {
+        _ = sender;
+        _ = e;
+
+        if (_isClosingOrClosed || !_isWebViewReady)
+        {
+            return;
+        }
+
+        try
+        {
+            await InjectSettingsScriptAsync();
+        }
+        catch
+        {
+            // The document can navigate away mid-injection; the next load retries.
+        }
+    }
+
+    private async Task InjectSettingsScriptAsync()
+    {
+        if (webView.CoreWebView2 is null)
+        {
+            return;
+        }
+
+        var settingsJson = _widgetHostApiService.GetWidgetSettingsJson(Model.FilePath) ?? "null";
+        await webView.CoreWebView2.ExecuteScriptAsync(BuildSettingsInjectionScript(settingsJson));
+    }
+
+    /// <summary>
+    ///     Builds the DOMContentLoaded settings-injection script exposed to the widget document
+    ///     (window.HTWind.__settings plus the htwindsettings event). Internal so runtime tests
+    ///     exercise the exact script shipped in the app.
+    /// </summary>
+    internal static string BuildSettingsInjectionScript(string settingsJson)
+    {
+        return
+            "window.HTWind = window.HTWind || {};"
+            + $"window.HTWind.__settings = {settingsJson};"
+            + "if (typeof window.dispatchEvent === 'function') { window.dispatchEvent(new CustomEvent('htwindsettings', { detail: window.HTWind.__settings })); }";
+    }
+
+    private async void WidgetHostApiService_ThemeChanged(object? sender, WidgetHostThemePayload payload)
+    {
+        if (_isClosingOrClosed || !_isWebViewReady || webView.CoreWebView2 is null)
+        {
+            return;
+        }
+
+        try
+        {
+            var json = JsonSerializer.Serialize(payload, HostBridgeJsonOptions);
+            var payloadBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+            await webView.CoreWebView2.ExecuteScriptAsync(
+                $"window.HTWind && window.HTWind.__themeChanged && window.HTWind.__themeChanged('{payloadBase64}');"
+            );
+        }
+        catch (ObjectDisposedException)
+        {
+            // Window/WebView can be disposed while a broadcast is in flight.
+        }
+        catch (InvalidOperationException)
+        {
+            // CoreWebView2 may be in teardown; ignore late broadcasts.
+        }
+    }
+
     private async void WebView_CoreWebView2_WebMessageReceived(
             object? sender,
             CoreWebView2WebMessageReceivedEventArgs e
     )
     {
         if (_isClosingOrClosed || sender is not CoreWebView2 coreWebView)
+        {
+            return;
+        }
+
+        // Console-hook messages (forwarded to the editor console panel) are handled separately.
+        if (TryHandleConsoleHookMessage(e.WebMessageAsJson))
         {
             return;
         }
@@ -888,11 +1348,171 @@ public partial class WidgetWindow : Window
             return;
         }
 
-        var executionResult = await _widgetHostApiService.ExecuteAsync(request.Command, request.Args);
+        var executionContext = BuildExecutionContext(request.Command, out var authorizationError);
+        if (executionContext is null)
+        {
+            await RespondToWidgetAsync(
+                coreWebView,
+                request.RequestId,
+                new WidgetHostApiExecutionResult
+                {
+                    Success = false,
+                    Error = authorizationError ?? "The command is not authorized for this widget."
+                });
+            return;
+        }
 
+        var executionResult = await _widgetHostApiService.ExecuteAsync(
+            request.Command,
+            request.Args,
+            executionContext);
+
+        await RespondToWidgetAsync(coreWebView, request.RequestId, executionResult);
+    }
+
+    private WidgetExecutionContext? BuildExecutionContext(string command, out string? error)
+    {
+        error = null;
+
+        if (!string.Equals(command, WidgetHostApiService.PowerShellCommand, StringComparison.Ordinal))
+        {
+            return new WidgetExecutionContext { WidgetFilePath = Model.FilePath };
+        }
+
+        var decision = ResolvePowerShellDecision();
+        if (decision is null)
+        {
+            error = "PowerShell execution is not authorized for this widget.";
+            return null;
+        }
+
+        return new WidgetExecutionContext
+        {
+            WidgetFilePath = Model.FilePath,
+            PowerShellAuthorization = decision == PowerShellExecutionDecision.Full
+                ? PowerShellExecutionAuthorization.Full
+                : PowerShellExecutionAuthorization.ReadOnly
+        };
+    }
+
+    /// <summary>
+    ///     Resolves the per-widget PowerShell authorization. Returns null when execution must be
+    ///     blocked (the user denied access, or the manifest declares no PowerShell requirement).
+    /// </summary>
+    private PowerShellExecutionDecision? ResolvePowerShellDecision()
+    {
+        if (string.IsNullOrWhiteSpace(Model.FilePath))
+        {
+            return null;
+        }
+
+        if (
+            _widgetPermissionStateService.TryGetPowerShellDecision(
+                Model.FilePath,
+                out var savedDecision
+            )
+        )
+        {
+            return savedDecision == PowerShellExecutionDecision.Deny ? null : savedDecision;
+        }
+
+        var requirement = ReadManifestPowerShellRequirement();
+        if (requirement == ManifestPowerShellRequirement.None)
+        {
+            // The manifest explicitly opts out of PowerShell; block without prompting.
+            return null;
+        }
+
+        var decision = ShowPowerShellPermissionDialog(requirement);
+        if (decision is null)
+        {
+            return PowerShellExecutionDecision.Deny;
+        }
+
+        _widgetPermissionStateService.SavePowerShellDecision(Model.FilePath, decision.Value);
+        return decision;
+    }
+
+    private enum ManifestPowerShellRequirement
+    {
+        Unspecified,
+
+        None,
+
+        ReadOnly,
+
+        Full
+    }
+
+    private ManifestPowerShellRequirement ReadManifestPowerShellRequirement()
+    {
+        var widgetRootPath = GetWidgetRootDirectory();
+        if (widgetRootPath is null)
+        {
+            return ManifestPowerShellRequirement.Unspecified;
+        }
+
+        try
+        {
+            var manifest = WidgetManifestHelper.LoadManifestIfPresent(widgetRootPath, ManifestJsonOptions);
+            if (manifest?.Requirements is not JsonElement requirements
+                || requirements.ValueKind != JsonValueKind.Object
+                || !requirements.TryGetProperty("powershell", out var powershellElement))
+            {
+                return ManifestPowerShellRequirement.Unspecified;
+            }
+
+            var value = powershellElement.ValueKind == JsonValueKind.String
+                ? powershellElement.GetString()
+                : powershellElement.ValueKind == JsonValueKind.False
+                    ? "none"
+                    : powershellElement.ValueKind == JsonValueKind.True
+                        ? "full"
+                        : null;
+
+            return (value?.Trim().ToLowerInvariant()) switch
+            {
+                "none" or "false" or "deny" => ManifestPowerShellRequirement.None,
+                "readonly" or "read-only" or "read" => ManifestPowerShellRequirement.ReadOnly,
+                "full" or "true" => ManifestPowerShellRequirement.Full,
+                _ => ManifestPowerShellRequirement.Unspecified
+            };
+        }
+        catch
+        {
+            return ManifestPowerShellRequirement.Unspecified;
+        }
+    }
+
+    private PowerShellExecutionDecision? ShowPowerShellPermissionDialog(
+        ManifestPowerShellRequirement requirement)
+    {
+        var widgetName = Path.GetFileName(Model.FilePath);
+        if (string.IsNullOrWhiteSpace(widgetName))
+        {
+            widgetName = string.IsNullOrWhiteSpace(Model.FilePath) ? "Unknown widget" : Model.FilePath!;
+        }
+
+        var permissionWindow = new PowerShellPermissionWindow(
+            widgetName,
+            requirement == ManifestPowerShellRequirement.Full
+        )
+        {
+            Owner = this
+        };
+
+        permissionWindow.ShowDialog();
+        return permissionWindow.Decision;
+    }
+
+    private static async Task RespondToWidgetAsync(
+        CoreWebView2 coreWebView,
+        string requestId,
+        WidgetHostApiExecutionResult executionResult)
+    {
         var response = new WidgetHostApiResponse
         {
-            RequestId = request.RequestId,
+            RequestId = requestId,
             Success = executionResult.Success,
             Result = executionResult.Result,
             Error = executionResult.Error
@@ -902,11 +1522,6 @@ public partial class WidgetWindow : Window
         // response serialization because Result can carry polymorphic/anonymous objects.
         var json = JsonSerializer.Serialize(response, HostBridgeJsonOptions);
         var payloadBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
-
-        if (_isClosingOrClosed)
-        {
-            return;
-        }
 
         try
         {
@@ -924,91 +1539,204 @@ public partial class WidgetWindow : Window
         }
     }
 
-    private static string GetHostBridgeScript()
+    internal static string GetHostBridgeScript()
     {
         return """
-                             (() => {
-                                 if (window.HTWind && window.HTWind.__bridgeReady) {
-                                     return;
-                                 }
+               (() => {
+                   if (window.HTWind && window.HTWind.__bridgeReady) {
+                       return;
+                   }
 
-                                 const pending = new Map();
+                   const pending = new Map();
 
-                                 function createRequestId() {
-                                     try {
-                                         if (window.crypto && typeof window.crypto.randomUUID === 'function') {
-                                             return window.crypto.randomUUID();
-                                         }
-                                     } catch {
-                                         // Ignore and use fallback id generation below.
-                                     }
+                   function createRequestId() {
+                       try {
+                           if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+                               return window.crypto.randomUUID();
+                           }
+                       } catch {
+                           // Ignore and use fallback id generation below.
+                       }
 
-                                     return `HTWind-${Date.now()}-${Math.random().toString(16).slice(2, 12)}`;
-                                 }
+                       return `HTWind-${Date.now()}-${Math.random().toString(16).slice(2, 12)}`;
+                   }
 
-                                 function decodeBase64(base64) {
-                                     try {
-                                         const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-                                         return new TextDecoder().decode(bytes);
-                                     } catch {
-                                         return '';
-                                     }
-                                 }
+                   function decodeBase64(base64) {
+                       try {
+                           const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+                           return new TextDecoder().decode(bytes);
+                       } catch {
+                           return '';
+                       }
+                   }
 
-                                 window.HTWind = {
-                                     __bridgeReady: true,
-                                     invoke(command, args) {
-                                         if (!window.chrome || !window.chrome.webview || !window.chrome.webview.postMessage) {
-                                             return Promise.reject(new Error('HTWind host bridge is not available.'));
-                                         }
+                   window.HTWind = {
+                       __bridgeReady: true,
+                       getSettings() {
+                           return window.HTWind.__settings || null;
+                       },
+                       invoke(command, args) {
+                           if (!window.chrome || !window.chrome.webview || !window.chrome.webview.postMessage) {
+                               return Promise.reject(new Error('HTWind host bridge is not available.'));
+                           }
 
-                                         if (command !== 'powershell.exec') {
-                                             return Promise.reject(new Error('Only powershell.exec is supported.'));
-                                         }
+                           const requestId = createRequestId();
+                           const payload = {
+                               type: 'HTWind-api-request',
+                               requestId,
+                               command,
+                               args: args || {}
+                           };
 
-                                         const requestId = createRequestId();
-                                         const payload = {
-                                             type: 'HTWind-api-request',
-                                             requestId,
-                                             command,
-                                             args: args || {}
-                                         };
+                           // Client-side watchdog: the promise is rejected and removed from the
+                           // pending map if the host never responds, so a failed host call cannot
+                           // leak promises forever.
+                           const hostTimeoutMs = (args && typeof args.timeoutMs === 'number' && args.timeoutMs > 0)
+                               ? args.timeoutMs
+                               : 10000;
+                           // powershell.exec may first show a per-widget permission dialog; keep a
+                           // 60s floor for it so the watchdog cannot fire while the user is still
+                           // answering. The host-side engine timeout enforces the real script
+                           // timeout regardless.
+                           const clientTimeoutMs = (command === 'powershell.exec')
+                               ? Math.max(hostTimeoutMs + 2000, 60000)
+                               : hostTimeoutMs + 2000;
 
-                                         return new Promise((resolve, reject) => {
-                                             pending.set(requestId, { resolve, reject });
-                                             window.chrome.webview.postMessage(payload);
-                                         });
-                                     },
-                                     __resolveFromHost(base64Payload) {
-                                         const raw = decodeBase64(base64Payload);
-                                         if (!raw) {
-                                             return;
-                                         }
+                           return new Promise((resolve, reject) => {
+                               const entry = { resolve, reject, timer: null };
+                               entry.timer = setTimeout(() => {
+                                   pending.delete(requestId);
+                                   entry.timer = null;
+                                   reject(new Error(`HTWind host call timed out: ${command}`));
+                               }, clientTimeoutMs);
 
-                                         let message;
-                                         try {
-                                             message = JSON.parse(raw);
-                                         } catch {
-                                             return;
-                                         }
+                               pending.set(requestId, entry);
+                               try {
+                                   window.chrome.webview.postMessage(payload);
+                               } catch (error) {
+                                   if (entry.timer) {
+                                       clearTimeout(entry.timer);
+                                       entry.timer = null;
+                                   }
+                                   pending.delete(requestId);
+                                   reject(error);
+                               }
+                           });
+                       },
+                       __resolveFromHost(base64Payload) {
+                           const raw = decodeBase64(base64Payload);
+                           if (!raw) {
+                               return;
+                           }
 
-                                         const entry = pending.get(message.requestId);
-                                         if (!entry) {
-                                             return;
-                                         }
+                           let message;
+                           try {
+                               message = JSON.parse(raw);
+                           } catch {
+                               return;
+                           }
 
-                                         pending.delete(message.requestId);
-                                         if (message.success) {
-                                             entry.resolve(message.result);
-                                             return;
-                                         }
+                           const entry = pending.get(message.requestId);
+                           if (!entry) {
+                               return;
+                           }
 
-                                         entry.reject(new Error(message.error || 'Unknown HTWind host error.'));
-                                     }
-                                 };
-                             })();
-                             """;
+                           pending.delete(message.requestId);
+                           if (entry.timer) {
+                               clearTimeout(entry.timer);
+                               entry.timer = null;
+                           }
+
+                           if (message.success) {
+                               entry.resolve(message.result);
+                               return;
+                           }
+
+                           entry.reject(new Error(message.error || 'Unknown HTWind host error.'));
+                       },
+                       __themeChanged(base64Payload) {
+                           const raw = decodeBase64(base64Payload);
+                           if (!raw) {
+                               return;
+                           }
+
+                           let theme;
+                           try {
+                               theme = JSON.parse(raw);
+                           } catch {
+                               return;
+                           }
+
+                           window.HTWind.__lastTheme = theme;
+                           if (typeof window.dispatchEvent === 'function') {
+                               window.dispatchEvent(new CustomEvent('htwindtheme', { detail: theme }));
+                           }
+                       }
+                   };
+               })();
+               """;
     }
+
+    #region Per-widget window experience (pin mode, opacity, zoom)
+
+    public void ApplyWidgetOpacity()
+    {
+        var percent = Math.Clamp(Model.WidgetOpacityPercent ?? 100, 20, 100);
+        Opacity = percent / 100.0;
+    }
+
+    public void ApplyZoomFactor()
+    {
+        if (!_isWebViewReady || webView.CoreWebView2 is null)
+        {
+            return;
+        }
+
+        try
+        {
+            var percent = Math.Clamp(Model.ZoomFactorPercent ?? 100, 50, 200);
+            webView.ZoomFactor = percent / 100.0;
+        }
+        catch
+        {
+            // ZoomFactor cannot change while a navigation is in flight; retries on next change.
+        }
+    }
+
+    public void ApplyPinMode(WidgetPinMode mode)
+    {
+        _appliedPinMode = mode;
+
+        var isTopmost = mode == WidgetPinMode.Topmost;
+        if (Topmost != isTopmost)
+        {
+            Topmost = isTopmost;
+        }
+
+        if (mode == WidgetPinMode.Desktop)
+        {
+            ApplyDesktopLayer();
+        }
+    }
+
+    private void ApplyDesktopLayer()
+    {
+        try
+        {
+            var windowHandle = new WindowInteropHelper(this).Handle;
+            if (windowHandle == IntPtr.Zero)
+            {
+                return;
+            }
+
+            SetWindowPos(windowHandle, HwndBottom, 0, 0, 0, 0, SwpZOrderFlags);
+        }
+        catch
+        {
+        }
+    }
+
+    #endregion
 
     private bool IsInteractionOverlayEnabled()
     {
@@ -1084,14 +1812,5 @@ public partial class WidgetWindow : Window
     {
         public int X;
         public int Y;
-    }
-
-    private enum CornerResizeMode
-    {
-        None,
-        TopLeft,
-        TopRight,
-        BottomLeft,
-        BottomRight
     }
 }

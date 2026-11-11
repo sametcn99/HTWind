@@ -35,6 +35,9 @@ public sealed class WidgetPackageManifest
     [JsonPropertyName("requirements")]
     public JsonElement? Requirements { get; set; }
 
+    [JsonPropertyName("settingsSchema")]
+    public JsonElement? SettingsSchema { get; set; }
+
     [JsonPropertyName("dev")]
     public JsonElement? Dev { get; set; }
 
