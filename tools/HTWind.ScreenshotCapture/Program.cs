@@ -16,7 +16,6 @@ namespace HTWind.ScreenshotCapture;
 /// </summary>
 internal static class Program
 {
-    private const double RenderScale = 1.5;
     private const int RenderSettleMilliseconds = 600;
 
     private static bool _scenarioMarkedComplete;
@@ -249,27 +248,192 @@ internal static class Program
 
     private static async Task CaptureAsync(Window window, string[] outputDirectories, string fileName)
     {
-        var width = (int)Math.Round(window.ActualWidth * RenderScale);
-        var height = (int)Math.Round(window.ActualHeight * RenderScale);
-        var dpi = 96 * RenderScale;
-
-        var bitmap = new RenderTargetBitmap(width, height, dpi, dpi, PixelFormats.Pbgra32);
-        bitmap.Render(window);
-
-        // BitmapEncoder.Save may only be called once; encode to memory, then write both copies.
-        var encoder = new PngBitmapEncoder();
-        encoder.Frames.Add(BitmapFrame.Create(bitmap));
-        using var memoryStream = new MemoryStream();
-        encoder.Save(memoryStream);
-        var pngBytes = memoryStream.ToArray();
+        // FluentWindow uses a DWM-composited Mica backdrop, which RenderTargetBitmap renders
+        // as fully transparent. Capturing from the screen DC gets the real composited pixels
+        // (Mica included), exactly what a user sees.
+        var hwnd = new System.Windows.Interop.WindowInteropHelper(window).Handle;
+        var pngBytes = await Task.Run(() => CaptureWindowBytes(hwnd));
 
         foreach (var directory in outputDirectories)
         {
             File.WriteAllBytes(Path.Combine(directory, fileName), pngBytes);
         }
 
-        Console.WriteLine($"Captured {fileName} ({width}x{height}).");
-        bitmap.Clear();
+        Console.WriteLine($"Captured {fileName} ({pngBytes.Length / 1024} KB).");
+    }
+
+    private static byte[] CaptureWindowBytes(IntPtr hwnd)
+    {
+        // Bring the window to the front so nothing occludes the capture.
+        _ = SetForegroundWindow(hwnd);
+        Thread.Sleep(400);
+
+        if (!GetClientRect(hwnd, out var clientRect))
+        {
+            throw new InvalidOperationException("GetClientRect failed.");
+        }
+
+        var point = new POINT { X = 0, Y = 0 };
+        if (!ClientToScreen(hwnd, ref point))
+        {
+            throw new InvalidOperationException("ClientToScreen failed.");
+        }
+
+        var width = clientRect.Right - clientRect.Left;
+        var height = clientRect.Bottom - clientRect.Top;
+
+        var screenDc = GetDC(IntPtr.Zero);
+        var memoryDc = CreateCompatibleDC(screenDc);
+        var bitmap = CreateCompatibleBitmap(screenDc, width, height);
+        var previous = SelectObject(memoryDc, bitmap);
+        try
+        {
+            if (!BitBlt(memoryDc, 0, 0, width, height, screenDc, point.X, point.Y, SRCCOPY))
+            {
+                throw new InvalidOperationException("BitBlt failed.");
+            }
+
+            var headerSize = System.Runtime.InteropServices.Marshal.SizeOf<BITMAPINFOHEADER>();
+            var header = new BITMAPINFOHEADER
+            {
+                BiSize = (uint)headerSize,
+                BiWidth = width,
+                BiHeight = -height, // top-down rows
+                BiPlanes = 1,
+                BiBitCount = 32,
+                BiCompression = 0, // BI_RGB
+            };
+
+            var pixels = new byte[width * height * 4];
+            var headerPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(headerSize);
+            try
+            {
+                System.Runtime.InteropServices.Marshal.StructureToPtr(header, headerPtr, false);
+                if (GetDIBits(memoryDc, bitmap, 0, (uint)height, pixels, headerPtr, 0) == 0)
+                {
+                    throw new InvalidOperationException("GetDIBits failed.");
+                }
+            }
+            finally
+            {
+                System.Runtime.InteropServices.Marshal.FreeHGlobal(headerPtr);
+            }
+
+            // BGRA → BGRA with opaque alpha so no pixel stays transparent.
+            for (var index = 3; index < pixels.Length; index += 4)
+            {
+                pixels[index] = 255;
+            }
+
+            return EncodePng(pixels, width, height);
+        }
+        finally
+        {
+            _ = SelectObject(memoryDc, previous);
+            _ = DeleteObject(bitmap);
+            _ = DeleteDC(memoryDc);
+            _ = ReleaseDC(IntPtr.Zero, screenDc);
+        }
+    }
+
+    /// <summary>Encodes the captured pixels, normalizing to the shipped 1380x990 size.</summary>
+    private static byte[] EncodePng(byte[] bgraPixels, int width, int height)
+    {
+        const int targetWidth = 1380;
+        const int targetHeight = 990;
+        BitmapSource source = BitmapSource.Create(
+            width, height, 96, 96, PixelFormats.Bgra32, null, bgraPixels, width * 4);
+
+        if (width != targetWidth || height != targetHeight)
+        {
+            var scale = Math.Min((double)targetWidth / width, (double)targetHeight / height);
+            var scaled = new TransformedBitmap(
+                source,
+                new System.Windows.Media.ScaleTransform(scale, scale));
+            scaled.Freeze();
+            source = new CroppedBitmap(
+                scaled,
+                new System.Windows.Int32Rect(0, 0, targetWidth, targetHeight));
+        }
+
+        var encoder = new PngBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(source));
+        using var stream = new MemoryStream();
+        encoder.Save(stream);
+        return stream.ToArray();
+    }
+
+    private const uint SRCCOPY = 0x00CC0020;
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hwnd);
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool GetClientRect(IntPtr hwnd, out RECT rect);
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool ClientToScreen(IntPtr hwnd, ref POINT point);
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern IntPtr GetDC(IntPtr hwnd);
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern int ReleaseDC(IntPtr hwnd, IntPtr dc);
+
+    [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+    private static extern IntPtr CreateCompatibleDC(IntPtr dc);
+
+    [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+    private static extern IntPtr CreateCompatibleBitmap(IntPtr dc, int width, int height);
+
+    [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+    private static extern IntPtr SelectObject(IntPtr dc, IntPtr obj);
+
+    [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+    private static extern bool DeleteObject(IntPtr obj);
+
+    [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+    private static extern bool DeleteDC(IntPtr dc);
+
+    [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+    private static extern bool BitBlt(
+        IntPtr destination, int x, int y, int width, int height,
+        IntPtr source, int sourceX, int sourceY, uint rasterOperation);
+
+    [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+    private static extern int GetDIBits(
+        IntPtr dc, IntPtr bitmap, uint start, uint lines, byte[] bits, IntPtr header, uint usage);
+
+    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
+    private struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
+    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
+    private struct POINT
+    {
+        public int X;
+        public int Y;
+    }
+
+    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
+    private struct BITMAPINFOHEADER
+    {
+        public uint BiSize;
+        public int BiWidth;
+        public int BiHeight;
+        public ushort BiPlanes;
+        public ushort BiBitCount;
+        public uint BiCompression;
+        public uint BiSizeImage;
+        public int BiXPelsPerMeter;
+        public int BiYPelsPerMeter;
+        public uint BiClrUsed;
+        public uint BiClrImportant;
     }
 
     private static async Task WaitForAsync(Func<bool> condition, string description, TimeSpan timeout)
