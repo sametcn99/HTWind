@@ -52,6 +52,13 @@
         "null"
       ]
     },
+    "settingsSchema": {
+      "type": [
+        "array",
+        "object",
+        "null"
+      ]
+    },
     "dev": {
       "type": [
         "object",
@@ -103,6 +110,13 @@
             "minLength": 1,
             "pattern": "^(?!/)(?!.*\\.\\.)(?!.*[A-Za-z]:).+"
           }
+        },
+        "settingsSchema": {
+          "type": [
+            "array",
+            "object",
+            "null"
+          ]
         }
       }
     }

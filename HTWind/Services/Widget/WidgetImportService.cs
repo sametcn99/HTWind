@@ -12,6 +12,7 @@ public sealed class WidgetImportService : IWidgetImportService
     private static readonly JsonSerializerOptions _widgetManifestJsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNameCaseInsensitive = true,
         WriteIndented = true
     };
 
@@ -182,7 +183,8 @@ public sealed class WidgetImportService : IWidgetImportService
                 assets: WidgetManifestHelper.CollectAssetPaths(widgetRootPath, widget.EntryFile),
                 widgetId: widget.WidgetId,
                 createdUtc: manifest.CreatedUtc,
-                sourceManifest: manifest
+                sourceManifest: manifest,
+                sourceWidgetItem: widget
             );
 
             WidgetManifestHelper.WriteManifest(widgetRootPath, managedManifest, _widgetManifestJsonOptions);
@@ -201,25 +203,108 @@ public sealed class WidgetImportService : IWidgetImportService
 
     private WidgetManagedReference ImportSingleFileWidget(string sourcePath)
     {
-        var sourceFileName = Path.GetFileName(sourcePath);
-        var widgetRootPath = BuildUniqueWidgetDirectoryPath(sourceFileName);
+        var fullSourcePath = Path.GetFullPath(sourcePath);
+        var sourceFileName = Path.GetFileName(fullSourcePath);
+        var sourceDirectory = Path.GetDirectoryName(fullSourcePath);
+
+        WidgetPackageManifest? siblingManifest = null;
+        WidgetPackageItemManifest? siblingWidgetItem = null;
+        var declaredAssetRelativePaths = new List<string>();
+
+        if (!string.IsNullOrWhiteSpace(sourceDirectory))
+        {
+            try
+            {
+                siblingManifest = WidgetManifestHelper.LoadManifestIfPresent(sourceDirectory, _widgetManifestJsonOptions);
+                if (siblingManifest is not null)
+                {
+                    siblingWidgetItem = siblingManifest.Widgets?.FirstOrDefault(item =>
+                        string.Equals(
+                            Path.GetFileName(item.EntryFile),
+                            sourceFileName,
+                            StringComparison.OrdinalIgnoreCase))
+                        ?? (siblingManifest.Widgets is { Count: 1 } ? siblingManifest.Widgets[0] : null);
+
+                    if (siblingWidgetItem?.Assets is { Count: > 0 })
+                    {
+                        foreach (var asset in siblingWidgetItem.Assets)
+                        {
+                            try
+                            {
+                                var resolvedAsset = WidgetManifestHelper.ResolveFileInsideRoot(sourceDirectory, asset);
+                                if (File.Exists(resolvedAsset))
+                                {
+                                    var normalizedAsset = WidgetManifestHelper.NormalizeRelativePath(
+                                        Path.GetRelativePath(sourceDirectory, resolvedAsset));
+                                    if (!string.Equals(normalizedAsset, sourceFileName, StringComparison.OrdinalIgnoreCase)
+                                        && !string.Equals(normalizedAsset, WidgetPackageConstants.ManifestFileName, StringComparison.OrdinalIgnoreCase)
+                                        && !declaredAssetRelativePaths.Contains(normalizedAsset, StringComparer.OrdinalIgnoreCase))
+                                    {
+                                        declaredAssetRelativePaths.Add(normalizedAsset);
+                                    }
+                                }
+                            }
+                            catch
+                            {
+                                // Ignore invalid asset paths in loose sibling manifests.
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore invalid sibling manifests and fall back to plain single-file import.
+                siblingManifest = null;
+                siblingWidgetItem = null;
+                declaredAssetRelativePaths.Clear();
+            }
+        }
+
+        var defaultWidgetName = Path.GetFileNameWithoutExtension(sourceFileName);
+        var effectiveWidgetName = !string.IsNullOrWhiteSpace(siblingWidgetItem?.Name)
+            ? siblingWidgetItem.Name
+            : !string.IsNullOrWhiteSpace(siblingManifest?.Name)
+                ? siblingManifest.Name
+                : defaultWidgetName;
+        var effectivePackageName = !string.IsNullOrWhiteSpace(siblingManifest?.Name)
+            ? siblingManifest.Name
+            : effectiveWidgetName;
+        var effectiveWidgetId = !string.IsNullOrWhiteSpace(siblingWidgetItem?.WidgetId)
+            ? siblingWidgetItem.WidgetId
+            : Guid.NewGuid().ToString("N");
+
+        var widgetRootPath = BuildUniqueWidgetDirectoryPath(effectiveWidgetName);
         Directory.CreateDirectory(widgetRootPath);
 
         var entryFilePath = Path.Combine(widgetRootPath, sourceFileName);
-        File.Copy(sourcePath, entryFilePath, overwrite: false);
+        File.Copy(fullSourcePath, entryFilePath, overwrite: false);
+
+        if (!string.IsNullOrWhiteSpace(sourceDirectory))
+        {
+            foreach (var assetRelativePath in declaredAssetRelativePaths)
+            {
+                var sourceAssetPath = Path.Combine(sourceDirectory, assetRelativePath);
+                var destinationAssetPath = Path.Combine(widgetRootPath, assetRelativePath);
+                Directory.CreateDirectory(Path.GetDirectoryName(destinationAssetPath)!);
+                File.Copy(sourceAssetPath, destinationAssetPath, overwrite: true);
+            }
+        }
 
         var manifest = WidgetManifestHelper.CreateSingleWidgetManifest(
-            packageName: Path.GetFileNameWithoutExtension(sourceFileName),
-            widgetName: Path.GetFileNameWithoutExtension(sourceFileName),
+            packageName: effectivePackageName,
+            widgetName: effectiveWidgetName,
             entryFile: sourceFileName,
-            assets: [],
-            widgetId: Guid.NewGuid().ToString("N"),
-            createdUtc: DateTime.UtcNow.ToString("O")
+            assets: declaredAssetRelativePaths,
+            widgetId: effectiveWidgetId,
+            createdUtc: siblingManifest?.CreatedUtc ?? DateTime.UtcNow.ToString("O"),
+            sourceManifest: siblingManifest,
+            sourceWidgetItem: siblingWidgetItem
         );
 
         WidgetManifestHelper.WriteManifest(widgetRootPath, manifest, _widgetManifestJsonOptions);
         return WidgetManifestHelper.CreateManagedReference(
-            sourceFileName,
+            EnsureWidgetName(effectiveWidgetName),
             entryFilePath,
             widgetRootPath,
             manifest.Widgets[0].WidgetId

@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.3.1
+
+### Improved
+
+- Added `htwind.widget.json` as an editable tab in the built-in Monaco code editor so manifest metadata and `settingsSchema` can be edited directly in-app.
+- Improved single-file HTML imports to detect a sibling `htwind.widget.json` in the same folder and preserve its `settingsSchema`, requirements, metadata, and declared assets.
+- Updated `htwind.widget.schema.json` to declare `settingsSchema` at both the package root and individual widget item levels.
+
+### Fixed
+
+- Fixed `settingsSchema` being dropped when importing or exporting manifest-backed widget packages (#8).
+- Fixed the widget settings parser to support the documented `"toggle"` boolean field type as well as JSON Schema `properties` objects, direct key-to-field objects, and item-level `settingsSchema` declarations (#8).
+- Fixed real composited window pixel capture in the screenshot utility.
+
 ## v0.3.0
 
 ### Added

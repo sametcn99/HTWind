@@ -131,16 +131,35 @@ public partial class HtmlCodeEditorWindow : FluentWindow
 
     /// <summary>
     ///     Collects the editable files of the widget: for .htwind packages the entry file plus
-    ///     declared text assets (multi-file tabbed editing); otherwise just the entry file.
+    ///     declared text assets and the widget manifest (htwind.widget.json); otherwise just the entry file.
     /// </summary>
     private void BuildDocumentTabs(string entryFilePath)
     {
         _documentPathsByName.Clear();
+        FileTabs.Items.Clear();
 
-        var entryName = Path.GetFileName(entryFilePath);
-        _documentPathsByName[entryName] = Path.GetFullPath(entryFilePath);
+        foreach (var (documentName, documentPath) in CollectEditableDocuments(entryFilePath))
+        {
+            _documentPathsByName[documentName] = documentPath;
+            var tab = new TabItem
+            {
+                Header = documentName,
+                Tag = documentName
+            };
+            FileTabs.Items.Add(tab);
+        }
 
-        var widgetRootPath = Path.GetDirectoryName(Path.GetFullPath(entryFilePath));
+        SelectDocumentTab(Path.GetFileName(entryFilePath));
+    }
+
+    internal static IReadOnlyDictionary<string, string> CollectEditableDocuments(string entryFilePath)
+    {
+        var documents = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var fullEntryPath = Path.GetFullPath(entryFilePath);
+        var entryName = Path.GetFileName(fullEntryPath);
+        documents[entryName] = fullEntryPath;
+
+        var widgetRootPath = Path.GetDirectoryName(fullEntryPath);
         if (!string.IsNullOrWhiteSpace(widgetRootPath))
         {
             try
@@ -154,7 +173,7 @@ public partial class HtmlCodeEditorWindow : FluentWindow
                 if (manifest is not null)
                 {
                     var normalizedEntryRelative = WidgetManifestHelper.NormalizeRelativePath(
-                        Path.GetRelativePath(widgetRootPath, Path.GetFullPath(entryFilePath)));
+                        Path.GetRelativePath(widgetRootPath, fullEntryPath));
                     var widgetItem = manifest.Widgets.FirstOrDefault(item =>
                         string.Equals(
                             WidgetManifestHelper.NormalizeRelativePath(item.EntryFile),
@@ -172,7 +191,7 @@ public partial class HtmlCodeEditorWindow : FluentWindow
                                 var extension = Path.GetExtension(assetPath);
                                 if (File.Exists(assetPath) && EditableExtensions.Contains(extension))
                                 {
-                                    _documentPathsByName[Path.GetFileName(assetPath)] = assetPath;
+                                    documents[Path.GetFileName(assetPath)] = assetPath;
                                 }
                             }
                             catch
@@ -182,24 +201,25 @@ public partial class HtmlCodeEditorWindow : FluentWindow
                         }
                     }
                 }
+
+                var manifestPath = Path.Combine(widgetRootPath, WidgetPackageConstants.ManifestFileName);
+                if (File.Exists(manifestPath))
+                {
+                    documents[WidgetPackageConstants.ManifestFileName] = Path.GetFullPath(manifestPath);
+                }
             }
             catch
             {
-                // Manifest problems fall back to single-file editing.
+                // Manifest problems fall back to single-file editing, plus raw manifest editing if present.
+                var manifestPath = Path.Combine(widgetRootPath, WidgetPackageConstants.ManifestFileName);
+                if (File.Exists(manifestPath))
+                {
+                    documents[WidgetPackageConstants.ManifestFileName] = Path.GetFullPath(manifestPath);
+                }
             }
         }
 
-        foreach (var documentName in _documentPathsByName.Keys)
-        {
-            var tab = new TabItem
-            {
-                Header = documentName,
-                Tag = documentName
-            };
-            FileTabs.Items.Add(tab);
-        }
-
-        SelectDocumentTab(entryName);
+        return documents;
     }
 
     private void SelectDocumentTab(string documentName)

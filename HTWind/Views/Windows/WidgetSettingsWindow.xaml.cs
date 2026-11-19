@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using HTWind.Localization;
 using HTWind.Model;
 using HTWind.Services.WebView;
+using HTWind.Services.Widget;
 
 using Wpf.Ui.Controls;
 
@@ -23,7 +24,7 @@ namespace HTWind;
 /// </summary>
 public partial class WidgetSettingsWindow : FluentWindow
 {
-    private sealed class SettingField
+    internal sealed class SettingField
     {
         public string Key { get; set; } = string.Empty;
 
@@ -61,7 +62,7 @@ public partial class WidgetSettingsWindow : FluentWindow
         Loaded += WidgetSettingsWindow_Loaded;
     }
 
-    private async void WidgetSettingsWindow_Loaded(object sender, RoutedEventArgs e)
+    private void WidgetSettingsWindow_Loaded(object sender, RoutedEventArgs e)
     {
         Loaded -= WidgetSettingsWindow_Loaded;
 
@@ -110,53 +111,54 @@ public partial class WidgetSettingsWindow : FluentWindow
 
     private List<SettingField>? TryLoadSettingsSchema()
     {
-        if (string.IsNullOrWhiteSpace(_model.FilePath))
+        var fields = LoadSettingsSchemaForWidgetFile(_model.FilePath);
+        if (fields is null || fields.Count == 0)
+        {
+            return null;
+        }
+
+        _fields.AddRange(fields);
+        return _fields;
+    }
+
+    internal static List<SettingField>? LoadSettingsSchemaForWidgetFile(string? widgetFilePath)
+    {
+        if (string.IsNullOrWhiteSpace(widgetFilePath))
         {
             return null;
         }
 
         try
         {
-            var widgetRootPath = Path.GetDirectoryName(Path.GetFullPath(_model.FilePath));
+            var fullFilePath = Path.GetFullPath(widgetFilePath);
+            var widgetRootPath = Path.GetDirectoryName(fullFilePath);
             if (string.IsNullOrWhiteSpace(widgetRootPath) || !Directory.Exists(widgetRootPath))
             {
                 return null;
             }
 
-            var manifest = global::HTWind.Services.Widget.WidgetManifestHelper.LoadManifestIfPresent(widgetRootPath, ManifestJsonOptions);
-            if (manifest?.SettingsSchema is not JsonElement schemaElement)
+            var manifest = WidgetManifestHelper.LoadManifestIfPresent(widgetRootPath, ManifestJsonOptions);
+            if (manifest is null)
             {
                 return null;
             }
 
-            var fields = new List<SettingField>();
+            var normalizedEntryRelative = WidgetManifestHelper.NormalizeRelativePath(
+                Path.GetRelativePath(widgetRootPath, fullFilePath));
+            var matchingItem = manifest.Widgets?.FirstOrDefault(item =>
+                string.Equals(
+                    WidgetManifestHelper.NormalizeRelativePath(item.EntryFile),
+                    normalizedEntryRelative,
+                    StringComparison.OrdinalIgnoreCase))
+                ?? (manifest.Widgets is { Count: 1 } ? manifest.Widgets[0] : null);
 
-            if (schemaElement.ValueKind == JsonValueKind.Array)
+            var schemaElement = matchingItem?.SettingsSchema ?? manifest.SettingsSchema;
+            if (schemaElement is not JsonElement resolvedSchema)
             {
-                foreach (var entry in schemaElement.EnumerateArray())
-                {
-                    var field = ParseSchemaEntry(entry);
-                    if (field is not null)
-                    {
-                        fields.Add(field);
-                    }
-                }
-            }
-            else if (schemaElement.ValueKind == JsonValueKind.Object && schemaElement.TryGetProperty("properties", out var propertiesElement)
-                && propertiesElement.ValueKind == JsonValueKind.Object)
-            {
-                foreach (var property in propertiesElement.EnumerateObject())
-                {
-                    var field = ParseSchemaEntry(property.Value);
-                    if (field is not null)
-                    {
-                        field.Key = property.Name;
-                        fields.Add(field);
-                    }
-                }
+                return null;
             }
 
-            _fields.AddRange(fields);
+            var fields = ParseSettingsSchema(resolvedSchema);
             return fields.Count > 0 ? fields : null;
         }
         catch
@@ -165,7 +167,69 @@ public partial class WidgetSettingsWindow : FluentWindow
         }
     }
 
-    private static SettingField? ParseSchemaEntry(JsonElement entry)
+    internal static List<SettingField> ParseSettingsSchema(JsonElement schemaElement)
+    {
+        var fields = new List<SettingField>();
+
+        if (schemaElement.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var entry in schemaElement.EnumerateArray())
+            {
+                var field = ParseSchemaEntry(entry);
+                if (field is not null)
+                {
+                    fields.Add(field);
+                }
+            }
+
+            return fields;
+        }
+
+        if (schemaElement.ValueKind != JsonValueKind.Object)
+        {
+            return fields;
+        }
+
+        // Support JSON Schema style: { "type": "object", "properties": { "foo": { ... } } }
+        // or wrapper object: { "fields": [ ... ] }
+        if (TryGetPropertyCaseInsensitive(schemaElement, "fields", out var fieldsArrayElement)
+            && fieldsArrayElement.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var entry in fieldsArrayElement.EnumerateArray())
+            {
+                var field = ParseSchemaEntry(entry);
+                if (field is not null)
+                {
+                    fields.Add(field);
+                }
+            }
+
+            return fields;
+        }
+
+        var objectContainer = TryGetPropertyCaseInsensitive(schemaElement, "properties", out var propertiesElement)
+            && propertiesElement.ValueKind == JsonValueKind.Object
+            ? propertiesElement
+            : schemaElement;
+
+        foreach (var property in objectContainer.EnumerateObject())
+        {
+            if (property.Value.ValueKind != JsonValueKind.Object)
+            {
+                continue;
+            }
+
+            var field = ParseSchemaEntry(property.Value, fallbackKey: property.Name);
+            if (field is not null)
+            {
+                fields.Add(field);
+            }
+        }
+
+        return fields;
+    }
+
+    internal static SettingField? ParseSchemaEntry(JsonElement entry, string? fallbackKey = null)
     {
         if (entry.ValueKind != JsonValueKind.Object)
         {
@@ -173,9 +237,22 @@ public partial class WidgetSettingsWindow : FluentWindow
         }
 
         string? key = null;
-        if (entry.TryGetProperty("key", out var keyElement) && keyElement.ValueKind == JsonValueKind.String)
+        if (TryGetPropertyCaseInsensitive(entry, "key", out var keyElement) && keyElement.ValueKind == JsonValueKind.String)
         {
             key = keyElement.GetString();
+        }
+        else if (TryGetPropertyCaseInsensitive(entry, "id", out var idElement) && idElement.ValueKind == JsonValueKind.String)
+        {
+            key = idElement.GetString();
+        }
+        else if (TryGetPropertyCaseInsensitive(entry, "name", out var nameElement) && nameElement.ValueKind == JsonValueKind.String)
+        {
+            key = nameElement.GetString();
+        }
+
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            key = fallbackKey;
         }
 
         if (string.IsNullOrWhiteSpace(key))
@@ -190,7 +267,9 @@ public partial class WidgetSettingsWindow : FluentWindow
             Type = "text"
         };
 
-        if (entry.TryGetProperty("label", out var labelElement) && labelElement.ValueKind == JsonValueKind.String)
+        if ((TryGetPropertyCaseInsensitive(entry, "label", out var labelElement)
+                || TryGetPropertyCaseInsensitive(entry, "title", out labelElement))
+            && labelElement.ValueKind == JsonValueKind.String)
         {
             var label = labelElement.GetString();
             if (!string.IsNullOrWhiteSpace(label))
@@ -199,16 +278,18 @@ public partial class WidgetSettingsWindow : FluentWindow
             }
         }
 
-        if (entry.TryGetProperty("type", out var typeElement) && typeElement.ValueKind == JsonValueKind.String)
+        if (TryGetPropertyCaseInsensitive(entry, "type", out var typeElement) && typeElement.ValueKind == JsonValueKind.String)
         {
             var type = typeElement.GetString()?.Trim().ToLowerInvariant();
             if (!string.IsNullOrWhiteSpace(type))
             {
-                field.Type = type;
+                field.Type = NormalizeFieldType(type);
             }
         }
 
-        if (entry.TryGetProperty("default", out var defaultElement) && defaultElement.ValueKind != JsonValueKind.Undefined)
+        if ((TryGetPropertyCaseInsensitive(entry, "default", out var defaultElement)
+                || TryGetPropertyCaseInsensitive(entry, "defaultValue", out defaultElement))
+            && defaultElement.ValueKind != JsonValueKind.Undefined)
         {
             try
             {
@@ -219,21 +300,69 @@ public partial class WidgetSettingsWindow : FluentWindow
             }
         }
 
-        if (entry.TryGetProperty("options", out var optionsElement) && optionsElement.ValueKind == JsonValueKind.Array)
+        if ((TryGetPropertyCaseInsensitive(entry, "options", out var optionsElement)
+                || TryGetPropertyCaseInsensitive(entry, "enum", out optionsElement)
+                || TryGetPropertyCaseInsensitive(entry, "choices", out optionsElement))
+            && optionsElement.ValueKind == JsonValueKind.Array)
         {
             foreach (var option in optionsElement.EnumerateArray())
             {
-                var optionValue = option.ValueKind == JsonValueKind.String
-                    ? option.GetString()
-                    : option.ValueKind == JsonValueKind.Number ? option.GetRawText() : null;
+                string? optionValue = option.ValueKind switch
+                {
+                    JsonValueKind.String => option.GetString(),
+                    JsonValueKind.Number => option.GetRawText(),
+                    JsonValueKind.Object when TryGetPropertyCaseInsensitive(option, "value", out var valElem) =>
+                        valElem.ValueKind == JsonValueKind.String ? valElem.GetString() : valElem.GetRawText(),
+                    _ => null
+                };
+
                 if (!string.IsNullOrWhiteSpace(optionValue))
                 {
                     field.Options.Add(optionValue);
                 }
             }
+
+            if (field.Options.Count > 0 && field.Type == "text")
+            {
+                field.Type = "select";
+            }
         }
 
         return field;
+    }
+
+    internal static string NormalizeFieldType(string rawType)
+    {
+        return rawType.Trim().ToLowerInvariant() switch
+        {
+            "number" or "int" or "integer" or "float" or "double" => "number",
+            "boolean" or "bool" or "checkbox" or "toggle" or "switch" => "boolean",
+            "select" or "dropdown" or "enum" or "choice" => "select",
+            _ => "text"
+        };
+    }
+
+    private static bool TryGetPropertyCaseInsensitive(JsonElement element, string propertyName, out JsonElement value)
+    {
+        if (element.ValueKind == JsonValueKind.Object)
+        {
+            if (element.TryGetProperty(propertyName, out value))
+            {
+                return true;
+            }
+
+            foreach (var property in element.EnumerateObject())
+            {
+                if (string.Equals(property.Name, propertyName, StringComparison.OrdinalIgnoreCase))
+                {
+                    value = property.Value;
+                    return true;
+                }
+            }
+        }
+
+        value = default;
+        return false;
     }
 
     private FrameworkElement BuildFieldControl(SettingField field, JsonNode? currentValue)
@@ -258,10 +387,11 @@ public partial class WidgetSettingsWindow : FluentWindow
                 container.Children.Add(textBox);
                 break;
             }
-            case "boolean" or "bool" or "checkbox":
+            case "boolean" or "bool" or "checkbox" or "toggle" or "switch":
             {
                 var checkBox = new System.Windows.Controls.CheckBox { MinHeight = 32 };
-                checkBox.IsChecked = currentValue is not null && currentValue.ToJsonString() == "true";
+                checkBox.IsChecked = currentValue is not null
+                    && string.Equals(currentValue.ToJsonString().Trim('"'), "true", StringComparison.OrdinalIgnoreCase);
                 _inputControls[field.Key] = new BooleanValueHost(checkBox);
                 container.Children.Add(checkBox);
                 break;

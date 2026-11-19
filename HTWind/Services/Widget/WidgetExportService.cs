@@ -127,6 +127,45 @@ public sealed class WidgetExportService : IWidgetExportService
             var widgetRootPath = sourceReference.WidgetRootPath;
             var hasWidgetRoot = !string.IsNullOrWhiteSpace(widgetRootPath) && Directory.Exists(widgetRootPath);
 
+            WidgetPackageManifest? sourceManifest = null;
+            WidgetPackageItemManifest? sourceWidgetItem = null;
+            if (hasWidgetRoot)
+            {
+                try
+                {
+                    sourceManifest = WidgetManifestHelper.LoadManifestIfPresent(widgetRootPath!, exportJsonOptions);
+                    if (sourceManifest is not null)
+                    {
+                        var normalizedEntryRelative = WidgetManifestHelper.NormalizeRelativePath(
+                            Path.GetRelativePath(widgetRootPath!, Path.GetFullPath(sourceReference.EntryFilePath)));
+                        sourceWidgetItem = sourceManifest.Widgets?.FirstOrDefault(item =>
+                            string.Equals(
+                                WidgetManifestHelper.NormalizeRelativePath(item.EntryFile),
+                                normalizedEntryRelative,
+                                StringComparison.OrdinalIgnoreCase))
+                            ?? (sourceManifest.Widgets is { Count: 1 } ? sourceManifest.Widgets[0] : null);
+                    }
+                }
+                catch
+                {
+                    sourceManifest = null;
+                    sourceWidgetItem = null;
+                }
+            }
+
+            if (!useWorkspaceSubdirectory && sourceManifest is not null)
+            {
+                packageManifest.Description = sourceManifest.Description;
+                packageManifest.Author = sourceManifest.Author;
+                packageManifest.Version = sourceManifest.Version;
+                packageManifest.Homepage = sourceManifest.Homepage;
+                packageManifest.CreatedUtc = sourceManifest.CreatedUtc;
+                packageManifest.Tags = sourceManifest.Tags is null ? null : [.. sourceManifest.Tags];
+                packageManifest.Requirements = sourceManifest.Requirements;
+                packageManifest.SettingsSchema = sourceWidgetItem?.SettingsSchema ?? sourceManifest.SettingsSchema;
+                packageManifest.Dev = sourceManifest.Dev;
+            }
+
             // Scope the export strictly to this widget's own entry file plus its declared or
             // referenced assets; shared folders (e.g. BuiltInTemplates) must not leak sibling
             // widgets into the package.
@@ -151,18 +190,24 @@ public sealed class WidgetExportService : IWidgetExportService
             }
 
             var entryFile = Path.GetFileName(sourceReference.EntryFilePath);
+            var itemSettingsSchema = sourceWidgetItem?.SettingsSchema ?? sourceManifest?.SettingsSchema;
 
             var packageItem = new WidgetPackageItemManifest
             {
-                WidgetId = Guid.NewGuid().ToString("N"),
-                Name = Path.GetFileNameWithoutExtension(sourceReference.WidgetName),
+                WidgetId = !string.IsNullOrWhiteSpace(sourceWidgetItem?.WidgetId)
+                    ? sourceWidgetItem.WidgetId
+                    : Guid.NewGuid().ToString("N"),
+                Name = !string.IsNullOrWhiteSpace(sourceWidgetItem?.Name)
+                    ? sourceWidgetItem.Name
+                    : Path.GetFileNameWithoutExtension(sourceReference.WidgetName),
                 RelativePath = itemRelativePath,
                 EntryFile = WidgetManifestHelper.NormalizeRelativePath(entryFile),
                 Assets = exportFiles
                     .Where(path => !string.Equals(path, sourceReference.EntryFilePath, StringComparison.OrdinalIgnoreCase))
                     .Select(path => WidgetManifestHelper.NormalizeRelativePath(Path.GetRelativePath(widgetRootForRelativePaths, path)))
                     .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
-                    .ToList()
+                    .ToList(),
+                SettingsSchema = useWorkspaceSubdirectory ? itemSettingsSchema : sourceWidgetItem?.SettingsSchema
             };
 
             packageManifest.Widgets.Add(packageItem);

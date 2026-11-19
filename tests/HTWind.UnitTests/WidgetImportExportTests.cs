@@ -257,7 +257,7 @@ public sealed class WidgetImportExportTests : IClassFixture<Fixtures.TempDirecto
             File.ReadAllText(reimported.EntryFilePath));
     }
 
-    private string CreateSingleWidgetPackage(string packageName)
+    private string CreateSingleWidgetPackage(string packageName, JsonElement? settingsSchema = null)
     {
         var packageRoot = _temp.CreateSubdirectory($"pkg-{packageName}");
         var widgetFolder = Directory.CreateDirectory(
@@ -274,6 +274,7 @@ public sealed class WidgetImportExportTests : IClassFixture<Fixtures.TempDirecto
                 {
                     SchemaVersion = WidgetPackageConstants.SupportedSchemaVersion,
                     Name = packageName,
+                    SettingsSchema = settingsSchema,
                     Widgets =
                     [
                         new WidgetPackageItemManifest
@@ -291,12 +292,20 @@ public sealed class WidgetImportExportTests : IClassFixture<Fixtures.TempDirecto
     }
 
     [Fact]
-    public void ImportSingleWidgetPackage_ExportReimport_PreservesContent()
+    public void ImportSingleWidgetPackage_ExportReimport_PreservesContentAndSettingsSchema()
     {
         var importService = CreateImportService();
         var exportService = CreateExportService();
 
-        var packageRoot = CreateSingleWidgetPackage("single-package");
+        var schemaJson = JsonSerializer.Deserialize<JsonElement>(
+            """
+            [
+              { "key": "city", "label": "City", "type": "text", "default": "Istanbul" },
+              { "key": "useMetric", "label": "Metric", "type": "toggle", "default": true }
+            ]
+            """);
+
+        var packageRoot = CreateSingleWidgetPackage("single-package", schemaJson);
         var sourceWidgetFolder = Path.Combine(packageRoot, "widgets", "single-package");
         var references = importService.ImportWidgetSource(
             Path.Combine(packageRoot, WidgetPackageConstants.ManifestFileName));
@@ -305,6 +314,12 @@ public sealed class WidgetImportExportTests : IClassFixture<Fixtures.TempDirecto
         AssertFileContentMatches(sourceWidgetFolder, Path.GetDirectoryName(reference.EntryFilePath)!, "index.html");
         AssertFileContentMatches(sourceWidgetFolder, Path.GetDirectoryName(reference.EntryFilePath)!, "app.js");
         AssertFileContentMatches(sourceWidgetFolder, Path.GetDirectoryName(reference.EntryFilePath)!, "theme.css");
+
+        var loadedFields = WidgetSettingsWindow.LoadSettingsSchemaForWidgetFile(reference.EntryFilePath);
+        Assert.NotNull(loadedFields);
+        Assert.Equal(2, loadedFields!.Count);
+        Assert.Equal("city", loadedFields[0].Key);
+        Assert.Equal("boolean", loadedFields[1].Type);
 
         var exportDirectory = _temp.CreateSubdirectory("single-package-export");
         var exportRoot = exportService.ExportWidgetToDirectory(reference.EntryFilePath, exportDirectory);
@@ -318,6 +333,120 @@ public sealed class WidgetImportExportTests : IClassFixture<Fixtures.TempDirecto
         AssertFileContentMatches(sourceWidgetFolder, Path.GetDirectoryName(reimported.EntryFilePath)!, "index.html");
         AssertFileContentMatches(sourceWidgetFolder, Path.GetDirectoryName(reimported.EntryFilePath)!, "app.js");
         AssertFileContentMatches(sourceWidgetFolder, Path.GetDirectoryName(reimported.EntryFilePath)!, "theme.css");
+
+        var reimportedFields = WidgetSettingsWindow.LoadSettingsSchemaForWidgetFile(reimported.EntryFilePath);
+        Assert.NotNull(reimportedFields);
+        Assert.Equal(2, reimportedFields!.Count);
+    }
+
+    [Fact]
+    public void ImportSingleFile_WithSiblingManifest_PreservesSettingsSchemaAndDeclaredAssets()
+    {
+        var importService = CreateImportService();
+
+        var folder = _temp.CreateSubdirectory("sibling-manifest-widget");
+        var htmlPath = Path.Combine(folder, "index.html");
+        var jsPath = Path.Combine(folder, "app.js");
+        var unrelatedPath = Path.Combine(folder, "other.txt");
+        File.WriteAllText(htmlPath, "<html><body><script src=\"app.js\"></script></body></html>");
+        File.WriteAllText(jsPath, "console.log('hi');");
+        File.WriteAllText(unrelatedPath, "unrelated");
+
+        File.WriteAllText(
+            Path.Combine(folder, WidgetPackageConstants.ManifestFileName),
+            """
+            {
+              "schemaVersion": 1,
+              "name": "my-weather-widget",
+              "settingsSchema": [
+                { "key": "apiKey", "label": "API Key", "type": "text", "default": "" },
+                { "key": "showSeconds", "label": "Show Seconds", "type": "toggle", "default": true }
+              ],
+              "widgets": [
+                {
+                  "widgetId": "weather-1",
+                  "name": "my-weather-widget",
+                  "relativePath": ".",
+                  "entryFile": "index.html",
+                  "assets": ["app.js"]
+                }
+              ]
+            }
+            """);
+
+        // User picks index.html instead of htwind.widget.json in the file picker.
+        var references = importService.ImportWidgetSource(htmlPath);
+        var reference = Assert.Single(references);
+
+        var managedRoot = Path.GetDirectoryName(reference.EntryFilePath)!;
+        Assert.True(File.Exists(Path.Combine(managedRoot, "index.html")));
+        Assert.True(File.Exists(Path.Combine(managedRoot, "app.js")));
+        Assert.False(File.Exists(Path.Combine(managedRoot, "other.txt")));
+
+        var fields = WidgetSettingsWindow.LoadSettingsSchemaForWidgetFile(reference.EntryFilePath);
+        Assert.NotNull(fields);
+        Assert.Equal(2, fields!.Count);
+        Assert.Equal("apiKey", fields[0].Key);
+        Assert.Equal("showSeconds", fields[1].Key);
+        Assert.Equal("boolean", fields[1].Type);
+
+        var editableDocs = HtmlCodeEditorWindow.CollectEditableDocuments(reference.EntryFilePath);
+        Assert.Contains("index.html", editableDocs.Keys);
+        Assert.Contains("app.js", editableDocs.Keys);
+        Assert.Contains(WidgetPackageConstants.ManifestFileName, editableDocs.Keys);
+    }
+
+    [Fact]
+    public void ParseSettingsSchema_SupportsArrayAndJsonSchemaPropertiesAndDirectMap()
+    {
+        // 1. JSON Schema object with "properties" (without inner "key" field)
+        var jsonSchemaElement = JsonSerializer.Deserialize<JsonElement>(
+            """
+            {
+              "type": "object",
+              "properties": {
+                "refreshInterval": {
+                  "title": "Refresh Interval (s)",
+                  "type": "integer",
+                  "default": 30
+                },
+                "themeMode": {
+                  "label": "Theme Mode",
+                  "type": "select",
+                  "enum": ["dark", "light"]
+                },
+                "compact": {
+                  "label": "Compact View",
+                  "type": "toggle",
+                  "default": false
+                }
+              }
+            }
+            """);
+
+        var parsedFromProperties = WidgetSettingsWindow.ParseSettingsSchema(jsonSchemaElement);
+        Assert.Equal(3, parsedFromProperties.Count);
+        Assert.Equal("refreshInterval", parsedFromProperties[0].Key);
+        Assert.Equal("Refresh Interval (s)", parsedFromProperties[0].Label);
+        Assert.Equal("number", parsedFromProperties[0].Type);
+        Assert.Equal("themeMode", parsedFromProperties[1].Key);
+        Assert.Equal("select", parsedFromProperties[1].Type);
+        Assert.Equal(["dark", "light"], parsedFromProperties[1].Options);
+        Assert.Equal("compact", parsedFromProperties[2].Key);
+        Assert.Equal("boolean", parsedFromProperties[2].Type);
+
+        // 2. Direct key-to-field map object (without "properties" wrapper)
+        var directMapElement = JsonSerializer.Deserialize<JsonElement>(
+            """
+            {
+              "username": { "label": "User Name", "type": "text", "default": "guest" }
+            }
+            """);
+
+        var parsedFromDirectMap = WidgetSettingsWindow.ParseSettingsSchema(directMapElement);
+        var single = Assert.Single(parsedFromDirectMap);
+        Assert.Equal("username", single.Key);
+        Assert.Equal("User Name", single.Label);
     }
 
     [Fact]

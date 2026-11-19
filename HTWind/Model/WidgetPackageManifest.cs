@@ -61,4 +61,7 @@ public sealed class WidgetPackageItemManifest
 
     [JsonPropertyName("assets")]
     public List<string> Assets { get; set; } = [];
+
+    [JsonPropertyName("settingsSchema")]
+    public JsonElement? SettingsSchema { get; set; }
 }

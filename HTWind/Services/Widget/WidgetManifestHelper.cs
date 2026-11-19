@@ -218,6 +218,7 @@ internal static class WidgetManifestHelper
             .EnumerateFiles(widgetRootPath, "*", SearchOption.AllDirectories)
             .Select(path => NormalizeRelativePath(Path.GetRelativePath(widgetRootPath, path)))
             .Where(path => !string.Equals(path, WidgetPackageConstants.ManifestFileName, StringComparison.OrdinalIgnoreCase))
+            .Where(path => !IsRuntimeGeneratedFile(Path.GetFileName(path)))
             .ToList();
 
         foreach (var relativeFilePath in actualFiles)
@@ -341,8 +342,11 @@ internal static class WidgetManifestHelper
         List<string> assets,
         string widgetId,
         string? createdUtc,
-        WidgetPackageManifest? sourceManifest = null)
+        WidgetPackageManifest? sourceManifest = null,
+        WidgetPackageItemManifest? sourceWidgetItem = null)
     {
+        var effectiveSettingsSchema = sourceWidgetItem?.SettingsSchema ?? sourceManifest?.SettingsSchema;
+
         return new WidgetPackageManifest
         {
             SchemaVersion = WidgetPackageConstants.SupportedSchemaVersion,
@@ -355,6 +359,7 @@ internal static class WidgetManifestHelper
             ExportedUtc = sourceManifest?.ExportedUtc,
             Tags = sourceManifest?.Tags is null ? null : [.. sourceManifest.Tags],
             Requirements = sourceManifest?.Requirements,
+            SettingsSchema = effectiveSettingsSchema,
             Dev = sourceManifest?.Dev,
             Widgets =
             [
@@ -364,7 +369,8 @@ internal static class WidgetManifestHelper
                     Name = widgetName,
                     RelativePath = ".",
                     EntryFile = NormalizeRelativePath(entryFile),
-                    Assets = [.. assets]
+                    Assets = [.. assets],
+                    SettingsSchema = sourceWidgetItem?.SettingsSchema
                 }
             ]
         };
@@ -377,6 +383,7 @@ internal static class WidgetManifestHelper
             .EnumerateFiles(widgetRootPath, "*", SearchOption.AllDirectories)
             .Select(path => NormalizeRelativePath(Path.GetRelativePath(widgetRootPath, path)))
             .Where(path => !string.Equals(path, WidgetPackageConstants.ManifestFileName, StringComparison.OrdinalIgnoreCase))
+            .Where(path => !IsRuntimeGeneratedFile(Path.GetFileName(path)))
             .Where(path => !string.Equals(path, normalizedEntryFile, StringComparison.OrdinalIgnoreCase))
             .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
             .ToList();
@@ -509,7 +516,7 @@ internal static class WidgetManifestHelper
     private const string LivePreviewFileSuffix = ".htwind-live-preview.html";
 
     /// <summary>Runtime-generated files (widget storage, live previews) never belong in a package.</summary>
-    private static bool IsRuntimeGeneratedFile(string fileName)
+    internal static bool IsRuntimeGeneratedFile(string fileName)
     {
         if (string.Equals(fileName, WidgetPackageConstants.ManifestFileName, StringComparison.OrdinalIgnoreCase))
         {
