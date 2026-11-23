@@ -151,7 +151,7 @@ public sealed partial class WidgetPermissionStateService : IWidgetPermissionStat
 
             foreach (var record in records)
             {
-                if (string.IsNullOrWhiteSpace(record.WidgetFilePath))
+                if (record is null || string.IsNullOrWhiteSpace(record.WidgetFilePath))
                 {
                     continue;
                 }
@@ -169,7 +169,7 @@ public sealed partial class WidgetPermissionStateService : IWidgetPermissionStat
                             record.State,
                             ignoreCase: true,
                             out var parsedDecision
-                        )
+                        ) && Enum.IsDefined(parsedDecision)
                     )
                     {
                         powerShellDecisions[record.WidgetFilePath] = parsedDecision;
@@ -183,7 +183,7 @@ public sealed partial class WidgetPermissionStateService : IWidgetPermissionStat
                         record.PermissionKind,
                         ignoreCase: true,
                         out var parsedKind
-                    )
+                    ) || !Enum.IsDefined(parsedKind)
                 )
                 {
                     continue;

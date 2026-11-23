@@ -137,10 +137,9 @@ public sealed class PowerShellExecutionEngine : IDisposable
 
             if (!string.IsNullOrWhiteSpace(request.WorkingDirectory))
             {
-                // Only relocate when the caller asked for it: a fresh runspace starts in the
-                // process working directory. In read-only mode this resolves to the sandbox's
-                // Set-Location session function (see BuildReadOnlySessionState).
-                powerShell.AddCommand("Set-Location").AddParameter("LiteralPath", workingDirectory);
+                // Relocate before building the pipeline so navigation emits no script output.
+                // PathIntrinsics accepts wildcards; escape directory names for literal semantics.
+                runspace.SessionStateProxy.Path.SetLocation(WildcardPattern.Escape(workingDirectory));
             }
 
             powerShell.AddScript(request.Script);

@@ -5,6 +5,7 @@ import {
 	type LocaleCode,
 	normalizeLocale,
 } from "../i18n/locales";
+import { isGitHubRelease } from "./releases";
 
 export function readCachedRelease(): GitHubRelease | null {
 	if (typeof window === "undefined") {
@@ -18,7 +19,13 @@ export function readCachedRelease(): GitHubRelease | null {
 		}
 
 		const cached = JSON.parse(raw) as CachedReleaseRecord;
-		if (!cached?.savedAt || !cached?.release) {
+		if (
+			typeof cached?.savedAt !== "number" ||
+			!Number.isFinite(cached.savedAt) ||
+			cached.savedAt < 0 ||
+			cached.savedAt > Date.now() ||
+			!isGitHubRelease(cached.release)
+		) {
 			return null;
 		}
 

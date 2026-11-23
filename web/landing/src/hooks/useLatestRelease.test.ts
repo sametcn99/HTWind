@@ -7,7 +7,7 @@ import { getLocaleMessages } from "../i18n/resources";
 import { formatReleaseDate } from "../lib/formatters";
 import { useLatestRelease } from "./useLatestRelease";
 
-const sampleRelease: GitHubRelease = {
+const sampleRelease = {
 	tag_name: "v1.4.0",
 	name: "HTWind 1.4.0",
 	published_at: "2026-01-02T12:00:00Z",
@@ -26,7 +26,7 @@ const sampleRelease: GitHubRelease = {
 			browser_download_url: "",
 		},
 	],
-};
+} satisfies GitHubRelease;
 
 const enMessages = getLocaleMessages("en");
 
@@ -71,6 +71,99 @@ afterEach(() => {
 });
 
 describe("useLatestRelease", () => {
+	it("accepts nullable GitHub release metadata and keeps downloads available", async () => {
+		mockFetchOk({ ...sampleRelease, name: null, published_at: null });
+		const { result } = renderHook(() => useLatestRelease("en", enMessages));
+		await advanceTimers(400);
+		expect(result.current.releaseText).toBe(sampleRelease.tag_name);
+		expect(result.current.releaseDate).toBe(enMessages.release.checkFeed);
+		expect(result.current.latestAssets).toHaveLength(1);
+		expect(result.current.isLoadingRelease).toBe(false);
+	});
+
+	it("cancels the scheduled request when unmounted before its delay", async () => {
+		mockFetchOk(sampleRelease);
+		const { unmount } = renderHook(() => useLatestRelease("en", enMessages));
+		unmount();
+		await advanceTimers(1500);
+		expect(fetch).not.toHaveBeenCalled();
+	});
+
+	it("aborts in-flight requests and does not cache a late response after unmount", async () => {
+		let resolveResponse!: (response: Response) => void;
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(
+				() =>
+					new Promise<Response>((resolve) => {
+						resolveResponse = resolve;
+					}),
+			),
+		);
+		const { unmount } = renderHook(() => useLatestRelease("en", enMessages));
+		await advanceTimers(400);
+		const signal = vi.mocked(fetch).mock.calls[0]?.[1]?.signal;
+		expect(signal?.aborted).toBe(false);
+		unmount();
+		expect(signal?.aborted).toBe(true);
+		await act(async () => {
+			resolveResponse({
+				ok: true,
+				json: async () => sampleRelease,
+			} as Response);
+		});
+		expect(window.localStorage.getItem(RELEASE_CACHE_KEY)).toBeNull();
+	});
+
+	it.each([
+		null,
+		{},
+		{ ...sampleRelease, assets: [null] },
+		{ ...sampleRelease, assets: {} },
+	])("handles a malformed successful response without crashing or caching it: %j", async (payload) => {
+		mockFetchOk(payload as GitHubRelease);
+		const { result } = renderHook(() => useLatestRelease("en", enMessages));
+		await advanceTimers(400);
+		expect(result.current.isLoadingRelease).toBe(false);
+		expect(result.current.releaseText).toBe(enMessages.release.unavailable);
+		expect(result.current.latestAssets).toEqual([]);
+		expect(window.localStorage.getItem(RELEASE_CACHE_KEY)).toBeNull();
+	});
+
+	it("keeps the cached release when a refresh returns invalid JSON", async () => {
+		seedCache({ savedAt: Date.now(), release: sampleRelease });
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(async () => ({
+				ok: true,
+				json: async () => {
+					throw new SyntaxError("invalid JSON");
+				},
+			})),
+		);
+		const { result } = renderHook(() => useLatestRelease("en", enMessages));
+		await advanceTimers(1500);
+		expect(result.current.latestRelease).toEqual(sampleRelease);
+		expect(result.current.isLoadingRelease).toBe(false);
+	});
+
+	it("changes locale without refetching the release", async () => {
+		mockFetchOk(sampleRelease);
+		const { result, rerender } = renderHook(
+			({ locale }: { locale: "en" | "tr" }) =>
+				useLatestRelease(locale, getLocaleMessages(locale)),
+			{ initialProps: { locale: "en" } },
+		);
+		await advanceTimers(400);
+		rerender({ locale: "tr" });
+		expect(result.current.releaseDate).toBe(
+			interpolate(getLocaleMessages("tr").release.publishedOn, {
+				date: formatReleaseDate(sampleRelease.published_at, "tr-TR", "unknown"),
+			}),
+		);
+		expect(fetch).toHaveBeenCalledTimes(1);
+	});
+
 	it("reports loading state until the delayed fetch completes", async () => {
 		mockFetchOk(sampleRelease);
 

@@ -50,6 +50,50 @@ public sealed class WebView2BridgeTests(WidgetHostSession session)
     }
 
     [Fact]
+    public async Task Storage_InvalidRequestRejectsAndNextRequestStillSucceeds()
+    {
+        await session.NavigateFileAsync(session.WidgetFilePath, "bridge-storage-recovery");
+        Assert.True(await WaitForBridgeReadyAsync());
+
+        var rejected = await session.InvokeAsync("storage.set", new { key = "  ", value = "invalid" });
+        Assert.False(GetBool(rejected, "ok"));
+        Assert.Contains("key", GetError(rejected));
+
+        var payload = new { nested = new { text = "quotes ' \" and İstanbul 🚀", values = new object?[] { 1, true, null } } };
+        var saved = await session.InvokeAsync("storage.set", new { key = "structured", value = payload });
+        Assert.True(GetBool(saved, "ok"), GetError(saved));
+
+        // A navigation creates a new page/bridge but must retain the on-disk values.
+        await session.NavigateFileAsync(session.WidgetFilePath, "bridge-storage-reloaded");
+        var loaded = await session.InvokeAsync("storage.get", new { key = "structured" });
+        Assert.True(GetBool(loaded, "ok"), GetError(loaded));
+        Assert.True(JsonElement.DeepEquals(JsonSerializer.SerializeToElement(payload), loaded.GetProperty("result")));
+    }
+
+    [Fact]
+    public async Task PowerShell_InvalidRequestDoesNotBreakSubsequentBridgeCalls()
+    {
+        Assert.True(await WaitForBridgeReadyAsync());
+        var previousAuthorization = session.PowerShellAuthorization;
+        session.PowerShellAuthorization = PowerShellExecutionAuthorization.ReadOnly;
+        try
+        {
+            var rejected = await session.InvokeAsync("powershell.exec", new { script = "  " });
+            Assert.False(GetBool(rejected, "ok"));
+            Assert.Contains("script", GetError(rejected));
+
+            var accepted = await session.InvokeAsync("powershell.exec", new { script = "'bridge-recovered'" });
+            Assert.True(GetBool(accepted, "ok"), GetError(accepted));
+            Assert.Equal(0, accepted.GetProperty("result").GetProperty("exitCode").GetInt32());
+            Assert.Equal("bridge-recovered", accepted.GetProperty("result").GetProperty("output").GetString()?.Trim());
+        }
+        finally
+        {
+            session.PowerShellAuthorization = previousAuthorization;
+        }
+    }
+
+    [Fact]
     public async Task ThemeGet_ReturnsAWellFormedPayload()
     {
         Assert.True(await WaitForBridgeReadyAsync());

@@ -41,7 +41,7 @@ public sealed partial class WidgetStateStore : IWidgetStateStore
                 var legacyStates = JsonSerializer.Deserialize(json, _jsonContext.ListWidgetStateRecord);
                 return new WidgetStateSnapshot
                 {
-                    Widgets = legacyStates ?? [],
+                    Widgets = NormalizeRecords(legacyStates),
                     SuppressWidgetsOnFullscreen = true,
                     SuppressWidgetsOnMaximized = false
                 };
@@ -50,7 +50,13 @@ public sealed partial class WidgetStateStore : IWidgetStateStore
             if (document.RootElement.ValueKind == JsonValueKind.Object)
             {
                 var snapshot = JsonSerializer.Deserialize(json, _jsonContext.WidgetStateSnapshot);
-                return snapshot ?? new WidgetStateSnapshot();
+                if (snapshot is null)
+                {
+                    return new WidgetStateSnapshot();
+                }
+
+                snapshot.Widgets = NormalizeRecords(snapshot.Widgets);
+                return snapshot;
             }
 
             return new WidgetStateSnapshot();
@@ -59,6 +65,17 @@ public sealed partial class WidgetStateStore : IWidgetStateStore
         {
             return new WidgetStateSnapshot();
         }
+    }
+
+    private static List<WidgetStateRecord> NormalizeRecords(List<WidgetStateRecord>? records)
+    {
+        var normalized = records?.Where(record => record is not null).ToList() ?? [];
+        foreach (var record in normalized)
+        {
+            record.MonitorPlacements = record.MonitorPlacements?.Where(placement => placement is not null).ToList() ?? [];
+        }
+
+        return normalized;
     }
 
     public void Save(WidgetStateSnapshot snapshot)

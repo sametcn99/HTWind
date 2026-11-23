@@ -30,6 +30,62 @@ afterEach(() => {
 });
 
 describe("release cache", () => {
+	it("round-trips nullable GitHub metadata and releases without assets", () => {
+		const release: GitHubRelease = {
+			...sampleRelease,
+			name: null,
+			published_at: null,
+			assets: [],
+		};
+		writeCachedRelease(release);
+		expect(readCachedRelease()).toEqual(release);
+	});
+
+	it.each([
+		"yesterday",
+		-1,
+		Date.now() + 60_000,
+		null,
+		{},
+		true,
+	])("rejects invalid cache timestamps: %j", (savedAt) => {
+		window.localStorage.setItem(
+			RELEASE_CACHE_KEY,
+			JSON.stringify({ savedAt, release: sampleRelease }),
+		);
+		expect(readCachedRelease()).toBeNull();
+	});
+
+	it.each([
+		true,
+		"release",
+		[],
+		{},
+		{ ...sampleRelease, assets: [null] },
+	])("rejects malformed cached release objects: %j", (release) => {
+		window.localStorage.setItem(
+			RELEASE_CACHE_KEY,
+			JSON.stringify({ savedAt: Date.now(), release }),
+		);
+		expect(readCachedRelease()).toBeNull();
+	});
+
+	it("keeps a cache entry at the TTL boundary and expires it one millisecond later", () => {
+		const now = Date.now();
+		const clock = vi.spyOn(Date, "now").mockReturnValue(now);
+		window.localStorage.setItem(
+			RELEASE_CACHE_KEY,
+			JSON.stringify({
+				savedAt: now - RELEASE_CACHE_TTL_MS,
+				release: sampleRelease,
+			}),
+		);
+		expect(readCachedRelease()).toEqual(sampleRelease);
+		clock.mockReturnValue(now + 1);
+		expect(readCachedRelease()).toBeNull();
+		expect(window.localStorage.getItem(RELEASE_CACHE_KEY)).toBeNull();
+	});
+
 	it("returns null when nothing is cached", () => {
 		expect(readCachedRelease()).toBeNull();
 	});

@@ -96,4 +96,93 @@ public sealed class WidgetRuntimeConsoleTests : IDisposable
     {
         Assert.Empty(WidgetRuntimeConsole.GetEntries("never-published-widget"));
     }
+
+    [Fact]
+    public void Snapshot_DoesNotChangeWhenNewEntriesArePublishedOrCleared()
+    {
+        WidgetRuntimeConsole.Publish(WidgetId, "log", "original");
+        var snapshot = WidgetRuntimeConsole.GetEntries(WidgetId);
+
+        WidgetRuntimeConsole.Publish(WidgetId, "log", "new");
+        WidgetRuntimeConsole.Clear(WidgetId);
+
+        Assert.Contains("[log] original", Assert.Single(snapshot));
+        Assert.Empty(WidgetRuntimeConsole.GetEntries(WidgetId));
+    }
+
+    [Fact]
+    public void Subscription_DoesNotReplayHistoryAndCanUnsubscribeItself()
+    {
+        WidgetRuntimeConsole.Publish(WidgetId, "log", "before-subscribe");
+        var received = new List<string>();
+        EventHandler<string>? handler = null;
+        handler = (_, entry) =>
+        {
+            received.Add(entry);
+            WidgetRuntimeConsole.Unsubscribe(WidgetId, handler!);
+        };
+        WidgetRuntimeConsole.Subscribe(WidgetId, handler);
+        try
+        {
+            WidgetRuntimeConsole.Publish(WidgetId, "log", "first");
+            WidgetRuntimeConsole.Publish(WidgetId, "log", "second");
+            Assert.Contains("[log] first", Assert.Single(received));
+        }
+        finally
+        {
+            WidgetRuntimeConsole.Unsubscribe(WidgetId, handler);
+        }
+    }
+
+    [Fact]
+    public void Clear_RemovesSubscriptionsAndDoesNotAffectOtherChannels()
+    {
+        var otherId = WidgetId + "-other";
+        var received = new List<string>();
+        void Handler(object? sender, string entry) => received.Add(entry);
+        WidgetRuntimeConsole.Subscribe(WidgetId, Handler);
+        try
+        {
+            WidgetRuntimeConsole.Publish(otherId, "log", "other");
+            WidgetRuntimeConsole.Clear(WidgetId);
+            WidgetRuntimeConsole.Publish(WidgetId, "log", "new channel");
+
+            Assert.Empty(received);
+            Assert.Contains("[log] other", Assert.Single(WidgetRuntimeConsole.GetEntries(otherId)));
+        }
+        finally
+        {
+            WidgetRuntimeConsole.Unsubscribe(WidgetId, Handler);
+            WidgetRuntimeConsole.Clear(otherId);
+        }
+    }
+
+    [Fact]
+    public async Task ConcurrentPublishers_DeliverEveryEventAndKeepBoundedDistinctHistory()
+    {
+        var received = new System.Collections.Concurrent.ConcurrentBag<string>();
+        void Handler(object? sender, string entry) => received.Add(entry);
+        WidgetRuntimeConsole.Subscribe(WidgetId, Handler);
+        try
+        {
+            await Task.WhenAll(Enumerable.Range(0, 8).Select(producer => Task.Run(() =>
+            {
+                for (var index = 0; index < 100; index++)
+                {
+                    WidgetRuntimeConsole.Publish(WidgetId, "log", $"producer-{producer}-entry-{index}");
+                }
+            }, TestContext.Current.CancellationToken)));
+
+            Assert.Equal(800, received.Count);
+            Assert.Equal(800, received.Distinct().Count());
+            var history = WidgetRuntimeConsole.GetEntries(WidgetId);
+            Assert.Equal(200, history.Count);
+            Assert.Equal(200, history.Distinct().Count());
+            Assert.All(history, entry => Assert.Contains(entry, received));
+        }
+        finally
+        {
+            WidgetRuntimeConsole.Unsubscribe(WidgetId, Handler);
+        }
+    }
 }

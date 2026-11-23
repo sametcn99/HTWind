@@ -120,8 +120,15 @@ public sealed class WorkspaceProfileStore
 
         try
         {
-            return JsonSerializer.Deserialize<List<WorkspaceProfile>>(File.ReadAllText(_storeFilePath), JsonOptions)
+            var profiles = JsonSerializer.Deserialize<List<WorkspaceProfile>>(File.ReadAllText(_storeFilePath), JsonOptions)
                 ?? [];
+            profiles = profiles.Where(profile => profile is not null && !string.IsNullOrWhiteSpace(profile.Name)).ToList();
+            foreach (var profile in profiles)
+            {
+                profile.Widgets = profile.Widgets?.Where(widget => widget is not null).ToList() ?? [];
+            }
+
+            return profiles;
         }
         catch
         {

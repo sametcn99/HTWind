@@ -5,6 +5,7 @@ import { interpolate } from "../i18n/interpolate";
 import { INTL_LOCALE_MAP, type LocaleCode } from "../i18n/locales";
 import type { LocaleMessages } from "../i18n/types";
 import { formatReleaseDate } from "../lib/formatters";
+import { isGitHubRelease } from "../lib/releases";
 import { readCachedRelease, writeCachedRelease } from "../lib/storage";
 
 export function useLatestRelease(locale: LocaleCode, messages: LocaleMessages) {
@@ -32,15 +33,21 @@ export function useLatestRelease(locale: LocaleCode, messages: LocaleMessages) {
 					throw new Error(`GitHub API failed with status ${response.status}`);
 				}
 
-				const payload = (await response.json()) as GitHubRelease;
+				const payload: unknown = await response.json();
+				abortController.signal.throwIfAborted();
+				if (!isGitHubRelease(payload)) {
+					throw new Error("GitHub API returned an invalid release");
+				}
 				setLatestRelease(payload);
 				writeCachedRelease(payload);
 			} catch {
-				if (!cachedRelease) {
+				if (!abortController.signal.aborted && !cachedRelease) {
 					setLatestRelease(null);
 				}
 			} finally {
-				setIsLoadingRelease(false);
+				if (!abortController.signal.aborted) {
+					setIsLoadingRelease(false);
+				}
 			}
 		}
 

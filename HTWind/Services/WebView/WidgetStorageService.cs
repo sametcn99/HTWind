@@ -140,7 +140,9 @@ public sealed class WidgetStorageService
             root = [];
         }
 
-        root[SettingsKey] = settings;
+        // The caller may reuse a form model or pass a node returned by GetSettings,
+        // which already belongs to another JSON tree. Keep ownership with the caller.
+        root[SettingsKey] = settings.DeepClone();
         WriteAtomic(settingsPath, root);
     }
 

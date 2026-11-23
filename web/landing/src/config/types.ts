@@ -7,8 +7,8 @@ export type GitHubReleaseAsset = {
 
 export type GitHubRelease = {
 	tag_name: string;
-	name: string;
-	published_at: string;
+	name: string | null;
+	published_at: string | null;
 	html_url: string;
 	assets?: GitHubReleaseAsset[];
 };

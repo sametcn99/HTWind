@@ -80,6 +80,12 @@ internal static class WidgetManifestHelper
         for (var index = 0; index < widgets.Count; index++)
         {
             var widget = widgets[index];
+            if (widget is null)
+            {
+                validationErrors.Add($"widgets[{index}]: widget is required.");
+                continue;
+            }
+
             var widgetLabel = string.IsNullOrWhiteSpace(widget.Name)
                 ? $"widgets[{index}]"
                 : $"widgets[{index}] ({widget.Name})";
@@ -111,12 +117,6 @@ internal static class WidgetManifestHelper
                 continue;
             }
 
-            if (!normalizedWidgetRoots.Add(normalizedWidgetRoot))
-            {
-                validationErrors.Add($"{widgetLabel}: relativePath is duplicated: {normalizedWidgetRoot}.");
-                continue;
-            }
-
             string widgetItemRootPath;
             try
             {
@@ -125,6 +125,12 @@ internal static class WidgetManifestHelper
             catch (InvalidOperationException ex)
             {
                 validationErrors.Add($"{widgetLabel}: relativePath is invalid: {ex.Message}");
+                continue;
+            }
+
+            if (!normalizedWidgetRoots.Add(Path.TrimEndingDirectorySeparator(widgetItemRootPath)))
+            {
+                validationErrors.Add($"{widgetLabel}: relativePath is duplicated: {normalizedWidgetRoot}.");
                 continue;
             }
 
@@ -259,8 +265,11 @@ internal static class WidgetManifestHelper
 
     private static string ResolvePathInsideRoot(string widgetRootPath, string relativePath)
     {
-        var rootPathWithSeparator = Path.GetFullPath(widgetRootPath) + Path.DirectorySeparatorChar;
-        var resolvedPath = Path.GetFullPath(Path.Combine(widgetRootPath, relativePath));
+        var rootPath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(widgetRootPath));
+        var rootPathWithSeparator = Path.EndsInDirectorySeparator(rootPath)
+            ? rootPath
+            : rootPath + Path.DirectorySeparatorChar;
+        var resolvedPath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(Path.Combine(rootPath, relativePath)));
         if (resolvedPath.StartsWith(rootPathWithSeparator, StringComparison.OrdinalIgnoreCase))
         {
             return resolvedPath;
@@ -268,7 +277,7 @@ internal static class WidgetManifestHelper
 
         // The widget root itself is a valid resolution target (single-widget packages use
         // relativePath "."), which GetFullPath collapses onto the root without the separator.
-        if (string.Equals(resolvedPath, Path.GetFullPath(widgetRootPath), StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(resolvedPath, rootPath, StringComparison.OrdinalIgnoreCase))
         {
             return resolvedPath;
         }

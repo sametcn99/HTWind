@@ -32,6 +32,80 @@ async function stubGitHubRelease(page: Page): Promise<void> {
 }
 
 test.describe("HTWind landing site", () => {
+	test.beforeEach(async ({ page }) => {
+		await stubGitHubRelease(page);
+	});
+
+	test("release API failure leaves the page usable and downloads disabled", async ({
+		page,
+	}) => {
+		await page.route("**/api.github.com/**", (route) =>
+			route.fulfill({ status: 503, body: "unavailable" }),
+		);
+		await page.goto("/en/");
+		await expect(
+			page.getByText("Release info unavailable", { exact: true }),
+		).toBeVisible();
+		await expect(page.locator('button[aria-haspopup="menu"]')).toBeDisabled();
+		await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+	});
+
+	test("malformed release assets cannot crash the page", async ({ page }) => {
+		const pageErrors: string[] = [];
+		page.on("pageerror", (error) => pageErrors.push(error.message));
+		await page.route("**/api.github.com/**", (route) =>
+			route.fulfill({
+				status: 200,
+				contentType: "application/json",
+				body: JSON.stringify({ ...releaseStub, assets: [null] }),
+			}),
+		);
+		await page.goto("/en/");
+		await expect(
+			page.getByText("Release info unavailable", { exact: true }),
+		).toBeVisible();
+		await expect(page.locator('button[aria-haspopup="menu"]')).toBeDisabled();
+		expect(pageErrors).toEqual([]);
+	});
+
+	test("cached downloads remain available after reload when GitHub is unavailable", async ({
+		page,
+	}) => {
+		await page.goto("/en/");
+		const button = page.locator('button[aria-haspopup="menu"]');
+		await expect(button).toBeEnabled();
+		await page.route("**/api.github.com/**", (route) =>
+			route.fulfill({ status: 429, body: "rate limited" }),
+		);
+		const refresh = page.waitForResponse(
+			(response) =>
+				response.url().includes("api.github.com") && response.status() === 429,
+		);
+		await page.reload();
+		await refresh;
+		await button.click();
+		await expect(
+			page.getByRole("link", { name: /HTWind-Setup-9.9.9.exe/ }),
+		).toBeVisible();
+	});
+
+	test("download menu supports keyboard opening, Escape, and outside dismissal", async ({
+		page,
+	}) => {
+		await page.goto("/en/");
+		const button = page.locator('button[aria-haspopup="menu"]');
+		await expect(button).toBeEnabled();
+		await button.focus();
+		await page.keyboard.press("Enter");
+		await expect(button).toHaveAttribute("aria-expanded", "true");
+		await page.keyboard.press("Escape");
+		await expect(button).toHaveAttribute("aria-expanded", "false");
+		await expect(button).toBeFocused();
+		await button.click();
+		await page.getByRole("heading", { level: 1 }).click();
+		await expect(button).toHaveAttribute("aria-expanded", "false");
+	});
+
 	test("root redirects to the default locale and renders", async ({ page }) => {
 		await page.goto("/");
 		await page.waitForURL("**/en/**");
