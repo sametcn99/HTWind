@@ -139,18 +139,18 @@
 		],
 		"featureCards": [
 			{
-				"title": "HTML Widgets on Desktop",
-				"description": "Build desktop widgets with HTML, CSS, and JavaScript. The built-in editor opens multi-file packages in tabs with live preview (hot reload) and a runtime console for errors and logs.",
+				"title": "Edit with a live preview",
+				"description": "Use HTML, CSS, and JavaScript. Open files in the built-in editor, see changes live, and check logs in the runtime console.",
 				"icon": "html"
 			},
 			{
-				"title": "PowerShell Integration",
-				"description": "Run PowerShell through an in-process engine after an explicit per-widget grant (read-only, full, or deny). Read-only mode runs in a constrained sandbox, and every call is isolated and time-limited.",
+				"title": "Automation, with permission",
+				"description": "Choose read-only, full access, or deny for each widget. PowerShell runs inside HTWind with isolated, time-limited calls.",
 				"icon": "powershell"
 			},
 			{
-				"title": "Windows Native Feel",
-				"description": "Tray behavior, pin-on-top or desktop-layer pinning, magnetic window snapping, per-widget opacity and zoom, workspace profiles, and display-aware suppression keep widgets feeling native to Windows.",
+				"title": "Save your setup",
+				"description": "Snap widgets into place, set opacity and zoom, and save layouts as profiles. Hide widgets per display while fullscreen or maximized apps are in use.",
 				"icon": "windows"
 			}
 		],

@@ -4,18 +4,18 @@
 		"ogLocale": "tr_TR"
 	},
 	"seo": {
-		"title": "HTWind | Windows Masaustu Widget Sunucusu",
-		"description": "HTWind; HTML widget'lari, manifest paketleri ve kontrollu PowerShell araclari icin acik kaynakli bir Windows masaustu widget sunucusudur.",
-		"openGraphTitle": "HTWind | Windows Masaustu Widget Sunucusu",
-		"openGraphDescription": "HTML widget'lari, paket ice aktarma ve yerel hissettiren is akisi kontrolleriyle daha duzenli bir Windows masaustu kurun.",
-		"twitterTitle": "HTWind | Windows Masaustu Widget Sunucusu",
-		"twitterDescription": "HTML widget'lari, manifest paketleri ve PowerShell entegrasyonu iceren acik kaynakli Windows widget sunucusu.",
-		"imageAlt": "Windows uzerinde widget'larla HTWind masaustu goruntusu",
-		"jsonLdDescription": "HTWind, Windows masaustleri icin ozellestirilebilir HTML tabanli bir widget sunucusudur."
+		"title": "HTWind | Windows için Masaüstü Widget’ları",
+		"description": "HTWind ile Windows masaüstüne HTML widget’ları ekle. Saatleri, sistem bilgilerini ve kısayolları tek yerden yönet.",
+		"openGraphTitle": "HTWind | Windows için Masaüstü Widget’ları",
+		"openGraphDescription": "Saat, sistem bilgileri ve kısayollar. Açık kaynak HTWind ile ihtiyacın olan araçları masaüstüne yerleştir.",
+		"twitterTitle": "HTWind | Windows için Masaüstü Widget’ları",
+		"twitterDescription": "HTML widget’ları, canlı önizlemeli editör ve widget başına PowerShell izinleri sunan açık kaynak Windows uygulaması.",
+		"imageAlt": "HTWind ve Windows masaüstü widget kitaplığının önizlemesi",
+		"jsonLdDescription": "HTWind, Windows masaüstünde HTML tabanlı widget’lar çalıştıran açık kaynak bir uygulamadır."
 	},
 	"languageSelector": {
 		"label": "Dil",
-		"ariaLabel": "Sayfa dilini sec",
+		"ariaLabel": "Sayfa dilini seç",
 		"options": {
 			"en": "English",
 			"tr": "Türkçe",
@@ -38,55 +38,55 @@
 		}
 	},
 	"downloadMenu": {
-		"title": "Onerilen: once kurulum paketi",
-		"ariaLabel": "Son surum varlik indirmeleri",
+		"title": "Önerilen: kurulum dosyası",
+		"ariaLabel": "Son sürümün indirme dosyaları",
 		"descriptions": {
-			"installer": "Cogu Windows kurulumu icin onerilen yukleyici",
-			"portable": "Elle cikarma icin tasinabilir paket",
-			"package": "Yonetilen kurulumlar icin Windows paket formati",
-			"other": "Ek surum dosyasi"
+			"installer": "Windows için kurulum dosyası",
+			"portable": "Klasöre çıkarıp kullanabileceğin taşınabilir paket",
+			"package": "Yönetilen kurulumlar için Windows paketi",
+			"other": "Ek sürüm dosyası"
 		},
 		"unknownSize": "Boyut bilinmiyor"
 	},
 	"release": {
-		"loadingLatest": "Son surum yukleniyor...",
-		"unavailable": "Surum bilgisi kullanilamiyor",
-		"checkFeed": "Guncellemeler icin surum akisina bakin",
-		"publishedOn": "Yayin tarihi: {date}",
-		"unknownDate": "Surum tarihi bilinmiyor"
+		"loadingLatest": "Son sürüm yükleniyor…",
+		"unavailable": "Sürüm bilgisine ulaşılamadı",
+		"checkFeed": "Güncellemeler için sürümlere bak",
+		"publishedOn": "Yayın tarihi: {date}",
+		"unknownDate": "Sürüm tarihi bilinmiyor"
 	},
 	"sections": {
 		"highlights": {
-			"ariaLabel": "Proje one cikanlar"
+			"ariaLabel": "HTWind özellikleri"
 		},
 		"overview": {
-			"screenshotHint": "Daha buyuk ve yakinlastirilabilir onizleme icin herhangi bir ekran goruntusunu acin.",
-			"viewLarger": "Daha buyuk gor: {alt}"
+			"screenshotHint": "Görsele tıklayarak büyütüp yakınlaştırabilirsin.",
+			"viewLarger": "Görseli büyüt: {alt}"
 		},
 		"widgets": {
 			"promptLabel": "HTWind Widget Generator Prompt"
 		},
 		"packages": {
-			"schemaLabel": "schema dosyasindan",
-			"exampleLabel": "cok widget'li ornek paketi"
+			"schemaLabel": "Paket şeması",
+			"exampleLabel": "Çok widget’lı örnek paket"
 		},
 		"support": {
-			"heading": "Gelisticiyi destekleyin"
+			"heading": "Geliştiriciyi destekle"
 		}
 	},
 	"footer": {
 		"github": "GitHub",
-		"releases": "Surumler",
-		"discussions": "Discussions"
+		"releases": "Sürümler",
+		"discussions": "GitHub Discussions"
 	},
 	"lightbox": {
 		"close": "Kapat"
 	},
 	"a11y": {
-		"skipToContent": "Icerige gec"
+		"skipToContent": "İçeriğe geç"
 	},
 	"errors": {
-		"missingRoot": "'root' kimligine sahip kok oge bulunamadi."
+		"missingRoot": "'root' kimliğine sahip kök öğe bulunamadı."
 	},
 	"content": {
 		"widgets": [
@@ -126,90 +126,90 @@
 		"highlights": [
 			{
 				"value": "20+",
-				"label": "Yerlesik sablon"
+				"label": "Yerleşik şablon"
 			},
 			{
-				"value": "Hot Reload",
-				"label": "Widget duzenlerken canli onizleme"
+				"value": "Canlı önizleme",
+				"label": "Düzenlerken değişiklikleri gör"
 			},
 			{
-				"value": "Acik Kaynak",
-				"label": "GPL 3.0 lisansli proje"
+				"value": "Açık kaynak",
+				"label": "GPL 3.0 lisanslı"
 			}
 		],
 		"featureCards": [
 			{
-				"title": "Masaustunde HTML Widget'lari",
-				"description": "HTML, CSS ve JavaScript ile masaüstü widget'ları oluştur. Yerleşik editör, çok dosyalı paketleri sekmeler halinde açar; canlı önizleme (hot reload) ve hata/loglar için çalışma zamanı konsolu sunar.",
+				"title": "Canlı önizlemeyle düzenle",
+				"description": "HTML, CSS ve JavaScript kullan. Dosyaları yerleşik editörde aç, değişiklikleri anında gör ve konsoldan hataları takip et.",
 				"icon": "html"
 			},
 			{
-				"title": "PowerShell Entegrasyonu",
-				"description": "Açık bir widget başına yetki (salt-okunur, tam ya da reddet) verdiğinde PowerShell'i süreç içi motorla çalıştır. Salt-okunur mod kısıtlı bir sandbox'ta koşar; her çağrı izole edilir ve süre sınırlıdır.",
+				"title": "İzni sen belirle",
+				"description": "Her widget için salt okunur erişim, tam erişim veya engelleme seç. PowerShell çağrıları HTWind içinde, birbirinden bağımsız ve süre sınırıyla çalışır.",
 				"icon": "powershell"
 			},
 			{
-				"title": "Windows'a Yerel His",
-				"description": "Tepsi davranışı, üstte tutma veya masaüstü katmanına sabitleme, manyetik pencere hizalama, widget başına opaklık ve yakınlaştırma, çalışma alanı profilleri ve ekrana duyarlı gizleme ile widget'lar Windows'a doğal hissettirir.",
+				"title": "Düzenini kaydet",
+				"description": "Widget’ları hizala, saydamlık ve yakınlaştırmayı ayarla, yerleşimini profil olarak kaydet. Tam ekran veya büyütülmüş uygulama kullanırken widget’ları o monitörde gizle.",
 				"icon": "windows"
 			}
 		],
 		"faqItems": [
 			{
-				"question": "HTWind ne icin kullanilir?",
-				"answer": "HTWind, Windows uzerinde HTML tabanli masaustu widget'larini yonetir ve goruntuler; boylece teshis araclarini, kisayollari ve faydali sistem baglamini calisirken gorunur tutmak kolaylasir."
+				"question": "HTWind ne işe yarar?",
+				"answer": "Windows masaüstünde HTML widget’ları çalıştırır. Saatleri, sistem bilgilerini, kısayolları ve kendi hazırladığın araçları görünür tutup tek yerden yönetmeni sağlar."
 			},
 			{
-				"question": "Kendi widget'larimi olusturabilir miyim?",
-				"answer": "Evet. HTML, CSS ve JavaScript ile ozel widget'lar olusturabilir; sonra bunlari tek dosya, varlik destekli klasor veya bir ya da birden fazla widget iceren manifest paketi olarak paketleyebilirsiniz."
+				"question": "Kendi widget’ımı oluşturabilir miyim?",
+				"answer": "Evet. HTML, CSS ve JavaScript kullanabilirsin. Tek bir HTML dosyasıyla başlayabilir veya CSS, JavaScript ve görseller içeren bir paket hazırlayabilirsin."
 			},
 			{
-				"question": "htwind.widget.json ne icin kullanilir?",
-				"answer": "htwind.widget.json, widget paket manifestidir. Paket metaverisini ve bir ya da daha fazla widget'i tanimlar; her widget'in goreli klasoru, giris HTML dosyasi ve beyan edilen varliklari burada yer alir.",
+				"question": "htwind.widget.json ne işe yarar?",
+				"answer": "Paketin manifest dosyasıdır. Paket bilgilerini, widget klasörlerini, giriş HTML dosyalarını ve kullanılacak ek dosyaları tanımlar. Bir paket birden fazla widget içerebilir.",
 				"spanTwoColumns": true
 			},
 			{
-				"question": "HTWind PowerShell otomasyonunu destekliyor mu?",
-				"answer": "Evet. Widget'lar PowerShell'i süreç içi motorla çalıştırabilir; ancak her widget için önce açık bir yetki gerekir: salt-okunur (sandbox), tam erişim veya reddet. Seçim widget başına hatırlanır."
+				"question": "PowerShell kullanabilir miyim?",
+				"answer": "Evet. Her widget için salt okunur erişim, tam erişim veya engelleme seçersin. Seçimin kaydedilir; salt okunur mod kısıtlı bir ortamda çalışır."
 			},
 			{
-				"question": "Widget'lar için hangi yerel host API'leri var?",
-				"answer": "Widget'lar system.metrics (CPU, bellek, diskler, ağ, pil), audio.visualizer (gerçek zamanlı ses FFT'si), media.session (çalan medya bilgisi ve kontrol), storage.get/set (kalıcı widget ayarları) ve theme.get/onChanged (canlı tema ve vurgu renkleri) API'lerini çağırabilir — hiç process başlatmadan.",
+				"question": "Widget’lar hangi yerel API’lere erişebilir?",
+				"answer": "Sistem bilgileri için system.metrics, ses analizi için audio.visualizer, medya kontrolü için media.session, kalıcı veri için storage.get/set ve tema bilgisi için theme.get/onChanged kullanılabilir. Bu API’ler ayrı bir süreç başlatmaz.",
 				"spanTwoColumns": true
 			},
 			{
-				"question": "Tam ekran veya buyutulmus uygulamalari kullanirken widget'lar otomatik gizlenebilir mi?",
-				"answer": "Evet. Ayarlar'dan tam ekran gizlemeyi ve ayrı bir maksimize uygulama gizlemeyi etkinleştirebilirsiniz. İkisi de ekran başına çalışır: widget pencereleri anında gizlenir ve askıya alınır, durumları korunur ve kayıtlı görünürlük durumunu değiştirmeden otomatik geri getirilir."
+				"question": "Tam ekran uygulamalarda widget’lar gizlenir mi?",
+				"answer": "Ayarlardan tam ekran ve büyütülmüş uygulamalar için ayrı gizleme seçeneklerini açabilirsin. Gizleme monitör başına çalışır; widget’lar durumları korunarak otomatik geri gelir."
 			},
 			{
-				"question": "Farklı widget dizilimlerini kaydedebilir miyim?",
-				"answer": "Evet. Çalışma alanı profilleri mevcut widget kurulumunu — görünürlük, konumlar, boyutlar, kilitleme/sabitleme modları, opaklık ve yakınlaştırma — adlandırılmış bir düzen olarak kaydeder; tepsi menüsünden istediğiniz zaman geçiş yapabilirsiniz."
+				"question": "Farklı yerleşimler kaydedebilir miyim?",
+				"answer": "Evet. Profiller; görünürlük, konum, boyut, kilit, sabitleme, saydamlık ve yakınlaştırma ayarlarını kaydeder. Sistem tepsisi menüsünden profiller arasında geçebilirsin."
 			},
 			{
-				"question": "HTWind acik kaynak mi?",
-				"answer": "Evet. HTWind, kisisel kullanim, deneme ve topluluk odakli gelistirme icin GPL 3.0 lisansi ile GitHub'da yayinlanmistir."
+				"question": "HTWind açık kaynak mı?",
+				"answer": "Evet. Kaynak kodu GitHub’da, GPL 3.0 lisansıyla yayımlanır."
 			},
 			{
-				"question": "Katkilar memnuniyetle karsilanir mi?",
-				"answer": "Evet. Widget'lar, sablonlar, dokumantasyon ve cekirdek uygulama iyilestirmeleri icin issue acabilir, Discussions'ta fikir paylasabilir ve pull request gonderebilirsiniz."
+				"question": "Nasıl katkıda bulunabilirim?",
+				"answer": "Hata bildirimi açabilir, GitHub Discussions’ta fikir veya widget paylaşabilir, kod ve dokümantasyon için pull request gönderebilirsin."
 			}
 		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
-				"alt": "HTWind Ana Sayfa - Widget Kutuphanesi"
+				"alt": "HTWind Ana Sayfa — Widget Kitaplığı"
 			},
 			{
 				"src": "/app_screenshots/page_gallery.png",
-				"alt": "HTWind Galerisi - Topluluk widget'larını kur"
+				"alt": "HTWind Galerisi — Widget içe aktarma"
 			},
 			{
 				"src": "/app_screenshots/page_settings.png",
-				"alt": "HTWind Ayarlar - Ozellestirme"
+				"alt": "HTWind Ayarlar — Özelleştirme"
 			},
 			{
 				"src": "/app_screenshots/page_about.png",
-				"alt": "HTWind Hakkinda - Surum Bilgisi"
+				"alt": "HTWind Hakkında — Sürüm bilgisi"
 			}
 		]
 	},
