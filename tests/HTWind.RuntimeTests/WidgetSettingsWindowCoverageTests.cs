@@ -2,6 +2,7 @@ using System.IO;
 using System.Text.Json.Nodes;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 using HTWind.Model;
 using HTWind.RuntimeTests.Support;
@@ -39,28 +40,32 @@ public sealed class WidgetSettingsWindowCoverageTests(WidgetHostSession session)
             Exception? loadFailure = null;
             window.Loaded += (_, _) =>
             {
-                try
+                // Let FluentWindow finish creating its native frame before Save closes it.
+                _ = window.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
                 {
-                    var controls = GetControlsByLabel(window);
-                    Assert.Equal(SavedText, Assert.IsType<UiTextBox>(controls["Title"]).Text);
-                    Assert.True(Assert.IsType<CheckBox>(controls["Enabled"]).IsChecked);
-                    Assert.Equal("17", Assert.IsType<UiTextBox>(controls["Count"]).Text);
-                    Assert.Equal("dark", Assert.IsType<ComboBox>(controls["Theme"]).SelectedItem);
+                    try
+                    {
+                        var controls = GetControlsByLabel(window);
+                        Assert.Equal(SavedText, Assert.IsType<UiTextBox>(controls["Title"]).Text);
+                        Assert.True(Assert.IsType<CheckBox>(controls["Enabled"]).IsChecked);
+                        Assert.Equal("17", Assert.IsType<UiTextBox>(controls["Count"]).Text);
+                        Assert.Equal("dark", Assert.IsType<ComboBox>(controls["Theme"]).SelectedItem);
 
-                    Assert.IsType<UiTextBox>(controls["Title"]).Text = EditedText;
-                    Assert.IsType<CheckBox>(controls["Enabled"]).IsChecked = false;
-                    Assert.IsType<UiTextBox>(controls["Count"]).Text = "23.5";
-                    Assert.IsType<ComboBox>(controls["Theme"]).SelectedItem = "light";
+                        Assert.IsType<UiTextBox>(controls["Title"]).Text = EditedText;
+                        Assert.IsType<CheckBox>(controls["Enabled"]).IsChecked = false;
+                        Assert.IsType<UiTextBox>(controls["Count"]).Text = "23.5";
+                        Assert.IsType<ComboBox>(controls["Theme"]).SelectedItem = "light";
 
-                    var save = Assert.IsType<UiButton>(window.FindName("SaveButton"));
-                    save.RaiseEvent(new RoutedEventArgs(UiButton.ClickEvent));
-                    Assert.False(window.IsVisible, "Saving should close the modal settings window.");
-                }
-                catch (Exception exception)
-                {
-                    loadFailure = exception;
-                    window.Close();
-                }
+                        var save = Assert.IsType<UiButton>(window.FindName("SaveButton"));
+                        save.RaiseEvent(new RoutedEventArgs(UiButton.ClickEvent));
+                        Assert.False(window.IsVisible, "Saving should close the modal settings window.");
+                    }
+                    catch (Exception exception)
+                    {
+                        loadFailure = exception;
+                        window.Close();
+                    }
+                }));
             };
 
             try
