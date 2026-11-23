@@ -489,9 +489,11 @@ public class WidgetManager : IWidgetManager, IDisposable
             }
 
             var model = Widgets.FirstOrDefault(candidate =>
-                string.Equals(candidate.FilePath, profileWidget.FilePath, StringComparison.OrdinalIgnoreCase))
+                !matchedWidgetIds.Contains(candidate.Id)
+                && string.Equals(candidate.FilePath, profileWidget.FilePath, StringComparison.OrdinalIgnoreCase))
                 ?? Widgets.FirstOrDefault(candidate =>
-                    !string.IsNullOrWhiteSpace(profileWidget.Name)
+                    !matchedWidgetIds.Contains(candidate.Id)
+                    && !string.IsNullOrWhiteSpace(profileWidget.Name)
                     && string.Equals(candidate.Name, profileWidget.Name, StringComparison.OrdinalIgnoreCase));
 
             if (model is null)

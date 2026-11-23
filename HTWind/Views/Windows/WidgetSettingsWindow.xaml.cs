@@ -94,11 +94,7 @@ public partial class WidgetSettingsWindow : FluentWindow
             savedObject = null;
         }
 
-        JsonObject? savedSettings = null;
-        if (savedObject is not null)
-        {
-            savedSettings = savedObject[WidgetStorageService.SettingsKey] as JsonObject;
-        }
+        var savedSettings = savedObject;
 
         foreach (var field in _fields)
         {
@@ -382,7 +378,7 @@ public partial class WidgetSettingsWindow : FluentWindow
             case "number":
             {
                 var textBox = new UiTextBox { MinHeight = 32 };
-                textBox.Text = currentValue is null ? string.Empty : currentValue.ToJsonString().Trim('"');
+                textBox.Text = GetDisplayText(currentValue);
                 _inputControls[field.Key] = textBox;
                 container.Children.Add(textBox);
                 break;
@@ -404,7 +400,7 @@ public partial class WidgetSettingsWindow : FluentWindow
                     comboBox.Items.Add(option);
                 }
 
-                var currentText = currentValue is null ? null : currentValue.ToJsonString().Trim('"');
+                var currentText = currentValue is null ? null : GetDisplayText(currentValue);
                 comboBox.SelectedItem = field.Options.FirstOrDefault(option => option == currentText) ?? field.Options[0];
                 _inputControls[field.Key] = comboBox;
                 container.Children.Add(comboBox);
@@ -413,7 +409,7 @@ public partial class WidgetSettingsWindow : FluentWindow
             default:
             {
                 var textBox = new UiTextBox { MinHeight = 32 };
-                textBox.Text = currentValue is null ? string.Empty : currentValue.ToJsonString().Trim('"');
+                textBox.Text = GetDisplayText(currentValue);
                 _inputControls[field.Key] = textBox;
                 container.Children.Add(textBox);
                 break;
@@ -421,6 +417,13 @@ public partial class WidgetSettingsWindow : FluentWindow
         }
 
         return container;
+    }
+
+    private static string GetDisplayText(JsonNode? value)
+    {
+        return value is JsonValue scalar && scalar.TryGetValue<string>(out var text)
+            ? text
+            : value?.ToJsonString() ?? string.Empty;
     }
 
     private sealed class BooleanValueHost : FrameworkElement

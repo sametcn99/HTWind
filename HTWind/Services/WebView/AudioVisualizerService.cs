@@ -20,8 +20,10 @@ public sealed class AudioVisualizerService : IDisposable
     private const float SmoothingFactor = 0.45f;
 
     private readonly object _sync = new();
-    private WasapiLoopbackCapture? _capture;
-    private Timer? _idleTimer;
+    private readonly Func<IWaveIn> _captureFactory;
+    private readonly TimeProvider _timeProvider;
+    private IWaveIn? _capture;
+    private ITimer? _idleTimer;
     private float _peakLevel;
     private float _rmsLevel;
     private float[] _bandLevels = new float[DefaultBandCount];
@@ -31,6 +33,16 @@ public sealed class AudioVisualizerService : IDisposable
     private DateTime _lastDataReceivedUtc = DateTime.MinValue;
     private bool _isDisposed;
 
+    public AudioVisualizerService() : this(() => new WasapiLoopbackCapture(), TimeProvider.System)
+    {
+    }
+
+    internal AudioVisualizerService(Func<IWaveIn> captureFactory, TimeProvider timeProvider)
+    {
+        _captureFactory = captureFactory ?? throw new ArgumentNullException(nameof(captureFactory));
+        _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
+    }
+
     public object GetSnapshot(JsonElement? args)
     {
         ObjectDisposedException.ThrowIf(_isDisposed, this);
@@ -39,14 +51,14 @@ public sealed class AudioVisualizerService : IDisposable
         requestedBands = Math.Clamp(requestedBands, 4, 64);
 
         EnsureStarted();
-        _lastRequestUtc = DateTime.UtcNow;
+        _lastRequestUtc = _timeProvider.GetUtcNow().UtcDateTime;
         EnsureIdleTimer();
 
         lock (_sync)
         {
             // WASAPI loopback delivers no DataAvailable events during silence, so decay the last
             // values toward zero when capture data is stale instead of freezing them.
-            if (DateTime.UtcNow - _lastDataReceivedUtc > TimeSpan.FromMilliseconds(StaleDataDecayThresholdMilliseconds))
+            if (_timeProvider.GetUtcNow().UtcDateTime - _lastDataReceivedUtc > TimeSpan.FromMilliseconds(StaleDataDecayThresholdMilliseconds))
             {
                 const float decayFactor = 0.6f;
                 _peakLevel *= decayFactor;
@@ -125,16 +137,17 @@ public sealed class AudioVisualizerService : IDisposable
 
             try
             {
-                var capture = new WasapiLoopbackCapture();
+                var capture = _captureFactory();
+                _capture = capture;
                 capture.DataAvailable += Capture_DataAvailable;
                 capture.RecordingStopped += Capture_RecordingStopped;
                 capture.StartRecording();
-                _capture = capture;
                 _isCaptureFailed = false;
                 _lastError = null;
             }
             catch (Exception exception)
             {
+                StopCaptureCore();
                 _isCaptureFailed = true;
                 _lastError = exception.Message;
                 _capture = null;
@@ -151,10 +164,10 @@ public sealed class AudioVisualizerService : IDisposable
                 return;
             }
 
-            _idleTimer = new Timer(
+            _idleTimer = _timeProvider.CreateTimer(
                 _ =>
                 {
-                    if (DateTime.UtcNow - _lastRequestUtc > TimeSpan.FromMilliseconds(IdleStopDelayMilliseconds))
+                    if (_timeProvider.GetUtcNow().UtcDateTime - _lastRequestUtc > TimeSpan.FromMilliseconds(IdleStopDelayMilliseconds))
                     {
                         lock (_sync)
                         {
@@ -177,8 +190,15 @@ public sealed class AudioVisualizerService : IDisposable
     {
         lock (_sync)
         {
-            _capture?.Dispose();
+            if (sender is not IWaveIn capture || !ReferenceEquals(capture, _capture))
+            {
+                return;
+            }
+
             _capture = null;
+            capture.DataAvailable -= Capture_DataAvailable;
+            capture.RecordingStopped -= Capture_RecordingStopped;
+            capture.Dispose();
         }
     }
 
@@ -211,6 +231,10 @@ public sealed class AudioVisualizerService : IDisposable
                 for (var channel = 0; channel < channels; channel++)
                 {
                     var sample = waveBuffer.FloatBuffer[(frame * channels) + channel];
+                    if (!float.IsFinite(sample))
+                    {
+                        sample = 0;
+                    }
                     sampleSum += sample;
                     var absolute = Math.Abs(sample);
                     if (absolute > peak)
@@ -229,7 +253,12 @@ public sealed class AudioVisualizerService : IDisposable
 
             lock (_sync)
             {
-                _lastDataReceivedUtc = DateTime.UtcNow;
+                if (_isDisposed || !ReferenceEquals(sender, _capture))
+                {
+                    return;
+                }
+
+                _lastDataReceivedUtc = _timeProvider.GetUtcNow().UtcDateTime;
                 _peakLevel = Math.Clamp(peak, 0, 1);
                 _rmsLevel = Math.Clamp(rms, 0, 1);
 
@@ -345,6 +374,13 @@ public sealed class AudioVisualizerService : IDisposable
             capture.DataAvailable -= Capture_DataAvailable;
             capture.RecordingStopped -= Capture_RecordingStopped;
             capture.StopRecording();
+        }
+        catch
+        {
+        }
+
+        try
+        {
             capture.Dispose();
         }
         catch

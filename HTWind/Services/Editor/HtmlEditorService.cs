@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 using HTWind.Services.WebView;
 using Microsoft.Web.WebView2.Core;
@@ -14,6 +15,7 @@ public sealed class EditorDocumentState
 
     public string Language { get; init; } = "plaintext";
 
+    [JsonPropertyName("dirty")]
     public bool IsDirty { get; init; }
 }
 

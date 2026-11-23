@@ -58,7 +58,7 @@ public partial class ProfileNameInputWindow : FluentWindow
 
     private void Confirm_Click(object sender, RoutedEventArgs e)
     {
-        if (IsDeletionMode)
+        if (IsDeletionMode && ExistingProfileNames is { Count: > 0 })
         {
             DialogResult = true;
             Close();
