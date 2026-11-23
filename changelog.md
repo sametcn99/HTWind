@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## v0.3.2
+
+### Improved
+
+- Expanded automated coverage to 639 desktop, web, and browser scenarios, including real WPF dialogs, Monaco editing, widget settings, workspace profiles, permissions, and audio processing.
 
 ### Fixed
 
@@ -8,6 +12,12 @@
 - Kept read-only PowerShell access restricted when bundling the SDK by blocking module and assembly imports, external scripts, and commands outside the registered allowlist (#9).
 - Fixed widget removal leaving orphaned desktop windows, cancelled pending window creation on removal, and preserved shared content until the last duplicate is removed (#9).
 - Added an accessible remove button to each widget's interaction overlay (#9).
+- Fixed the Monaco editor's unsaved-change tracking and widget settings displaying or saving escaped text incorrectly.
+- Fixed workspace profile restoration when multiple widget instances share the same HTML file, and the profile name dialog's empty-list fallback.
+- Improved recovery from malformed widget state, profiles, permissions, and storage, while preserving valid records and preventing settings node ownership errors.
+- Fixed manifest validation for invalid widget entries and duplicate widget roots, and PowerShell working directories containing spaces, quotes, or brackets.
+- Improved audio capture cleanup, restart handling, stale-event rejection, and handling of non-finite samples.
+- Fixed landing page release and cache validation, including nullable GitHub release metadata and cancelled requests updating stale state.
 
 ## v0.3.1
 
