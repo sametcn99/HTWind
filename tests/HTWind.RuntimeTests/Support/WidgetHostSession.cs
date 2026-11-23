@@ -11,6 +11,9 @@ using HTWind.Services.WebView;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 
+using Wpf.Ui.Appearance;
+using Wpf.Ui.Markup;
+
 using Xunit;
 
 namespace HTWind.RuntimeTests.Support;
@@ -30,6 +33,7 @@ public sealed class WidgetHostSession : IAsyncLifetime
     };
 
     private readonly StaRunner _sta = new();
+    private Application? _application;
     private readonly TaskCompletionSource _bridgeReady = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private Window? _window;
     private WebView2? _webView;
@@ -69,6 +73,8 @@ public sealed class WidgetHostSession : IAsyncLifetime
     /// <summary>Runs arbitrary async work on the session's STA thread.</summary>
     public Task<T> RunOnStaAsync<T>(Func<Task<T>> action) => _sta.RunAsync(action);
 
+    public Task RunOnStaAsync(Func<Task> action) => _sta.RunAsync(action);
+
     /// <summary>
     ///     WidgetRuntimeConsole entries forwarded through the production console hook since the
     ///     last navigation (console.log/error, uncaught errors, unhandled rejections).
@@ -82,6 +88,12 @@ public sealed class WidgetHostSession : IAsyncLifetime
         await _sta.RunAsync(async () =>
         {
             Environment.SetEnvironmentVariable(TestPaths.DataDirEnvironmentVariable, TestPaths.DataRoot);
+
+            // Fluent dialogs require the same application resources and dispatcher as
+            // the desktop app. A plain Application avoids running HTWind's startup flow.
+            _application = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+            _application.Resources.MergedDictionaries.Add(new ThemesDictionary { Theme = ApplicationTheme.Dark });
+            _application.Resources.MergedDictionaries.Add(new ControlsDictionary());
 
             File.WriteAllText(WidgetFilePath, "<html><body>probe</body></html>", Encoding.UTF8);
 
@@ -148,6 +160,8 @@ public sealed class WidgetHostSession : IAsyncLifetime
 
                 _window?.Close();
                 _window = null;
+                _application?.Shutdown();
+                _application = null;
                 return true;
             });
         }

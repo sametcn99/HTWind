@@ -14,13 +14,12 @@ using Xunit;
 namespace HTWind.RuntimeTests;
 
 [Collection(WebView2Collection.CollectionName)]
-public sealed class DialogInteractionTests
+public sealed class DialogInteractionTests(WidgetHostSession session)
 {
     [Fact]
     public async Task ProfileNameInput_CreateTrimsNameAndReturnsConfirmation()
     {
-        using var sta = new StaRunner();
-        await sta.RunAsync(async () =>
+        await session.RunOnStaAsync(async () =>
         {
             var window = CreateOffscreen(new ProfileNameInputWindow());
             ShowDialogAndDrive(window, () =>
@@ -38,8 +37,7 @@ public sealed class DialogInteractionTests
     [Fact]
     public async Task ProfileNameInput_BlankConfirmationKeepsDialogOpenAndCancelReturnsNoName()
     {
-        using var sta = new StaRunner();
-        await sta.RunAsync(async () =>
+        await session.RunOnStaAsync(async () =>
         {
             var window = CreateOffscreen(new ProfileNameInputWindow());
             var remainedOpenAfterBlank = false;
@@ -61,8 +59,7 @@ public sealed class DialogInteractionTests
     [Fact]
     public async Task ProfileNameInput_CancelReturnsFalse()
     {
-        using var sta = new StaRunner();
-        await sta.RunAsync(async () =>
+        await session.RunOnStaAsync(async () =>
         {
             var window = CreateOffscreen(new ProfileNameInputWindow());
             ShowDialogAndDrive(window, () => ClickButton(window, "WidgetSettings_Cancel"));
@@ -76,8 +73,7 @@ public sealed class DialogInteractionTests
     [Fact]
     public async Task ProfileNameInput_DeletionSelectsFirstThenTracksChangedSelection()
     {
-        using var sta = new StaRunner();
-        await sta.RunAsync(async () =>
+        await session.RunOnStaAsync(async () =>
         {
             var window = CreateOffscreen(new ProfileNameInputWindow
             {
@@ -103,8 +99,7 @@ public sealed class DialogInteractionTests
     [Fact]
     public async Task ProfileNameInput_DeletionWithoutNamesFallsBackToCreateInput()
     {
-        using var sta = new StaRunner();
-        await sta.RunAsync(async () =>
+        await session.RunOnStaAsync(async () =>
         {
             var window = CreateOffscreen(new ProfileNameInputWindow
             {
@@ -130,8 +125,7 @@ public sealed class DialogInteractionTests
     [InlineData("PowerShellPermissionDialog_Deny", PowerShellExecutionDecision.Deny)]
     public async Task PowerShellPermission_ButtonsReturnTheirDecision(string buttonKey, PowerShellExecutionDecision expected)
     {
-        using var sta = new StaRunner();
-        await sta.RunAsync(async () =>
+        await session.RunOnStaAsync(async () =>
         {
             var window = CreateOffscreen(new PowerShellPermissionWindow("Weather Widget", suggestFullAccess: true));
             ShowDialogAndDrive(window, () => ClickButton(window, buttonKey));
@@ -145,8 +139,7 @@ public sealed class DialogInteractionTests
     [Fact]
     public async Task PowerShellPermission_TitleBarCloseLeavesDecisionUnset()
     {
-        using var sta = new StaRunner();
-        await sta.RunAsync(async () =>
+        await session.RunOnStaAsync(async () =>
         {
             var window = CreateOffscreen(new PowerShellPermissionWindow("Weather Widget", suggestFullAccess: false));
             ShowDialogAndDrive(window, window.Close);
@@ -160,8 +153,7 @@ public sealed class DialogInteractionTests
     [Fact]
     public async Task WidgetPermission_AllowSetsAllowedAndTrueDialogResult()
     {
-        using var sta = new StaRunner();
-        await sta.RunAsync(async () =>
+        await session.RunOnStaAsync(async () =>
         {
             var window = CreateOffscreen(new WidgetPermissionDecisionWindow("Clipboard read", "Notes Widget"));
             ShowDialogAndDrive(window, () => ClickButton(window, "WidgetPermissionDialog_Allow"));
@@ -175,8 +167,7 @@ public sealed class DialogInteractionTests
     [Fact]
     public async Task WidgetPermission_DenySetsFalseDialogResult()
     {
-        using var sta = new StaRunner();
-        await sta.RunAsync(async () =>
+        await session.RunOnStaAsync(async () =>
         {
             var window = CreateOffscreen(new WidgetPermissionDecisionWindow("Clipboard read", "Notes Widget"));
             ShowDialogAndDrive(window, () => ClickButton(window, "WidgetPermissionDialog_Deny"));
@@ -190,8 +181,7 @@ public sealed class DialogInteractionTests
     [Fact]
     public async Task WidgetPermission_TitleBarCloseLeavesDefaultDenial()
     {
-        using var sta = new StaRunner();
-        await sta.RunAsync(async () =>
+        await session.RunOnStaAsync(async () =>
         {
             var window = CreateOffscreen(new WidgetPermissionDecisionWindow("Clipboard read", "Notes Widget"));
             ShowDialogAndDrive(window, window.Close);
@@ -205,8 +195,7 @@ public sealed class DialogInteractionTests
     [Fact]
     public async Task CreateWidgetWithEditor_CreateTrimsNameAndReturnsBothToggleValues()
     {
-        using var sta = new StaRunner();
-        await sta.RunAsync(async () =>
+        await session.RunOnStaAsync(async () =>
         {
             var window = CreateOffscreen(new CreateWidgetWithEditorWindow());
             ShowDialogAndDrive(window, () =>
@@ -228,8 +217,7 @@ public sealed class DialogInteractionTests
     [Fact]
     public async Task CreateWidgetWithEditor_CancelReturnsFalseAndDoesNotAcceptName()
     {
-        using var sta = new StaRunner();
-        await sta.RunAsync(async () =>
+        await session.RunOnStaAsync(async () =>
         {
             var window = CreateOffscreen(new CreateWidgetWithEditorWindow());
             ShowDialogAndDrive(window, () =>

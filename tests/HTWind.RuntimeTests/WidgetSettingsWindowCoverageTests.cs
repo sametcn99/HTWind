@@ -16,7 +16,7 @@ using Xunit;
 namespace HTWind.RuntimeTests;
 
 [Collection(WebView2Collection.CollectionName)]
-public sealed class WidgetSettingsWindowCoverageTests
+public sealed class WidgetSettingsWindowCoverageTests(WidgetHostSession session)
 {
     [Fact]
     public async Task LoadedWindow_ShowsSavedValuesAndSavePersistsAllControlTypes()
@@ -32,8 +32,7 @@ public sealed class WidgetSettingsWindowCoverageTests
             ["theme"] = "dark",
         });
 
-        using var sta = new StaRunner();
-        await sta.RunAsync<bool>(() =>
+        await session.RunOnStaAsync<bool>(() =>
         {
             var callbackCount = 0;
             var window = CreateWindow(widget, api, () => callbackCount++);
@@ -55,6 +54,7 @@ public sealed class WidgetSettingsWindowCoverageTests
 
                     var save = Assert.IsType<UiButton>(window.FindName("SaveButton"));
                     save.RaiseEvent(new RoutedEventArgs(UiButton.ClickEvent));
+                    Assert.False(window.IsVisible, "Saving should close the modal settings window.");
                 }
                 catch (Exception exception)
                 {
@@ -97,8 +97,7 @@ public sealed class WidgetSettingsWindowCoverageTests
         var widget = new WidgetModel { Id = "no-schema", FilePath = widgetFile };
         var api = new WidgetHostApiService();
 
-        using var sta = new StaRunner();
-        await sta.RunAsync(async () =>
+        await session.RunOnStaAsync(async () =>
         {
             var window = CreateWindow(widget, api);
             try
