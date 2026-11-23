@@ -1,4 +1,3 @@
-import { FluentProvider, webDarkTheme } from "@fluentui/react-components";
 import { useEffect, useState } from "react";
 import i18n from "./i18n/setup";
 import "./App.css";
@@ -6,15 +5,13 @@ import { HeroSection } from "./components/hero/HeroSection";
 import { Banner } from "./components/layout/Banner";
 import { Footer } from "./components/layout/Footer";
 import { ScreenshotLightbox } from "./components/media/ScreenshotLightbox";
-import { BuiltInWidgetsSection } from "./components/sections/BuiltInWidgetsSection";
-import { CommunitySection } from "./components/sections/CommunitySection";
-import { FaqSection } from "./components/sections/FaqSection";
-import { FeatureCardsSection } from "./components/sections/FeatureCardsSection";
-import { HighlightsSection } from "./components/sections/HighlightsSection";
-import { OverviewSection } from "./components/sections/OverviewSection";
-import { SupportSection } from "./components/sections/SupportSection";
-import { UseCasesSection } from "./components/sections/UseCasesSection";
-import { WidgetPackagesSection } from "./components/sections/WidgetPackagesSection";
+import {
+	AppShowcase,
+	BuilderSection,
+	FaqSection,
+	ProductFacts,
+	WidgetCollection,
+} from "./components/sections/LandingSections";
 import type { ScreenshotItem } from "./config/types";
 import { useHeadMetadata } from "./hooks/useHeadMetadata";
 import { useLatestRelease } from "./hooks/useLatestRelease";
@@ -28,7 +25,6 @@ import {
 } from "./i18n/locales";
 import { getLocaleMessages } from "./i18n/resources";
 import { readSavedLocale, writeSavedLocale } from "./lib/storage";
-import { useAppStyles } from "./styles/appStyles";
 
 function getResolvedLocale(): LocaleCode {
 	return (
@@ -37,7 +33,6 @@ function getResolvedLocale(): LocaleCode {
 }
 
 function App() {
-	const styles = useAppStyles();
 	const [locale, setLocale] = useState<LocaleCode>(() => getResolvedLocale());
 	const messages = getLocaleMessages(locale);
 	const [selectedImage, setSelectedImage] = useState<ScreenshotItem | null>(
@@ -108,37 +103,32 @@ function App() {
 
 	return (
 		<LocaleProvider locale={locale} changeLocale={changeLocale}>
-			<FluentProvider theme={webDarkTheme} className={styles.page}>
-				<a href="#main-content" className={styles.skipLink}>
+			<div className="site" id="top">
+				<a href="#main-content" className="skip-link">
 					{messages.a11y.skipToContent}
 				</a>
-				<main id="main-content" className={styles.shell}>
-					<header>
-						<Banner />
-					</header>
+				<Banner />
+				<main id="main-content" tabIndex={-1}>
 					<HeroSection
 						isLoadingRelease={isLoadingRelease}
 						releaseText={releaseText}
 						releaseDate={releaseDate}
 						latestReleaseUrl={latestRelease?.html_url}
 						latestAssets={latestAssets}
+						onSelectImage={setSelectedImage}
 					/>
-					<HighlightsSection />
-					<OverviewSection onSelectImage={setSelectedImage} />
-					<FeatureCardsSection />
-					<BuiltInWidgetsSection />
-					<WidgetPackagesSection />
-					<UseCasesSection />
-					<CommunitySection />
+					<ProductFacts />
+					<AppShowcase onSelectImage={setSelectedImage} />
+					<WidgetCollection />
+					<BuilderSection />
 					<FaqSection />
-					<SupportSection />
 				</main>
 				<Footer />
 				<ScreenshotLightbox
 					selectedImage={selectedImage}
 					onClose={() => setSelectedImage(null)}
 				/>
-			</FluentProvider>
+			</div>
 		</LocaleProvider>
 	);
 }

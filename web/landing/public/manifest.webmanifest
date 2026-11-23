@@ -4,8 +4,8 @@
 	"description": "HTWind is a Windows desktop widget manager with HTML templates and PowerShell tooling.",
 	"start_url": "/",
 	"display": "standalone",
-	"background_color": "#0b1019",
-	"theme_color": "#0b1019",
+	"background_color": "#f6f5f0",
+	"theme_color": "#f6f5f0",
 	"icons": [
 		{
 			"src": "/android-chrome-192x192.png",

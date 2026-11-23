@@ -1,23 +1,7 @@
-import {
-	Body1,
-	Button,
-	Caption1,
-	Card,
-	Link,
-	Spinner,
-} from "@fluentui/react-components";
-import { Code24Regular, Open24Regular } from "@fluentui/react-icons";
-import {
-	GITHUB_DISCUSSIONS_URL,
-	GITHUB_REPOSITORY_URL,
-	MICROSOFT_STORE_BADGE_URL,
-	MICROSOFT_STORE_URL,
-	REDDIT_COMMUNITY_URL,
-	RELEASES_URL,
-} from "../../config/constants";
-import type { GitHubReleaseAsset } from "../../config/types";
+import { RELEASES_URL } from "../../config/constants";
+import type { GitHubReleaseAsset, ScreenshotItem } from "../../config/types";
+import { interpolate } from "../../i18n/interpolate";
 import { useLocale } from "../../i18n/LocaleContext";
-import { useAppStyles } from "../../styles/appStyles";
 import { DownloadMenu } from "./DownloadMenu";
 
 type HeroSectionProps = {
@@ -26,6 +10,7 @@ type HeroSectionProps = {
 	releaseDate: string;
 	latestReleaseUrl?: string;
 	latestAssets: GitHubReleaseAsset[];
+	onSelectImage: (image: ScreenshotItem) => void;
 };
 
 export function HeroSection({
@@ -34,130 +19,59 @@ export function HeroSection({
 	releaseDate,
 	latestReleaseUrl,
 	latestAssets,
+	onSelectImage,
 }: HeroSectionProps) {
-	const styles = useAppStyles();
 	const { messages } = useLocale();
-
+	const screenshot = messages.content.overviewScreenshots[0];
 	return (
-		<Card className={styles.heroCard}>
-			<div className={styles.heroTopRow}>
-				<div className={styles.heroCopyBlock}>
-					<Caption1 className={styles.heroEyebrow}>
-						{messages.hero.eyebrow}
-					</Caption1>
-					<h1 className={styles.heroHeading}>{messages.hero.heading}</h1>
-					<p className={styles.heroDescription}>{messages.hero.description}</p>
-					<div className={styles.heroProofList}>
-						{messages.hero.proofPoints.map((item) => (
-							<div key={item} className={styles.heroProofItem}>
-								<Caption1 className={styles.releaseTitle}>
-									{messages.hero.includedLabel}
-								</Caption1>
-								<span>{item}</span>
-							</div>
-						))}
-					</div>
-
-					<div className={styles.buttonRow}>
-						<DownloadMenu
-							isLoadingRelease={isLoadingRelease}
-							latestAssets={latestAssets}
-						/>
-
-						<Button
-							as="a"
-							href={GITHUB_REPOSITORY_URL}
-							target="_blank"
-							rel="noreferrer noopener"
-							icon={<Code24Regular aria-hidden="true" focusable="false" />}
-							className={styles.ghostButton}
-							size="large"
-						>
-							{messages.hero.githubButton}
-						</Button>
-
-						<Button
-							as="a"
-							href={latestReleaseUrl ?? RELEASES_URL}
-							target="_blank"
-							rel="noreferrer noopener"
-							icon={<Open24Regular aria-hidden="true" focusable="false" />}
-							className={styles.ghostButton}
-							size="large"
-						>
-							{messages.hero.releaseNotesButton}
-						</Button>
-					</div>
-
-					<Body1 className={styles.communityNotice}>
-						{messages.hero.communityNotice}
-					</Body1>
+		<section className="hero wrap" aria-labelledby="hero-heading">
+			<div className="hero-copy">
+				<p className="eyebrow">
+					<span className="status-dot" />
+					{messages.design.eyebrow}
+				</p>
+				<h1 id="hero-heading">{messages.design.heroHeading}</h1>
+				<p className="hero-description">{messages.design.heroDescription}</p>
+				<DownloadMenu
+					isLoadingRelease={isLoadingRelease}
+					latestAssets={latestAssets}
+				/>
+				<div className="release-meta" aria-live="polite">
+					<a
+						href={latestReleaseUrl ?? RELEASES_URL}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{releaseText}
+					</a>
+					<span>{releaseDate}</span>
 				</div>
-
-				<aside className={styles.releaseCard} aria-live="polite">
-					<Caption1 className={styles.releaseTitle}>
-						{messages.hero.releaseCard.title}
-					</Caption1>
-					<span className={styles.releaseValue}>
-						{isLoadingRelease ? (
-							<Spinner
-								size="tiny"
-								labelPosition="after"
-								label={messages.hero.releaseCard.loadingLabel}
-							/>
-						) : (
-							releaseText
-						)}
-					</span>
-					<Caption1 className={styles.releaseMeta}>{releaseDate}</Caption1>
-					<div className={styles.releaseChannelList}>
-						{messages.hero.releaseCard.channels.map((channel) => (
-							<div key={channel.name} className={styles.releaseChannelItem}>
-								<span className={styles.releaseChannelLabel}>
-									{channel.name}
-								</span>
-								<Caption1 className={styles.dropdownItemMeta}>
-									{channel.description}
-								</Caption1>
-							</div>
-						))}
-					</div>
-					<div className={styles.storeBadgeContainer}>
-						<a
-							href={MICROSOFT_STORE_URL}
-							target="_blank"
-							rel="noopener noreferrer"
-							aria-label={messages.hero.releaseCard.storeAriaLabel}
-						>
-							<img
-								src={MICROSOFT_STORE_BADGE_URL}
-								width="160"
-								alt={messages.hero.releaseCard.storeImageAlt}
-								className={styles.storeBadgeImage}
-							/>
-						</a>
-					</div>
-					<Caption1 className={styles.releaseMeta}>
-						{messages.hero.releaseCard.communityPrefix}{" "}
-						<Link
-							href={GITHUB_DISCUSSIONS_URL}
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							{messages.hero.releaseCard.communityGithubLabel}
-						</Link>{" "}
-						{messages.hero.releaseCard.communityConnector}{" "}
-						<Link
-							href={REDDIT_COMMUNITY_URL}
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							{messages.hero.releaseCard.communityRedditLabel}
-						</Link>
-						{messages.hero.releaseCard.communitySuffix}
-					</Caption1>
-				</aside>
 			</div>
-		</Card>
+			<figure className="hero-figure">
+				<div className="hero-image-mat">
+					<button
+						type="button"
+						className="screenshot-button"
+						onClick={() => onSelectImage(screenshot)}
+						aria-label={interpolate(messages.sections.overview.viewLarger, {
+							alt: screenshot.alt,
+						})}
+					>
+						<img
+							className="hero-screenshot"
+							src={screenshot.src}
+							alt={screenshot.alt}
+							width="1380"
+							height="990"
+							fetchPriority="high"
+						/>
+					</button>
+				</div>
+				<figcaption>
+					<span>HTWind / Windows</span>
+					<span>{messages.design.library}</span>
+				</figcaption>
+			</figure>
+		</section>
 	);
 }

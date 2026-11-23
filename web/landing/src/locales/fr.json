@@ -37,55 +37,8 @@
 			"uk": "Українська"
 		}
 	},
-	"banner": {
-		"text": "Hôte de widgets open source sur Windows pour les outils HTML, PowerShell et packages."
-	},
-	"hero": {
-		"eyebrow": "Plateforme de widgets de bureau native sous Windows",
-		"heading": "Construisez un bureau plus propre à l'aide de widgets HTML",
-		"description": "HTWind offre un hôte esthétique pour les widgets HTML, les imports de paquets, les outils d'interface et des actions de PowerShell contrôlées sans jamais quitter le flux de travail natif de Windows.",
-		"includedLabel": "Inclus",
-		"proofPoints": [
-			"Création en HTML, CSS, JavaScript et rendu natif par WebView2",
-			"Paquets par manifestes pour intégrer de multiples ressources locales",
-			"Actions PowerShell contrôlées avec autorisations par widget",
-			"API hôtes natives pour métriques système, audio, contrôle multimédia, stockage et thèmes"
-		],
-		"githubButton": "Voir sur GitHub",
-		"releaseNotesButton": "Notes de version",
-		"communityNotice": "L'installeur est l'approche recommandée par défaut. Les formats ZIP portables et le Microsoft Store restent à votre disposition pour le déploiement.",
-		"releaseCard": {
-			"title": "Dernière version",
-			"loadingLabel": "Chargement...",
-			"channels": [
-				{
-					"name": "Programme d'installation",
-					"description": "Recommandé pour une installation parfaite."
-				},
-				{
-					"name": "Portable ZIP",
-					"description": "Idéal pour une exécution en mode manuel, sans droits admin."
-				},
-				{
-					"name": "Microsoft Store",
-					"description": "Adapté aux mises à jour rapides des environnements gérés."
-				}
-			],
-			"storeAriaLabel": "L'obtenir sur Microsoft Store",
-			"storeImageAlt": "Microsoft Store",
-			"communityPrefix": "Partagez sur",
-			"communityGithubLabel": "GitHub Discussions",
-			"communityConnector": "et",
-			"communityRedditLabel": "Reddit",
-			"communitySuffix": "."
-		}
-	},
 	"downloadMenu": {
-		"loading": "Vérification en cours...",
-		"empty": "Aucun téléchargement",
-		"choose": "Choisir une archive ({count})",
 		"title": "Recommandé : Exécutable (*.exe)",
-		"hint": "Installez en mode natif. Des archives autonomes sont plus bas.",
 		"ariaLabel": "Ressources à télécharger",
 		"descriptions": {
 			"installer": "Installation Windows traditionnelle",
@@ -104,61 +57,21 @@
 	},
 	"sections": {
 		"highlights": {
-			"heading": "Un outil de bureau orienté productivité",
-			"lead": "L'application fonctionne pour que les passionnés puissent façonner quotidiennement leur interface informatique sans ralentissements.",
 			"ariaLabel": "Résumé du projet"
 		},
 		"overview": {
-			"heading": "Aperçus du tableau de bord",
 			"screenshotHint": "Cliquez pour agrandir.",
 			"viewLarger": "Agrandir l'image {alt}"
 		},
-		"features": {
-			"heading": "Un ensemble de capacités fondamentales",
-			"lead": "Une base minimaliste avec tout l'outillage pour la personnalisation des widgets."
-		},
 		"widgets": {
-			"heading": "Basez-vous sur l'existant, puis modulez",
-			"lead": "L'installation vient avec chrono, données en direct et autres utilitaires prêts à être redessinés.",
-			"documentationPrefix": "Plus d'instructions sur le",
-			"documentationLinkLabel": "dépôt officiel",
-			"documentationSuffix": ".",
-			"promptPrefix": "Générez avec l'Intelligence Artificielle en utilisant le",
-			"promptLabel": "Prompt de génération Web HTWind",
-			"promptConnector": "voire sa",
-			"sharedPromptLabel": "version raccourcie",
-			"promptSuffix": "pour accélérer la cadence."
+			"promptLabel": "Prompt de génération Web HTWind"
 		},
 		"packages": {
-			"heading": "Importez multiples configurations d'un coup",
-			"flowHeading": "Organigramme classique",
-			"schemaPrefix": "Vous pouvez observer le",
 			"schemaLabel": "schéma JSON",
-			"schemaConnector": "ou vérifier",
-			"exampleLabel": "le répertoire factice",
-			"schemaSuffix": "pour y voir plus clair."
-		},
-		"useCases": {
-			"heading": "Dans quels cas s'en servir ?",
-			"lead": "Idéal pour concevoir un dashboard privé ou l'utiliser comme centre technique en local."
-		},
-		"community": {
-			"heading": "Partage de savoir et créations collaboratives",
-			"lead": "Tout développeur peut diffuser ses créations pour enrichir l'écosystème.",
-			"visitPrefix": "Rejoignez",
-			"githubLinkLabel": "Discussions HTWind",
-			"visitConnector": "et",
-			"redditLinkLabel": "le Subreddit dédié",
-			"visitSuffix": "pour y proposer vos améliorations."
-		},
-		"faq": {
-			"heading": "Foires Aux Questions",
-			"lead": "Obtenez des indices rapides aux blocages courants."
+			"exampleLabel": "le répertoire factice"
 		},
 		"support": {
-			"heading": "Permettre le développement continu",
-			"lead": "En cas de bénéfice notable grâce au logiciel, votre mécénat donne vie aux prochaines mises à jour.",
-			"button": "Agir et Soutenir"
+			"heading": "Permettre le développement continu"
 		}
 	},
 	"footer": {
@@ -220,42 +133,8 @@
 				"label": "Sauvegardez l'HTML, il s'actualise au vol"
 			},
 			{
-				"value": "WebView2",
-				"label": "La puissance Chromium au profit de l'App"
-			},
-			{
 				"value": "GPLv3",
 				"label": "Licence libératrice pour codeurs"
-			},
-			{
-				"value": "Masquage Auto",
-				"label": "Disparition si vous lancez un film HD",
-				"spanTwo": true
-			},
-			{
-				"value": "Editeur Interne",
-				"label": "Modifications simples dans HTWind",
-				"spanTwo": true
-			},
-			{
-				"value": "Dossiers Emballés",
-				"label": "Fichiers zip transformés en UI locales",
-				"spanTwo": true
-			},
-			{
-				"value": "Système Intégré",
-				"label": "Autorisations par widget avec un mode lecture seule isolé",
-				"spanTwo": true
-			},
-			{
-				"value": "API hôtes natives",
-				"label": "Métriques système, niveaux audio, sessions multimédias, stockage et ponts de thème sans aucun processus",
-				"spanTwo": true
-			},
-			{
-				"value": "Profils d'espace de travail",
-				"label": "Enregistrez et changez des dispositions complètes de widgets depuis le menu de la barre",
-				"spanTwo": true
 			}
 		],
 		"featureCards": [
@@ -274,48 +153,6 @@
 				"description": "Comportement de la barre système, épinglage au-dessus ou sur la couche du bureau, alignement magnétique des fenêtres, opacité et zoom par widget, profils d'espace de travail et masquage adapté à l'écran rendent les widgets natifs à Windows.",
 				"icon": "windows"
 			}
-		],
-		"workflowUseCases": [
-			"Concentration optimisée avec petits agendas clairs et utiles.",
-			"Tutoriels ou bloc-notes maintenus accrochés verticalement.",
-			"Script d'extinction quotidienne et maintenance à la demande.",
-			"Création de portails locaux de la flotte d'un bureau IT.",
-			"Partage d'un setup de streaming vidéo pour des configurations homogènes."
-		],
-		"widgetPackageParagraphs": [
-			"Fini l'ancien concept d'injecter tous le code CSS et Image en texte base64 dans un long document incompréhensible.",
-			"Ouvrez un dossier, posez un htwind.widget.json et vous avez à présent un véritable mini site.",
-			"Exportez ensuite le tout d'un simple clic pour un collègue sous la même version."
-		],
-		"widgetPackageCapabilities": [
-			{
-				"title": "Support des Assets",
-				"description": "Accès fluide aux images et polices de caractères du dossier sans CDN lourd."
-			},
-			{
-				"title": "Multi-Instances Groupées",
-				"description": "Récoltez divers services connectés en appelant une unique source centrale."
-			},
-			{
-				"title": "Aides à la frappe",
-				"description": "Le langage valide par JSON schéma vos écrits dans l'IDE pour éviter tout plantage systémique."
-			},
-			{
-				"title": "Facile à partager",
-				"description": "Une extension zippée que tout utilisateur HTWind peut aspirer en quelques clics."
-			}
-		],
-		"widgetPackageSteps": [
-			"Faites une boîte vide sur Windows.",
-			"Glissez les divers composants web nécessaires avec un manifest lié.",
-			"Veillez aux chemins internes via système relatif.",
-			"Faites un Drag & Drop sur l'écusson HTWind."
-		],
-		"communitySharingSteps": [
-			"Infiltrez Reddit pour poster vos nouvelles configurations visuelles.",
-			"Agrémentez par des copies d'écran claires du système en marche.",
-			"Précisez la documentation pour le côté script au PowerShell.",
-			"Ajoutez des logs pour les potentiels mises à niveau."
 		],
 		"faqItems": [
 			{
@@ -357,10 +194,6 @@
 				"answer": "Théoriquement le nombre géré est virtuellement sans limitation technique brutale de l'environnement."
 			}
 		],
-		"overviewParagraphs": [
-			"Un environnement de codage accessible avec WebView2, couplé à la performance de la compilation WPF et .Net.",
-			"L'application est conçue pour ceux qui veulent une couche de widgets légère mais extensible : intégration à la barre système, épinglage au-dessus ou sur la couche du bureau, alignement magnétique, opacité et zoom par widget, profils d'espace de travail, widgets empaquetés et masquage adapté à l'écran transforment un bureau Windows standard en un espace de travail plus utile."
-		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
@@ -379,5 +212,32 @@
 				"alt": "Versionnage et Moteurs de licence"
 			}
 		]
+	},
+	"design": {
+		"navExplore": "L’application",
+		"navBuild": "Créer un widget",
+		"navFaq": "Questions",
+		"download": "Télécharger pour Windows",
+		"otherDownloads": "Autres téléchargements",
+		"eyebrow": "Widgets open source pour Windows",
+		"heroHeading": "Des outils utiles.\nSur votre bureau.",
+		"heroDescription": "Horloges, statistiques système et raccourcis. Choisissez un widget, placez-le et reprenez votre activité.",
+		"appHeading": "Les outils du quotidien.",
+		"appDescription": "Ajoutez un widget. Personnalisez-le. Gardez-le à portée de main.",
+		"library": "Bibliothèque",
+		"gallery": "Galerie",
+		"settings": "Paramètres",
+		"widgetsHeading": "Commencez par l’utile.",
+		"buildHeading": "Un peu de HTML suffit.",
+		"buildDescription": "Créez un widget en HTML, CSS et JavaScript. Modifiez-le dans l’application, prévisualisez les changements et partagez-le en paquet.",
+		"docs": "Lire la documentation",
+		"source": "Voir le code",
+		"communityHeading": "Conçu pour être partagé.",
+		"communityDescription": "Publiez vos widgets, montrez votre bureau ou contribuez à la prochaine version.",
+		"faqHeading": "Quelques réponses.",
+		"zoomIn": "Agrandir",
+		"zoomOut": "Réduire",
+		"resetZoom": "Réinitialiser le zoom",
+		"backToTop": "Retour en haut"
 	}
 }

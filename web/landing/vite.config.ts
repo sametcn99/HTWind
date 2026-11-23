@@ -16,10 +16,6 @@ export default defineConfig({
 						return;
 					}
 
-					if (id.includes("@fluentui")) {
-						return "fluentui";
-					}
-
 					if (
 						id.includes("react-zoom-pan-pinch") ||
 						id.includes("use-sync-external-store")

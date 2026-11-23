@@ -37,55 +37,8 @@
 			"uk": "Українська"
 		}
 	},
-	"banner": {
-		"text": "Stwórz czysty ekran! Otwartoźródłowa baza dla integracji widżetów stron WEB oraz skryptów w ekosystemie Windows"
-	},
-	"hero": {
-		"eyebrow": "Natywna Platforma Integracji Aplikacji Pulpitu",
-		"heading": "Skonstruuj czysty pulpit Windows dzięki widżetom HTML",
-		"description": "Rozwiązanie ułatwiające uruchamianie stałych narzędzi i paneli informatycznych używając HTML. Z zachowaniem kontroli systemu, z interfejsami API automatyzującymi komendy PowerShell.",
-		"includedLabel": "Zestaw posiada:",
-		"proofPoints": [
-			"Wsparcie renderu HTML, CSS i nowoczesnego JS na architekturze WebView2",
-			"Skonstruowane instalacje JSON z paczkami i zasobami z trybem Offline",
-			"Kontrolowane akcje PowerShell z uprawnieniami dla każdego widżetu",
-			"Natywne API hosta dla metryk systemu, dźwięku, sterowania multimediami, pamięci i motywów"
-		],
-		"githubButton": "Wejdź na stronę GitHub",
-		"releaseNotesButton": "Zmiany najnowszego wydania",
-		"communityNotice": "Instalator z opcją EXE to najlepsza rekomendacja. Dla wdrożeń manualnych, mamy paczki systemowe MS Store i wersje ZIP typu Portable.",
-		"releaseCard": {
-			"title": "Obecna Wersja",
-			"loadingLabel": "Trwa poszukiwanie informacji",
-			"channels": [
-				{
-					"name": "Standardowy Instalator",
-					"description": "Preferowana ścieżka umożliwiająca stabilne odpalenie na stałe."
-				},
-				{
-					"name": "Przenośny Plik ZIP",
-					"description": "Zapisz i kontroluj ręcznie pliki konfiguracyjne projektu."
-				},
-				{
-					"name": "Sklep Microsoft",
-					"description": "Niezależna platforma dająca auto-aktualizacje firmie."
-				}
-			],
-			"storeAriaLabel": "Pobierz paczkę MS Store",
-			"storeImageAlt": "Kup w sieci MS Store",
-			"communityPrefix": "Projekty użytkowników badaj",
-			"communityGithubLabel": "Na panelu GitHuba",
-			"communityConnector": "czy chociażby",
-			"communityRedditLabel": "Konta w Reddit",
-			"communitySuffix": "."
-		}
-	},
 	"downloadMenu": {
-		"loading": "Ustalanie powiązanych wersji do ściagnięcia...",
-		"empty": "Zbiór nie zawiera aktywnych plików i wersji",
-		"choose": "Pobrania: Dostępnych ({count}) opcji",
 		"title": "Rekomendowane: Instalacja bazowa",
-		"hint": "Instalator ma komplet sterowników. Formaty specjalne dla inżynierów lub administratorów firm umieściliśmy dookoła.",
 		"ariaLabel": "Pole aktywnych wariantów wydanych programów",
 		"descriptions": {
 			"installer": "Stabilny system wdrażania standardu OS Windows",
@@ -104,61 +57,21 @@
 	},
 	"sections": {
 		"highlights": {
-			"heading": "Ustalenie gotowości deweloperskiej",
-			"lead": "Ten framework powołano, żeby po 2 tygodniach stania, on nadal z tą samą stabilnością nie zakłócił spójności wizualnej operacji biznesowych.",
 			"ariaLabel": "Najważniejsze cechy projektu"
 		},
 		"overview": {
-			"heading": "Odpal galerię zanim wkleisz instalacje środowiska",
 			"screenshotHint": "Działania widoczne na powiększanych i interaktywnoskach podglądzie miniatur.",
 			"viewLarger": "Aparat zoomu cyfrowego rozkłada {alt}"
 		},
-		"features": {
-			"heading": "Elementy funkcjonalne projektu aplikacji",
-			"lead": "Pozyskujemy surowość HTML i wklejamy interaktywności C#, co zapewnia ci elastyczność nie znając limitów starych technologii desktopu."
-		},
 		"widgets": {
-			"heading": "Prototypuj pakiety lub projektuj u nas",
-			"lead": "Nasze startery pogody, stoperów, śledzenia adresów IP w zupełności starczają. Wystarczy przenieść ich style we własny styl firmowy.",
-			"documentationPrefix": "Dostępne definicje z pełnym ujęciem odnajdziecie na",
-			"documentationLinkLabel": "Dokumentacyjnych zakładkach Wiki",
-			"documentationSuffix": "i Githubie.",
-			"promptPrefix": "Stwórz sobie własny moduł posługując się modelami AI wpisując:",
-			"promptLabel": "Wklejając nasze gotowe sztuczne prompty podzespołu LLM",
-			"promptConnector": "czy logując na platformie",
-			"sharedPromptLabel": "Prompty udostępniane publicznie",
-			"promptSuffix": "by po wymieszaniu w ChatGpt dostać profesjonalny i kompatybilnie bezpłatny generator układu interfejsu widżetu html na twój ekran komputera."
+			"promptLabel": "Wklejając nasze gotowe sztuczne prompty podzespołu LLM"
 		},
 		"packages": {
-			"heading": "Formaty jsonowych Manifestów Plikowych dla zasobów lokalnych w paczkach programisty",
-			"flowHeading": "Działania powtarzalne na schemacie działania system JSON Manifest.",
-			"schemaPrefix": "Dowiedz i zaznajom z formatami:",
 			"schemaLabel": "Schematu .json i metrykami budujących środowisko HTWIND",
-			"schemaConnector": "i przeanalizuj modelowy z życia skrypt archiwum pobierany od",
-			"exampleLabel": "Podłączonego wielkoformatowego systemu multi-widget",
-			"schemaSuffix": "by spakować swoje narzędzia i oprawić sprawnie jako pełny pakiet zip a z wieloma ramkami aplikacji widżetów na twoich systemach operacyjnych lokalnych OS."
-		},
-		"useCases": {
-			"heading": "Cele najczęściej wykorzystującego panel HTWIND w praktykach codziennych na PCie czy korporacyjnym laptopie.",
-			"lead": "Sytuacje programów i wizualnego wykorzystywania programowania widgetu w produktywnych dniach pracy systemowej administracji programistycznych."
-		},
-		"community": {
-			"heading": "Projekt budowany wokół dzielenia kodu z pomocą chmury programistów społeczności.",
-			"lead": "Sukces projektu polega z otwartości kodu - każdy dorzuca swój interfejs by inni budowali sobie super ładne nakładki wizualne ułatwiające skróty aplikacji bez konieczności uruchamiania wielkich stron.",
-			"visitPrefix": "Udaj w wycieczkę odwiedzenia do",
-			"githubLinkLabel": "Grupy na platformie serwisu GITHuba pod hasłem discussions (Forum o kodzie HTML widgetów dyskusje)",
-			"visitConnector": "albo na platformie anglojęzycznej pod adresem:",
-			"redditLinkLabel": "W grupie użytkowników Reddit sekcji projektanta zrzutów modowania.",
-			"visitSuffix": "Tam najpewniej wysłuchamy Twoich raportowych pomysłów błędu oraz przyjmiesz zapytania za wdrożenie unowocześnień funkcji."
-		},
-		"faq": {
-			"heading": "System Zapytania Rozwiązywania Zgłaszanych Zasad Wsparcia FAQ pytań stałych dla programu",
-			"lead": "Kompletowane porady co do konfiguracji bezpieczeńskich zezwoleń dla ułatwień w instalacji projektu."
+			"exampleLabel": "Podłączonego wielkoformatowego systemu multi-widget"
 		},
 		"support": {
-			"heading": "Przekaż pomoc dla twórcy oprogramowania otwartych środowisk.",
-			"lead": "Wysiłki o aktualizacji dla serwerowych kosztu oraz wydania platformy programowej są wspierane jako dotacja do czasu prywatnego developera projektu HTW. Daje kopa dla postępów o nowotrzebnych technologii w projekcie HTW.",
-			"button": "Strona bezpośredniego datkowania wsparcia z płatnością u producenta"
+			"heading": "Przekaż pomoc dla twórcy oprogramowania otwartych środowisk."
 		}
 	},
 	"footer": {
@@ -220,42 +133,8 @@
 				"label": "Podgląd na żywo podczas edytowania widżetów"
 			},
 			{
-				"value": "Motor Chromium z platform u deweloper bazy technologii Windows Core we wzbogacone Edge proces C++ bazy",
-				"label": "Natywny stos renderowania Windows"
-			},
-			{
 				"value": "Technologia w pełnych darmowści format otwartego GPL projektu o licencyjna autorskiej wolność form w użyci programu open",
 				"label": "Projekt na licencji GPL 3.0"
-			},
-			{
-				"value": "Ukryć przy odpaleni do Gier (Supresja)",
-				"label": "Ograniczenie automatyzowania okien w grach bez ekranowania panel przykrywających wyświetlanym",
-				"spanTwo": true
-			},
-			{
-				"value": "Edycji bezpośrednio paneli projekt",
-				"label": "Pisaniem bezpośrednia kod podprogram form okien program wewnętrznych modułu dewelopera",
-				"spanTwo": true
-			},
-			{
-				"value": "Form JSON koncepcja architektura katalogu folderu paczek modyfikacji",
-				"label": "Przemić format i udokumentować powiązania dla grafik wewnętrznym o obiekty w ścieżce na katalogowy pakiet importach z ZIP dla paczek manifestacji JSON pod obiekt w oknach system deweloper widget format JSON architektur modyfikacji i folder paczek.",
-				"spanTwo": true
-			},
-			{
-				"value": "Interfejsu C Systemowego PowerShell",
-				"label": "Uprawnienia dla każdego widżetu z trybem tylko do odczytu w piaskownicy",
-				"spanTwo": true
-			},
-			{
-				"value": "Natywne API hosta",
-				"label": "Metryki systemu, poziomy dźwięku, sesje multimedialne, pamięć i mostki motywu bez procesów",
-				"spanTwo": true
-			},
-			{
-				"value": "Profile obszaru roboczego",
-				"label": "Zapisuj i przełączaj pełne układy widżetów z menu zasobnika",
-				"spanTwo": true
 			}
 		],
 		"featureCards": [
@@ -274,48 +153,6 @@
 				"description": "Zachowanie zasobnika, przypinanie na wierzchu lub do warstwy pulpitu, magnetyczne przyciąganie okien, przezroczystość i zoom dla każdego widżetu, profile obszaru roboczego i świadome ukrywanie ekranu sprawiają, że widżety są natywne dla Windows.",
 				"icon": "windows"
 			}
-		],
-		"workflowUseCases": [
-			"Stale używanie sieci przez inżynier u administracja o weryfikacja błędy do interfejs i serwer pod prac log",
-			"Stoper w system dla projekt i uczeń po krawędzi komputery widoczne ekran",
-			"Odtwarzacz plików lub od panel zarządzania z audio z wizualna mod form interfejs i system do animowanym obiekty kod web html plik",
-			"Dashboard IT zespołu z metrykam z operacyjnym u monitoring sprzęcie proces i usługi firmy z serwer od system do widoczne pulpit w chmury bazy po HTML interfejs w pracy deweloper zespołu C.",
-			"Backup ZIP w form paczuś z udostępnioną interfejs u prac projektów biurowy do zespołowe"
-		],
-		"widgetPackageParagraphs": [
-			"Zrozumi JSON HTWIND architektur z pakowanie u pliki zip pod instalacje powłoki, by plik web w system wiedziały o od plików u katalog graficzna CSS od instalacyjnym z środowisku u program platform.",
-			"Pliki mogą pozostawiać u działanie aplikacji po plik z komputery folder do udostępniane i działający w form archaicznej aplikacji offline system deweloper pakiet.",
-			"Jeden paczuś importowany jest obsługi bez trud z eksport GUI moduły z panel od instalacja i plik u instalacja konfiguracjami pod PC z format zip paczkowania API dla użytkownik pobranym programu HTWIND udostępnianego narzędzi pakowania konfiguracji do paczkach środowisk i projekt API narzędzi C"
-		],
-		"widgetPackageCapabilities": [
-			{
-				"title": "Foldery Obrazy Działa Niezależni",
-				"description": "Podpinam ikony po form plików na aplikacja folder środowiska od powłoki w zip instalacja do folder pliki obraz i CSS lokalnych"
-			},
-			{
-				"title": "Kompilowanie Dużych System Zestaw 1 Okno Formaty",
-				"description": "Sklej projekt instalując pod powłok paczką z różny system u widget form do uruchomieni 2 i więcej pod jeden json system z instalator"
-			},
-			{
-				"title": "Schema Narzędzie Form JSON w IDE Zabezpieczeń i Składni C u deweloper Formaty.",
-				"description": "Kodując we edytor tekstów pliki u konfiguracjom powłoki u HTWIND ma kontrola błędu form składnie w projekcie dewelopera u zabezpieczonych kodu JSON"
-			},
-			{
-				"title": "Eksporter GUI zip System.",
-				"description": "Tworz w system programu pliki eksportów u klik po przycisk eksportuj instalacją dla aplikacji pliki zip i instalacyjne na powłok platform PC"
-			}
-		],
-		"widgetPackageSteps": [
-			"Konstruł folder powłok u pakowania systemu plików pod obiekt JSON HTWIND w pliku konfig.",
-			"Zlokalizuj dla aplikacja htwind od indeksowany html index pliku adres powłoki i foldera konfig JSON w folder API podział instalacja pakowania konfiguracji programu C",
-			"Zaimportuje plikiem przeciągania na panel API GUI dewelopera w oknie w zarządzanie z poziomu pod platform GUI aplikacji projekt API dla HTWIND Windows z instalacjami i powłok",
-			"Zaimportuj manifest do HTWind albo wyeksportuj istniejący widżet lub obszar roboczy, aby wygenerować układ pakietu wielokrotnego użytku."
-		],
-		"communitySharingSteps": [
-			"Stawia posta pod forum za serwis zdjęcia z form od widget html modyfikacjom na platform system",
-			"Dopisujesz od pliki w użyci do operacjami jak przyspiesza dla systemu u PC platform",
-			"Umieś opisy z systemowych pozwoleń czy administrator powłoki na PS1 C# środowiska plików zip na uruchomionych skrypt deweloper powłok",
-			"Dołączasz log ze zmian wersji pliki u oprogramowanie do mod od pakietów archiwum instalacji do deweloper"
 		],
 		"faqItems": [
 			{
@@ -357,10 +194,6 @@
 				"answer": "Od ustawieni na okna platform do Boot na uruchomieniu dla od PC z system z Windows by włącz aplikacji u zapamiętanymi na okna współrzędnymi instalacjami na platform PC"
 			}
 		],
-		"overviewParagraphs": [
-			"Narzędziem dla program do aplikacji widget w html systemu na pulpit platform w system Windows by modyfikacji od pulpit okna z wolnością na konfiguracja kodu na projekt od web dewelopera instalacji aplikacji do PC Windows",
-			"Aplikacja jest przeznaczona dla użytkowników, którzy chcą lekkiej, ale rozszerzalnej warstwy widżetów: integracja z zasobnikiem, przypinanie na wierzchu lub do warstwy pulpitu, magnetyczne przyciąganie, przezroczystość i zoom dla każdego widżetu, profile obszaru roboczego, pakowane widżety i świadome ukrywanie ekranu zamieniają standardowy pulpit Windows w bardziej użyteczną przestrzeń pracy."
-		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
@@ -379,5 +212,32 @@
 				"alt": "O aplikacji plik do projekt systemu Windows"
 			}
 		]
+	},
+	"design": {
+		"navExplore": "Aplikacja",
+		"navBuild": "Stwórz widżet",
+		"navFaq": "Pytania",
+		"download": "Pobierz dla Windows",
+		"otherDownloads": "Inne pliki",
+		"eyebrow": "Widżety open source dla Windows",
+		"heroHeading": "Przydatne narzędzia.\nNa Twoim pulpicie.",
+		"heroDescription": "Zegary, statystyki systemu i skróty. Wybierz widżet, umieść go tam, gdzie potrzebujesz, i wróć do pracy.",
+		"appHeading": "Codzienne narzędzia pod ręką.",
+		"appDescription": "Dodaj widżet. Dostosuj go. Miej go blisko.",
+		"library": "Biblioteka",
+		"gallery": "Galeria",
+		"settings": "Ustawienia",
+		"widgetsHeading": "Zacznij od czegoś przydatnego.",
+		"buildHeading": "Wystarczy trochę HTML.",
+		"buildDescription": "Twórz widżety w HTML, CSS i JavaScript. Edytuj je w aplikacji, oglądaj zmiany na żywo i udostępniaj jako pakiet.",
+		"docs": "Czytaj dokumentację",
+		"source": "Zobacz kod",
+		"communityHeading": "Do wspólnego użytku.",
+		"communityDescription": "Publikuj widżety, pokaż pulpit lub pomóż tworzyć kolejną wersję.",
+		"faqHeading": "Warto wiedzieć.",
+		"zoomIn": "Powiększ",
+		"zoomOut": "Pomniejsz",
+		"resetZoom": "Zresetuj powiększenie",
+		"backToTop": "Wróć na górę"
 	}
 }

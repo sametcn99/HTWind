@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 export function useDownloadMenu() {
 	const [isOpen, setIsOpen] = useState(false);
 	const containerRef = useRef<HTMLDivElement | null>(null);
+	const triggerRef = useRef<HTMLButtonElement | null>(null);
 
 	useEffect(() => {
 		if (!isOpen) {
@@ -23,6 +24,7 @@ export function useDownloadMenu() {
 		function handleEscape(event: KeyboardEvent): void {
 			if (event.key === "Escape") {
 				setIsOpen(false);
+				triggerRef.current?.focus();
 			}
 		}
 
@@ -37,6 +39,7 @@ export function useDownloadMenu() {
 
 	return {
 		containerRef,
+		triggerRef,
 		isOpen,
 		toggle: () => setIsOpen((value) => !value),
 		close: () => setIsOpen(false),

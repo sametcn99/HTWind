@@ -1,39 +1,42 @@
-import { Caption1, Select } from "@fluentui/react-components";
-import { Desktop24Regular } from "@fluentui/react-icons";
+import { GITHUB_REPOSITORY_URL } from "../../config/constants";
 import { useLocale } from "../../i18n/LocaleContext";
 import { type LocaleCode, SUPPORTED_LOCALES } from "../../i18n/locales";
-import { useAppStyles } from "../../styles/appStyles";
 
 export function Banner() {
-	const styles = useAppStyles();
 	const { locale, messages, changeLocale } = useLocale();
-
 	return (
-		<div className={styles.banner}>
-			<div className={styles.bannerContent}>
-				<Desktop24Regular aria-hidden="true" focusable="false" />
-				<Caption1 className={styles.bannerText}>
-					{messages.banner.text}
-				</Caption1>
-			</div>
-			<div className={styles.languageControl}>
-				<Caption1 className={styles.languageLabel}>
-					{messages.languageSelector.label}
-				</Caption1>
-				<Select
+		<header className="site-header wrap">
+			<a className="wordmark" href="#top" aria-label="HTWind">
+				<img src="/favicon-32x32.png" width="27" height="27" alt="" />
+				HTWind<span aria-hidden="true">.</span>
+			</a>
+			<nav className="site-nav" aria-label={messages.design.navExplore}>
+				<a href="#explore">{messages.design.navExplore}</a>
+				<a href="#build">{messages.design.navBuild}</a>
+				<a href="#questions">{messages.design.navFaq}</a>
+			</nav>
+			<div className="header-tools">
+				<a
+					className="source-link"
+					href={GITHUB_REPOSITORY_URL}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					GitHub <span aria-hidden="true">↗</span>
+				</a>
+				<select
+					className="language-select"
 					value={locale}
-					size="small"
-					className={styles.languageSelect}
 					aria-label={messages.languageSelector.ariaLabel}
 					onChange={(event) => changeLocale(event.target.value as LocaleCode)}
 				>
-					{SUPPORTED_LOCALES.map((supportedLocale) => (
-						<option key={supportedLocale} value={supportedLocale}>
-							{messages.languageSelector.options[supportedLocale]}
+					{SUPPORTED_LOCALES.map((code) => (
+						<option key={code} value={code}>
+							{messages.languageSelector.options[code]}
 						</option>
 					))}
-				</Select>
+				</select>
 			</div>
-		</div>
+		</header>
 	);
 }

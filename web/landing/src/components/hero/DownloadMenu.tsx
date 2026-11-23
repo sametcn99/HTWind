@@ -1,74 +1,20 @@
-import {
-	Button,
-	Caption1,
-	Link,
-	mergeClasses,
-} from "@fluentui/react-components";
-import { ArrowDownload24Regular } from "@fluentui/react-icons";
+import { useId } from "react";
+import { RELEASES_URL } from "../../config/constants";
 import type { GitHubReleaseAsset } from "../../config/types";
 import { useDownloadMenu } from "../../hooks/useDownloadMenu";
-import { interpolate } from "../../i18n/interpolate";
 import { useLocale } from "../../i18n/LocaleContext";
 import { INTL_LOCALE_MAP } from "../../i18n/locales";
 import { formatFileSize } from "../../lib/formatters";
-import { useAppStyles } from "../../styles/appStyles";
 
 type DownloadMenuProps = {
 	isLoadingRelease: boolean;
 	latestAssets: GitHubReleaseAsset[];
 };
 
-type AssetDescriptionKey = "installer" | "portable" | "package" | "other";
-
-function getAssetRank(asset: GitHubReleaseAsset): number {
-	const normalizedName = asset.name.toLowerCase();
-
-	if (
-		normalizedName.includes("setup") ||
-		normalizedName.endsWith(".exe") ||
-		normalizedName.endsWith(".msi")
-	) {
-		return 0;
-	}
-
-	if (normalizedName.endsWith(".zip")) {
-		return 1;
-	}
-
-	if (
-		normalizedName.endsWith(".msix") ||
-		normalizedName.endsWith(".appinstaller")
-	) {
-		return 2;
-	}
-
-	return 3;
-}
-
-function getAssetDescriptionKey(
-	asset: GitHubReleaseAsset,
-): AssetDescriptionKey {
-	const normalizedName = asset.name.toLowerCase();
-
-	if (
-		normalizedName.includes("setup") ||
-		normalizedName.endsWith(".exe") ||
-		normalizedName.endsWith(".msi")
-	) {
-		return "installer";
-	}
-
-	if (normalizedName.endsWith(".zip")) {
-		return "portable";
-	}
-
-	if (
-		normalizedName.endsWith(".msix") ||
-		normalizedName.endsWith(".appinstaller")
-	) {
-		return "package";
-	}
-
+function assetKind(asset: GitHubReleaseAsset) {
+	if (/\.(exe|msi)$/i.test(asset.name)) return "installer";
+	if (/\.zip$/i.test(asset.name)) return "portable";
+	if (/\.(msix|appinstaller)$/i.test(asset.name)) return "package";
 	return "other";
 }
 
@@ -76,75 +22,67 @@ export function DownloadMenu({
 	isLoadingRelease,
 	latestAssets,
 }: DownloadMenuProps) {
-	const styles = useAppStyles();
 	const { locale, messages } = useLocale();
-	const { containerRef, isOpen, toggle, close } = useDownloadMenu();
-	const sortedAssets = [...latestAssets].sort(
-		(leftAsset, rightAsset) =>
-			getAssetRank(leftAsset) - getAssetRank(rightAsset) ||
-			leftAsset.name.localeCompare(rightAsset.name),
+	const { containerRef, triggerRef, isOpen, toggle, close } = useDownloadMenu();
+	const menuId = useId();
+	const priority = { installer: 0, portable: 1, package: 2, other: 3 };
+	const assets = [...latestAssets].sort(
+		(a, b) =>
+			priority[assetKind(a)] - priority[assetKind(b)] ||
+			a.name.localeCompare(b.name),
 	);
-
+	const installer = assets.find((asset) => assetKind(asset) === "installer");
 	return (
-		<div ref={containerRef} className={styles.dropdownContainer}>
-			<Button
-				icon={<ArrowDownload24Regular />}
-				className={styles.dropdownButton}
-				size="large"
-				disabled={isLoadingRelease || latestAssets.length === 0}
-				onClick={toggle}
-				aria-expanded={isOpen}
-				aria-haspopup="menu"
-			>
-				{isLoadingRelease
-					? messages.downloadMenu.loading
-					: latestAssets.length === 0
-						? messages.downloadMenu.empty
-						: interpolate(messages.downloadMenu.choose, {
-								count: latestAssets.length,
-							})}
-			</Button>
-
-			{isOpen && latestAssets.length > 0 && (
-				<div className={styles.dropdownMenu}>
-					<Caption1 className={styles.dropdownTitle}>
-						{messages.downloadMenu.title}
-					</Caption1>
-					<Caption1 className={styles.dropdownHint}>
-						{messages.downloadMenu.hint}
-					</Caption1>
-					<ul
-						className={styles.dropdownList}
-						aria-label={messages.downloadMenu.ariaLabel}
-					>
-						{sortedAssets.map((asset) => (
+		<div className="download-area" ref={containerRef}>
+			<div className="download-actions">
+				<a
+					className="button button-primary"
+					href={installer?.browser_download_url ?? RELEASES_URL}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{messages.design.download}
+					<span aria-hidden="true">↓</span>
+				</a>
+				<button
+					className="download-toggle"
+					type="button"
+					ref={triggerRef}
+					aria-expanded={isOpen}
+					aria-controls={menuId}
+					disabled={isLoadingRelease || assets.length === 0}
+					onClick={toggle}
+				>
+					{messages.design.otherDownloads}
+					<span aria-hidden="true">⌄</span>
+				</button>
+			</div>
+			{isOpen && assets.length > 0 && (
+				<div className="download-panel" id={menuId}>
+					<p className="download-heading">{messages.downloadMenu.title}</p>
+					<ul aria-label={messages.downloadMenu.ariaLabel}>
+						{assets.map((asset) => (
 							<li key={asset.id}>
-								<Link
+								<a
 									href={asset.browser_download_url}
 									target="_blank"
 									rel="noopener noreferrer"
-									className={mergeClasses(
-										styles.dropdownItem,
-										getAssetRank(asset) === 0 && styles.dropdownItemRecommended,
-									)}
 									onClick={close}
 								>
-									<span className={styles.dropdownItemTitle}>{asset.name}</span>
-									<Caption1 className={styles.dropdownItemDescription}>
-										{
-											messages.downloadMenu.descriptions[
-												getAssetDescriptionKey(asset)
-											]
-										}
-									</Caption1>
-									<Caption1 className={styles.dropdownItemMeta}>
+									<span>
+										<strong>{asset.name}</strong>
+										<small>
+											{messages.downloadMenu.descriptions[assetKind(asset)]}
+										</small>
+									</span>
+									<span className="file-size">
 										{formatFileSize(
 											asset.size,
 											INTL_LOCALE_MAP[locale],
 											messages.downloadMenu.unknownSize,
 										)}
-									</Caption1>
-								</Link>
+									</span>
+								</a>
 							</li>
 						))}
 					</ul>

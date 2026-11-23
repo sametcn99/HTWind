@@ -37,55 +37,8 @@
 			"uk": "Українська"
 		}
 	},
-	"banner": {
-		"text": "HTML widgets, package imports aur controlled PowerShell tools ke liye open-source Windows widget host"
-	},
-	"hero": {
-		"eyebrow": "Windows-native desktop widget platform",
-		"heading": "HTML widgets ke sath zyada saaf Windows desktop banaiye",
-		"description": "HTWind aapko HTML widgets, package imports, always-on desktop tools aur controlled PowerShell actions ke liye ek polished host deta hai, bina native Windows workflow chhode.",
-		"includedLabel": "Included",
-		"proofPoints": [
-			"WebView2 ke sath render hone wale HTML, CSS aur JavaScript widgets",
-			"Asset-backed aur multi-widget setups ke liye manifest-based packages",
-			"प्रति-विजेट अनुमतियों के साथ नियंत्रित PowerShell क्रियाएँ",
-			"सिस्टम मेट्रिक्स, ऑडियो, मीडिया नियंत्रण, स्टोरेज और थीमिंग के लिए नेटिव होस्ट API"
-		],
-		"githubButton": "GitHub par dekhen",
-		"releaseNotesButton": "Release notes",
-		"communityNotice": "Zyadatar users ke liye installer recommended path hai. Portable ZIP aur Microsoft Store option tab bhi available rehte hain jab aapko alag deployment model chahiye.",
-		"releaseCard": {
-			"title": "Latest release",
-			"loadingLabel": "Loading",
-			"channels": [
-				{
-					"name": "Installer",
-					"description": "Sabse clean Windows setup ke liye recommended."
-				},
-				{
-					"name": "Portable ZIP",
-					"description": "Manual deployment ke liye self-contained copy rakhen."
-				},
-				{
-					"name": "Microsoft Store",
-					"description": "Managed installs aur quick updates ke liye accha option."
-				}
-			],
-			"storeAriaLabel": "Microsoft Store se paayen",
-			"storeImageAlt": "Microsoft Store se paayen",
-			"communityPrefix": "Widgets share karein",
-			"communityGithubLabel": "GitHub Discussions",
-			"communityConnector": "aur",
-			"communityRedditLabel": "Reddit",
-			"communitySuffix": "par."
-		}
-	},
 	"downloadMenu": {
-		"loading": "Downloads check kiye ja rahe hain...",
-		"empty": "Koi download available nahi hai",
-		"choose": "Download chuniye ({count})",
 		"title": "Recommended: installer pehle",
-		"hint": "Sabse smooth setup ke liye installer use karein. Portable aur package formats niche available hain.",
 		"ariaLabel": "Latest release asset downloads",
 		"descriptions": {
 			"installer": "Zyadatar Windows setups ke liye recommended installer",
@@ -104,61 +57,21 @@
 	},
 	"sections": {
 		"highlights": {
-			"heading": "HTWind production-ready kyun lagta hai",
-			"lead": "Yeh platform sirf quick demos ke liye nahi, balki roz ke desktop use ke liye banaya gaya hai. Yeh capabilities workflow ko Windows par reliable banati hain.",
 			"ariaLabel": "Project highlights"
 		},
 		"overview": {
-			"heading": "Install karne se pehle desktop experience dekhiye",
 			"screenshotHint": "Badi aur zoomable preview ke liye kisi bhi screenshot ko kholiye.",
 			"viewLarger": "Bada dekhen {alt}"
 		},
-		"features": {
-			"heading": "Core product capabilities",
-			"lead": "HTWind native-feeling shell ko desktop widgets banane, package karne aur chalane ke liye practical toolchain ke sath jodta hai."
-		},
 		"widgets": {
-			"heading": "Built-in widgets se shuru karein, phir customize karein",
-			"lead": "HTWind clocks, diagnostics, file tools aur quick actions ke liye practical starting points ke sath aata hai. Aap inhe jaisa hai waisa rakh sakte hain ya local assets ke sath richer packages me badal sakte hain.",
-			"documentationPrefix": "Puri details ke liye",
-			"documentationLinkLabel": "repository documentation",
-			"documentationSuffix": "dekhiye.",
-			"promptPrefix": "LLM ki madad se widgets banana chahte hain?",
-			"promptLabel": "HTWind Widget Generator Prompt",
-			"promptConnector": "ya",
-			"sharedPromptLabel": "shared prompts.chat version",
-			"promptSuffix": "se HTWind-compatible widgets jaldi banaiye, phir workflow badhne par unhe asset-backed ya multi-widget packages me expand kijiye."
+			"promptLabel": "HTWind Widget Generator Prompt"
 		},
 		"packages": {
-			"heading": "Multiple widgets aur local assets ke liye manifest packages",
-			"flowHeading": "Typical package flow",
-			"schemaPrefix": "Manifest contract ke liye",
 			"schemaLabel": "schema file",
-			"schemaConnector": "se shuru karein, ya",
-			"exampleLabel": "multi-widget example package",
-			"schemaSuffix": "dekhkar samajhiye ki HTWind ek hi importable bundle ke andar multiple widget folders kaise define karta hai."
-		},
-		"useCases": {
-			"heading": "Common HTWind workflows",
-			"lead": "Yeh examples dikhate hain ki HTWind kaha sabse accha fit baithta hai: lightweight desktop productivity, technical monitoring aur repeatable internal tooling."
-		},
-		"community": {
-			"heading": "Widgets share karein, patterns seekhein aur feedback paayen",
-			"lead": "Jab widgets clear screenshots, setup notes aur real workflow context ke sath share hote hain tab HTWind sabse accha grow karta hai. Releases publish karne, ideas compare karne aur dusre users se practical feedback lene ke liye Discussions aur Reddit sabse main jagah hain.",
-			"visitPrefix": "Visit karein",
-			"githubLinkLabel": "HTWind GitHub Discussions",
-			"visitConnector": "aur",
-			"redditLinkLabel": "Reddit par r/HTWind",
-			"visitSuffix": "taaki aap widgets publish kar saken, features request kar saken, issues report kar saken aur desktop setups share kar saken."
-		},
-		"faq": {
-			"heading": "HTWind FAQ",
-			"lead": "Installation, customization, packaging aur automation support par quick answers."
+			"exampleLabel": "multi-widget example package"
 		},
 		"support": {
-			"heading": "Developer ko support karein",
-			"lead": "Agar HTWind aapke daily workflow ko better banata hai, to direct support project ko maintain, document aur ship karte rehne me madad karta hai.",
-			"button": "Support page kholen"
+			"heading": "Developer ko support karein"
 		}
 	},
 	"footer": {
@@ -220,42 +133,8 @@
 				"label": "Widgets edit karte waqt live preview"
 			},
 			{
-				"value": "WebView2",
-				"label": "Native Windows rendering stack"
-			},
-			{
 				"value": "Open Source",
 				"label": "GPL 3.0 licensed project"
-			},
-			{
-				"value": "Smart Suppression",
-				"label": "Fullscreen aur maximized apps ke liye display-aware hide modes",
-				"spanTwo": true
-			},
-			{
-				"value": "Built-in Editor",
-				"label": "App ke andar widgets banaiye aur edit kijiye",
-				"spanTwo": true
-			},
-			{
-				"value": "Manifest Packages",
-				"label": "Ek manifest ke sath asset-backed ya multi-widget bundles ship kijiye",
-				"spanTwo": true
-			},
-			{
-				"value": "PowerShell API",
-				"label": "सैंडबॉक्स्ड रीड-ओनली मोड के साथ प्रति-विजेट अनुमतियाँ",
-				"spanTwo": true
-			},
-			{
-				"value": "नेटिव होस्ट API",
-				"label": "सिस्टम मेट्रिक्स, ऑडियो स्तर, मीडिया सेशन, स्टोरेज और थीम ब्रिज — बिना किसी प्रोसेस के",
-				"spanTwo": true
-			},
-			{
-				"value": "वर्कस्पेस प्रोफ़ाइल",
-				"label": "ट्रे मेनू से पूरी विजेट लेआउट सहेजें और बदलें",
-				"spanTwo": true
 			}
 		],
 		"featureCards": [
@@ -274,48 +153,6 @@
 				"description": "ट्रे व्यवहार, टॉप या डेस्कटॉप-लेयर पर पिन, मैग्नेटिक विंडो स्नैपिंग, प्रति-विजेट ओपैसिटी और ज़ूम, वर्कस्पेस प्रोफ़ाइल और स्क्रीन-जागरूक छिपाना — विजेट Windows के नेटिव लगते हैं।",
 				"icon": "windows"
 			}
-		],
-		"workflowUseCases": [
-			"Focused work sessions ke dauran clocks, weather, timers aur quick actions ko visible rakhiye.",
-			"Development ya support work ke dauran network checks, DNS lookups aur process monitoring widgets chalaiye.",
-			"Diagnostics aur repetitive system tasks ke liye controlled PowerShell actions use kijiye.",
-			"Aise internal HTML widgets banaiye jo team-specific operational tools ko desktop par expose karein.",
-			"Dashboards, timers aur status boards ko ek manifest ke roop me package kijiye taki teams poora setup ek step me import kar saken."
-		],
-		"widgetPackageParagraphs": [
-			"HTWind htwind.widget.json ke through manifest-based widget packages support karta hai, isliye ab ek widget sirf ek HTML file tak simit nahi hai. Aap CSS, JavaScript, images, fonts aur doosre local assets ke sath poore folders ko ek explicit manifest ke niche ship kar sakte hain.",
-			"Yahi format ek import me multiple widgets ko describe kar sakta hai, jo curated bundles, internal toolkits aur reusable desktop setups ke liye practical banata hai jinko ek sath install hona chahiye.",
-			"Import aur export simple rehte hain: standalone HTML widget layein, manifest package import karein, ek managed widget export karein ya sharing aur backup ke liye poora workspace export karein."
-		],
-		"widgetPackageCapabilities": [
-			{
-				"title": "Asset-backed widgets",
-				"description": "Sab kuch ek file me flatten karne ke bajay CSS, JavaScript, images, fonts aur dusre local assets ke sath widgets package kijiye."
-			},
-			{
-				"title": "Ek package me multiple widgets",
-				"description": "Ek manifest ke andar kai widget folders describe kijiye taaki HTWind ek hi action me poora dashboard ya toolkit import kar sake."
-			},
-			{
-				"title": "Schema-guided structure",
-				"description": "Consistent relative paths, entry files aur asset declarations ke liye included schema aur example package ko reference ke roop me use kijiye."
-			},
-			{
-				"title": "Import aur export ke liye ready",
-				"description": "Manual repackaging ke bina development se sharing tak jaiye: manifests directly import kijiye, ek widget export kijiye ya poora workspace export kijiye."
-			}
-		],
-		"widgetPackageSteps": [
-			"Top level par htwind.widget.json ke sath package root banaiye.",
-			"Ek ya zyada widget folders add kijiye aur har widget entry ko relative paths ke through uski HTML file se point kijiye.",
-			"Har widget ke non-entry assets ko list kijiye taaki package explicit aur portable rahe.",
-			"Manifest ko HTWind me import kijiye, ya reusable package layout generate karne ke liye existing widget ya workspace export kijiye."
-		],
-		"communitySharingSteps": [
-			"Widget releases ko GitHub Discussions me share kijiye aur HTWind Reddit community me highlight kijiye.",
-			"Chhota summary, screenshots aur woh main Windows workflow jise aapka widget improve karta hai, add kijiye.",
-			"Setup notes, required permissions aur kisi bhi host API ya PowerShell details ko include kijiye.",
-			"Update notes publish kijiye taaki users versions, fixes aur feature changes track kar saken."
 		],
 		"faqItems": [
 			{
@@ -357,10 +194,6 @@
 				"answer": "Haan. Aap issues khol sakte hain, Discussions me ideas share kar sakte hain aur widgets, templates, documentation aur core app improvements ke liye pull requests bhej sakte hain."
 			}
 		],
-		"overviewParagraphs": [
-			"HTWind native Windows behavior ko flexible web content ke sath jodta hai. HTML widgets WebView2 ke through render hote hain, jisse aise desktop tools banana asaan hota hai jo kaam karte waqt visible rahen.",
-			"यह ऐप हल्के लेकिन विस्तारयोग्य विजेट लेयर चाहने वाले उपयोगकर्ताओं के लिए बना है: ट्रे इंटीग्रेशन, टॉप या डेस्कटॉप-लेयर पिनिंग, मैग्नेटिक स्नैपिंग, प्रति-विजेट ओपैसिटी और ज़ूम, वर्कस्पेस प्रोफ़ाइल, पैकेज्ड विजेट और स्क्रीन-जागरूक छिपाना एक सामान्य Windows डेस्कटॉप को अधिक उपयोगी वर्कस्पेस में बदल देते हैं।"
-		],
 		"overviewScreenshots": [
 			{
 				"src": "/app_screenshots/page_home.png",
@@ -379,5 +212,32 @@
 				"alt": "HTWind About - Version Info"
 			}
 		]
+	},
+	"design": {
+		"navExplore": "ऐप",
+		"navBuild": "विजेट बनाएँ",
+		"navFaq": "सवाल",
+		"download": "Windows के लिए डाउनलोड करें",
+		"otherDownloads": "अन्य डाउनलोड",
+		"eyebrow": "Windows के लिए ओपन-सोर्स विजेट",
+		"heroHeading": "काम के टूल।\nआपके डेस्कटॉप पर।",
+		"heroDescription": "घड़ी, सिस्टम की जानकारी और शॉर्टकट। विजेट चुनें, जहाँ चाहें रखें और अपना काम जारी रखें।",
+		"appHeading": "रोज़ की ज़रूरतें, पास में।",
+		"appDescription": "विजेट जोड़ें। अपने हिसाब से बदलें। पास रखें।",
+		"library": "लाइब्रेरी",
+		"gallery": "गैलरी",
+		"settings": "सेटिंग्स",
+		"widgetsHeading": "कुछ उपयोगी से शुरू करें।",
+		"buildHeading": "थोड़ी-सी HTML से शुरुआत।",
+		"buildDescription": "HTML, CSS और JavaScript से विजेट बनाएँ। ऐप में संपादित करें, बदलाव तुरंत देखें और पैकेज के रूप में साझा करें।",
+		"docs": "दस्तावेज़ पढ़ें",
+		"source": "सोर्स देखें",
+		"communityHeading": "साझा करने के लिए बनाया।",
+		"communityDescription": "अपने विजेट प्रकाशित करें, डेस्कटॉप दिखाएँ या अगले संस्करण में योगदान दें।",
+		"faqHeading": "कुछ ज़रूरी बातें।",
+		"zoomIn": "ज़ूम इन",
+		"zoomOut": "ज़ूम आउट",
+		"resetZoom": "ज़ूम रीसेट करें",
+		"backToTop": "ऊपर जाएँ"
 	}
 }

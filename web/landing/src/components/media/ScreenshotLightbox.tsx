@@ -1,20 +1,7 @@
-import {
-	Button,
-	Dialog,
-	DialogBody,
-	DialogContent,
-	DialogSurface,
-} from "@fluentui/react-components";
-import { Dismiss24Regular } from "@fluentui/react-icons";
-import { useRef } from "react";
-import {
-	type ReactZoomPanPinchRef,
-	TransformComponent,
-	TransformWrapper,
-} from "react-zoom-pan-pinch";
+import { useEffect, useRef } from "react";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import type { ScreenshotItem } from "../../config/types";
 import { useLocale } from "../../i18n/LocaleContext";
-import { useAppStyles } from "../../styles/appStyles";
 
 type ScreenshotLightboxProps = {
 	selectedImage: ScreenshotItem | null;
@@ -25,53 +12,81 @@ export function ScreenshotLightbox({
 	selectedImage,
 	onClose,
 }: ScreenshotLightboxProps) {
-	const styles = useAppStyles();
 	const { messages } = useLocale();
-	const lightboxTransformRef = useRef<ReactZoomPanPinchRef | null>(null);
-
+	const dialogRef = useRef<HTMLDialogElement>(null);
+	useEffect(() => {
+		const dialog = dialogRef.current;
+		if (!selectedImage || !dialog) return;
+		const previousOverflow = document.body.style.overflow;
+		dialog.showModal();
+		document.body.style.overflow = "hidden";
+		return () => {
+			dialog.close();
+			document.body.style.overflow = previousOverflow;
+		};
+	}, [selectedImage]);
 	return (
-		<Dialog
-			open={!!selectedImage}
-			onOpenChange={(_, data) => !data.open && onClose()}
+		<dialog
+			ref={dialogRef}
+			className="screenshot-dialog"
+			aria-label={selectedImage?.alt}
+			onCancel={(event) => {
+				event.preventDefault();
+				onClose();
+			}}
 		>
-			<DialogSurface className={styles.lightboxSurface}>
-				<DialogBody className={styles.lightboxBody}>
-					<DialogContent className={styles.lightboxContent}>
-						<Button
-							appearance="subtle"
-							icon={<Dismiss24Regular />}
-							className={styles.closeButton}
-							onClick={onClose}
-							aria-label={messages.lightbox.close}
-						/>
-						{selectedImage && (
-							<TransformWrapper
-								ref={lightboxTransformRef}
-								initialScale={1}
-								minScale={1}
-								maxScale={8}
-								centerOnInit={true}
-								centerZoomedOut={true}
+			{selectedImage && (
+				<TransformWrapper
+					key={selectedImage.src}
+					minScale={1}
+					maxScale={5}
+					centerOnInit
+				>
+					{({ zoomIn, zoomOut, resetTransform }) => (
+						<>
+							<div className="lightbox-toolbar">
+								<span>{selectedImage.alt}</span>
+								<div>
+									<button
+										type="button"
+										aria-label={messages.design.zoomOut}
+										onClick={() => zoomOut()}
+									>
+										−
+									</button>
+									<button
+										type="button"
+										aria-label={messages.design.resetZoom}
+										onClick={() => resetTransform()}
+									>
+										1:1
+									</button>
+									<button
+										type="button"
+										aria-label={messages.design.zoomIn}
+										onClick={() => zoomIn()}
+									>
+										+
+									</button>
+									<button
+										type="button"
+										aria-label={messages.lightbox.close}
+										onClick={onClose}
+									>
+										×
+									</button>
+								</div>
+							</div>
+							<TransformComponent
+								wrapperClass="lightbox-viewport"
+								contentClass="lightbox-image"
 							>
-								<TransformComponent
-									wrapperClass={styles.lightboxTransformWrapper}
-									contentClass={styles.lightboxTransformWrapper}
-								>
-									<img
-										src={selectedImage.src}
-										alt={selectedImage.alt}
-										className={styles.lightboxImage}
-										onLoad={() => {
-											lightboxTransformRef.current?.resetTransform(0);
-											lightboxTransformRef.current?.centerView(1, 0);
-										}}
-									/>
-								</TransformComponent>
-							</TransformWrapper>
-						)}
-					</DialogContent>
-				</DialogBody>
-			</DialogSurface>
-		</Dialog>
+								<img src={selectedImage.src} alt={selectedImage.alt} />
+							</TransformComponent>
+						</>
+					)}
+				</TransformWrapper>
+			)}
+		</dialog>
 	);
 }
