@@ -418,7 +418,12 @@ public class WidgetManager : IWidgetManager, IDisposable
         _lifecycleService.RemoveWidget(
             model,
             widgetId => _editorManager.CloseEditor(widgetId),
-            widgetId => _windowTracker.UntrackWindow(widgetId));
+            widgetId =>
+            {
+                _windowTracker.CancelQueuedCreation(widgetId);
+                _windowTracker.GetWindow(widgetId)?.Close();
+                _windowTracker.UntrackWindow(widgetId);
+            });
 
         WidgetRuntimeConsole.Clear(model.Id);
         ScheduleSave();
@@ -767,6 +772,7 @@ public class WidgetManager : IWidgetManager, IDisposable
                 });
         };
 
+        window.RemoveRequested += (_, _) => RemoveWidget(model);
         window.Closed += (_, _) =>
         {
             _geometryService.CaptureGeometry(window, model);

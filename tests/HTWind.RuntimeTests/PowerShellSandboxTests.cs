@@ -35,8 +35,8 @@ public sealed class PowerShellSandboxTests
     [InlineData("@{ a = 1; b = 2 } | ConvertTo-Json")]
     [InlineData("1..5 | Measure-Object -Sum | Out-String")]
     [InlineData("1..10 | Where-Object { $_ % 2 -eq 0 } | Sort-Object -Descending | Out-String")]
-    [InlineData("Test-Path 'C:\\Windows'")]
-    [InlineData("Resolve-Path 'C:\\Windows' | Out-String")]
+    [InlineData("Test-Path (Get-Location).Path")]
+    [InlineData("Resolve-Path (Get-Location).Path | Out-String")]
     [InlineData("'{}' | ConvertFrom-Json | Out-String")]
     [InlineData("Get-ChildItem Env: | Select-Object -First 1 | Out-String")]
     public async Task ReadOnlyMode_AllowsReadCmdlets(string script)
@@ -61,6 +61,7 @@ public sealed class PowerShellSandboxTests
     [InlineData("Invoke-RestMethod")]
     [InlineData("Copy-Item")]
     [InlineData("Stop-Process")]
+    [InlineData("Trace-Command")]
     public async Task ReadOnlyMode_BlocksMutatingCommands(string commandName)
     {
         var output = await ExecuteAsync(commandName);
@@ -89,6 +90,211 @@ public sealed class PowerShellSandboxTests
 
         Assert.Equal(-1, output.ExitCode);
         Assert.False(File.Exists(target), "Out-File is deliberately excluded from the allowlist.");
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadOnlyMode_TraceCommandCannotCreateOrOverwriteFiles(bool fileExists)
+    {
+        var target = Path.Combine(TestPaths.CreateTempDirectory("trace-denied"), "trace.txt");
+        if (fileExists)
+        {
+            await File.WriteAllTextAsync(target, "keep this content", TestContext.Current.CancellationToken);
+        }
+
+        var output = await ExecuteAsync(
+            "Trace-Command -Name ParameterBinding -Expression { Get-Date } "
+            + $"-FilePath '{target.Replace("'", "''")}' -Force -ErrorAction Stop");
+
+        Assert.Equal(-1, output.ExitCode);
+        Assert.Contains("Trace-Command", output.Error, StringComparison.OrdinalIgnoreCase);
+        if (fileExists)
+        {
+            Assert.Equal("keep this content", await File.ReadAllTextAsync(target, TestContext.Current.CancellationToken));
+        }
+        else
+        {
+            Assert.False(File.Exists(target));
+        }
+    }
+
+    [Theory]
+    [InlineData("$PSModuleAutoLoadingPreference = 'All'; ")]
+    [InlineData("& { $PSModuleAutoLoadingPreference = 'All'; ")]
+    [InlineData("Set-Variable PSModuleAutoLoadingPreference All -Force; ")]
+    public async Task ReadOnlyMode_CannotReenableModuleAutoLoadingToWriteFiles(string prefix)
+    {
+        var target = Path.Combine(TestPaths.CreateTempDirectory("autoload-denied"), "keep.txt");
+        await File.WriteAllTextAsync(target, "keep this content", TestContext.Current.CancellationToken);
+        var suffix = prefix.StartsWith("&", StringComparison.Ordinal) ? " }" : string.Empty;
+        var output = await ExecuteAsync(prefix
+            + "Microsoft.PowerShell.Utility\\Trace-Command -Name ParameterBinding -Expression { Get-Date } "
+            + $"-FilePath '{target.Replace("'", "''")}' -Force -ErrorAction Stop" + suffix);
+
+        Assert.NotEqual(string.Empty, output.Error);
+        Assert.Equal("keep this content", await File.ReadAllTextAsync(target, TestContext.Current.CancellationToken));
+    }
+
+    [Theory]
+    [InlineData("using module Microsoft.PowerShell.Utility\n")]
+    [InlineData("using module @{ ModuleName = 'Microsoft.PowerShell.Utility'; ModuleVersion = '7.0.0.0' }\n")]
+    public async Task ReadOnlyMode_UsingModuleCannotImportWritingCommands(string import)
+    {
+        var target = Path.Combine(TestPaths.CreateTempDirectory("module-import-denied"), "trace.txt");
+        var output = await ExecuteAsync(import
+            + "Trace-Command -Name ParameterBinding -Expression { Get-Date } "
+            + $"-FilePath '{target.Replace("'", "''")}' -Force -ErrorAction Stop");
+
+        Assert.Equal(-1, output.ExitCode);
+        Assert.Contains("Module imports", output.Error, StringComparison.Ordinal);
+        Assert.False(File.Exists(target));
+    }
+
+    [Fact]
+    public async Task ReadOnlyMode_UsingAssemblyCannotLoadCode()
+    {
+        var assemblyPath = typeof(PowerShellExecutionEngine).Assembly.Location.Replace("'", "''");
+        var output = await ExecuteAsync($"using assembly '{assemblyPath}'\n'loaded'");
+
+        Assert.Equal(-1, output.ExitCode);
+        Assert.Contains("assembly imports", output.Error, StringComparison.Ordinal);
+        Assert.Equal(string.Empty, output.Output);
+    }
+
+    [Fact]
+    public async Task ReadOnlyMode_NestedUsingModuleIsRejectedBeforeInvocation()
+    {
+        var output = await ExecuteAsync("& { using module Microsoft.PowerShell.Utility\n Get-Date }");
+
+        Assert.Equal(-1, output.ExitCode);
+        Assert.Contains("Module imports", output.Error, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("Microsoft.PowerShell.Core\\Import-Module Microsoft.PowerShell.Utility; ", false)]
+    [InlineData("Microsoft.PowerShell.Core\\Import-Module Microsoft.PowerShell.Utility; ", true)]
+    [InlineData("& ('Microsoft.PowerShell.Core\\' + 'Import-Module') Microsoft.PowerShell.Utility; ", false)]
+    [InlineData("& ('Microsoft.PowerShell.Core\\' + 'Import-Module') Microsoft.PowerShell.Utility; ", true)]
+    [InlineData("Microsoft.PowerShell.Core\\New-Module -ScriptBlock { Microsoft.PowerShell.Core\\Import-Module Microsoft.PowerShell.Utility }; ", false)]
+    [InlineData("Microsoft.PowerShell.Core\\New-Module -ScriptBlock { Microsoft.PowerShell.Core\\Import-Module Microsoft.PowerShell.Utility }; ", true)]
+    public async Task ReadOnlyMode_QualifiedImportsCannotCreateOrOverwriteFiles(string prefix, bool fileExists)
+    {
+        var target = Path.Combine(TestPaths.CreateTempDirectory("qualified-import-denied"), "trace.txt");
+        if (fileExists)
+        {
+            await File.WriteAllTextAsync(target, "keep this content", TestContext.Current.CancellationToken);
+        }
+
+        var output = await ExecuteAsync(prefix
+            + "Trace-Command -Name ParameterBinding -Expression { Get-Date } "
+            + $"-FilePath '{target.Replace("'", "''")}' -Force -ErrorAction Stop");
+
+        Assert.Equal(-1, output.ExitCode);
+        Assert.NotEqual(string.Empty, output.Error);
+        if (fileExists)
+        {
+            Assert.Equal("keep this content", await File.ReadAllTextAsync(target, TestContext.Current.CancellationToken));
+        }
+        else
+        {
+            Assert.False(File.Exists(target));
+        }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadOnlyMode_QualifiedNewModuleCannotImportOrTraceInsideScriptBlock(bool fileExists)
+    {
+        var target = Path.Combine(TestPaths.CreateTempDirectory("qualified-new-module-denied"), "trace.txt");
+        if (fileExists)
+        {
+            await File.WriteAllTextAsync(target, "keep this content", TestContext.Current.CancellationToken);
+        }
+
+        var escapedTarget = target.Replace("'", "''");
+        var output = await ExecuteAsync(
+            "Microsoft.PowerShell.Core\\New-Module -Name SandboxProbe -ScriptBlock { "
+            + "Microsoft.PowerShell.Core\\Import-Module Microsoft.PowerShell.Utility; "
+            + "Microsoft.PowerShell.Utility\\Trace-Command -Name ParameterBinding "
+            + "-Expression { Get-Date } "
+            + $"-FilePath '{escapedTarget}' -Force -ErrorAction Stop; "
+            + "'module-created' }");
+
+        Assert.Equal(-1, output.ExitCode);
+        Assert.NotEqual(string.Empty, output.Error);
+        Assert.DoesNotContain("module-created", output.Output, StringComparison.Ordinal);
+        if (fileExists)
+        {
+            Assert.Equal("keep this content", await File.ReadAllTextAsync(target, TestContext.Current.CancellationToken));
+        }
+        else
+        {
+            Assert.False(File.Exists(target));
+        }
+    }
+
+    [Fact]
+    public async Task ReadOnlyMode_AllowsRegisteredQueriesAndSetLocationInMinimalSession()
+    {
+        var workingDirectory = TestPaths.CreateTempDirectory("readonly-location");
+        var output = await ExecuteAsync(
+            $"Set-Location -LiteralPath '{workingDirectory.Replace("'", "''")}'; "
+            + "(Get-Location).Path; Get-Date -Format 'yyyy-MM-dd'",
+            workingDirectory);
+
+        Assert.False(output.TimedOut);
+        Assert.Equal(0, output.ExitCode);
+        Assert.Equal(string.Empty, output.Error);
+        Assert.Contains(workingDirectory, output.Output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture), output.Output, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ReadOnlyMode_DynamicallyInvokesRegisteredAllowedCmdlet()
+    {
+        var output = await ExecuteAsync("$query = 'Get-Date'; & $query -Format 'yyyy-MM-dd'");
+
+        Assert.False(output.TimedOut);
+        Assert.Equal(0, output.ExitCode);
+        Assert.Equal(string.Empty, output.Error);
+        Assert.Equal(DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture), output.Output.Trim());
+    }
+
+    [Theory]
+    [InlineData(".", false)]
+    [InlineData(".", true)]
+    [InlineData("&", false)]
+    [InlineData("&", true)]
+    public async Task ReadOnlyMode_ExternalScriptCannotImportWritingCommands(string invocation, bool fileExists)
+    {
+        var directory = TestPaths.CreateTempDirectory("external-script-denied");
+        var target = Path.Combine(directory, "trace.txt");
+        var scriptPath = Path.Combine(directory, "Get-payload.ps1");
+        if (fileExists)
+        {
+            await File.WriteAllTextAsync(target, "keep this content", TestContext.Current.CancellationToken);
+        }
+
+        await File.WriteAllTextAsync(scriptPath,
+            "using module Microsoft.PowerShell.Utility\n"
+            + "Trace-Command -Name ParameterBinding -Expression { Get-Date } "
+            + $"-FilePath '{target.Replace("'", "''")}' -Force -ErrorAction Stop",
+            TestContext.Current.CancellationToken);
+
+        var output = await ExecuteAsync($"{invocation} '{scriptPath.Replace("'", "''")}'");
+
+        Assert.Equal(-1, output.ExitCode);
+        Assert.NotEqual(string.Empty, output.Error);
+        if (fileExists)
+        {
+            Assert.Equal("keep this content", await File.ReadAllTextAsync(target, TestContext.Current.CancellationToken));
+        }
+        else
+        {
+            Assert.False(File.Exists(target));
+        }
     }
 
     [Fact]
@@ -139,6 +345,51 @@ public sealed class PowerShellSandboxTests
 
         Assert.Equal(-1, output.ExitCode);
         Assert.Contains("Start-Transcript", output.Error, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Theory]
+    [InlineData("Out-String")]
+    [InlineData("Start-Process")]
+    [InlineData("ConvertTo-Json")]
+    [InlineData("Get-Date")]
+    public async Task FullMode_ResolvesBundledCommands(string commandName)
+    {
+        using var engine = new PowerShellExecutionEngine();
+        var output = await engine.ExecuteAsync(new PowerShellExecutionRequest
+        {
+            Script = $"Get-Command '{commandName}' -ErrorAction Stop | Select-Object -ExpandProperty Name",
+            Mode = PowerShellExecutionMode.Full,
+        });
+
+        Assert.Equal(0, output.ExitCode);
+        Assert.Equal(string.Empty, output.Error);
+        Assert.Equal(commandName, output.Output.Trim());
+    }
+
+    [Fact]
+    public async Task FullMode_StartProcessLaunchesARealProcessAndReturnsJson()
+    {
+        var executable = OperatingSystem.IsWindows()
+            ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "cmd.exe")
+            : "/bin/sh";
+        var arguments = OperatingSystem.IsWindows() ? "/d /c exit 0" : "-c true";
+        using var engine = new PowerShellExecutionEngine();
+        var output = await engine.ExecuteAsync(new PowerShellExecutionRequest
+        {
+            Script = $"$p = Start-Process -FilePath '{executable.Replace("'", "''")}' "
+                + $"-ArgumentList '{arguments}' -Wait -PassThru -ErrorAction Stop; "
+                + "[pscustomobject]@{ Started = $true; ProcessId = $p.Id; ExitCode = $p.ExitCode } | ConvertTo-Json -Compress",
+            Mode = PowerShellExecutionMode.Full,
+            TimeoutMilliseconds = 15000,
+        });
+
+        Assert.False(output.TimedOut);
+        Assert.Equal(0, output.ExitCode);
+        Assert.Equal(string.Empty, output.Error);
+        using var json = System.Text.Json.JsonDocument.Parse(output.Output);
+        Assert.True(json.RootElement.GetProperty("Started").GetBoolean());
+        Assert.True(json.RootElement.GetProperty("ProcessId").GetInt32() > 0);
+        Assert.Equal(0, json.RootElement.GetProperty("ExitCode").GetInt32());
     }
 
     [Fact]

@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Bundled the complete PowerShell SDK so App Launcher and other PowerShell widgets can resolve built-in commands without a separate PowerShell installation (#9).
+- Kept read-only PowerShell access restricted when bundling the SDK by blocking module and assembly imports, external scripts, and commands outside the registered allowlist (#9).
+- Fixed widget removal leaving orphaned desktop windows, cancelled pending window creation on removal, and preserved shared content until the last duplicate is removed (#9).
+- Added an accessible remove button to each widget's interaction overlay (#9).
+
 ## v0.3.1
 
 ### Improved

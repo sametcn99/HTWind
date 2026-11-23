@@ -312,6 +312,8 @@ public sealed class WidgetManagerTests : IClassFixture<Fixtures.TempDirectoryFix
         Received.InOrder(() =>
         {
             _editorManager.CloseEditor(model.Id);
+            _windowTracker.CancelQueuedCreation(model.Id);
+            _windowTracker.GetWindow(model.Id);
             _windowTracker.UntrackWindow(model.Id);
         });
         _lifecycleService.Received(1).RemoveWidget(

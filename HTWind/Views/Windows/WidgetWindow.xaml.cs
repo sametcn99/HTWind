@@ -113,6 +113,16 @@ public partial class WidgetWindow : Window
 
     public WidgetModel Model { get; }
 
+    public event EventHandler? RemoveRequested;
+
+    private void RemoveWidgetButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (IsInteractionOverlayEnabled())
+        {
+            RemoveRequested?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetCursorPos(out NativePoint point);
@@ -415,6 +425,7 @@ public partial class WidgetWindow : Window
         if (!isInteractionOverlayEnabled)
         {
             DragOverlay.Visibility = Visibility.Collapsed;
+            RemoveWidgetButton.Visibility = Visibility.Collapsed;
             ResizeHandles.Visibility = Visibility.Collapsed;
             webView.IsHitTestVisible = true;
 
@@ -425,6 +436,7 @@ public partial class WidgetWindow : Window
         else
         {
             DragOverlay.Visibility = Visibility.Visible;
+            RemoveWidgetButton.Visibility = Visibility.Visible;
             ResizeHandles.Visibility = Visibility.Visible;
             webView.IsHitTestVisible = false;
 

@@ -152,6 +152,54 @@ public sealed class WidgetLifecycleServiceTests : IClassFixture<Fixtures.TempDir
     }
 
     [Fact]
+    public void RemoveWidget_SharedManagedContentSurvivesUntilLastDuplicateIsRemoved()
+    {
+        var sourceFile = _temp.CreateFile("shared.html", "<html>shared</html>");
+        var lifecycle = CreateLifecycle();
+        var first = lifecycle.AddWidget(sourceFile, isVisible: true, (_, _) => { });
+        var second = lifecycle.AddWidget(first.FilePath!, isVisible: true, (_, _) => { });
+        var third = lifecycle.AddWidget(first.FilePath!, isVisible: true, (_, _) => { });
+        var ids = new List<string>();
+        Assert.Equal(first.FilePath, second.FilePath);
+        Assert.NotEqual(first.Id, second.Id);
+
+        lifecycle.RemoveWidget(second, _ => { }, id =>
+        {
+            ids.Add(id);
+        });
+        Assert.Equal(2, lifecycle.Widgets.Count);
+        Assert.True(first.IsVisible);
+        Assert.True(File.Exists(first.FilePath));
+        Assert.False(second.IsVisible);
+
+        lifecycle.RemoveWidget(first, _ => { }, ids.Add);
+        Assert.Single(lifecycle.Widgets);
+        Assert.True(File.Exists(third.FilePath));
+
+        lifecycle.RemoveWidget(third, _ => { }, ids.Add);
+        Assert.Empty(lifecycle.Widgets);
+        Assert.False(File.Exists(third.FilePath));
+        Assert.True(File.Exists(sourceFile));
+        Assert.Equal(new[] { second.Id, first.Id, third.Id }, ids);
+    }
+
+    [Fact]
+    public void RemoveWidget_RepeatedRemovalDoesNotRepeatCleanup()
+    {
+        var sourceFile = _temp.CreateFile("remove-once.html", "<html></html>");
+        var lifecycle = CreateLifecycle();
+        var model = lifecycle.AddWidget(sourceFile, isVisible: false, (_, _) => { });
+        var closeCalls = 0;
+        var untrackCalls = 0;
+
+        lifecycle.RemoveWidget(model, _ => closeCalls++, _ => untrackCalls++);
+        lifecycle.RemoveWidget(model, _ => closeCalls++, _ => untrackCalls++);
+
+        Assert.Equal(1, closeCalls);
+        Assert.Equal(1, untrackCalls);
+    }
+
+    [Fact]
     public void CreateWidgetWithEditor_CreatesNewManagedWidgetWithTemplate()
     {
         var lifecycle = CreateLifecycle();

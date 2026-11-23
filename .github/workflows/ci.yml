@@ -2,8 +2,9 @@ name: ci
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'fix/issue-9-*']
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -32,9 +33,16 @@ jobs:
       - name: Build (Release, warnings as errors)
         run: dotnet build $env:PROJECT_PATH -c Release --no-restore -warnaserror
 
+      - name: Publish Windows single-file package
+        run: >
+          dotnet publish $env:PROJECT_PATH -c Release -r win-x64
+          --self-contained true -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true -o out/ci-publish
+
   desktop-tests:
     name: Desktop tests (unit + runtime + e2e)
     runs-on: windows-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout

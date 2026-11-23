@@ -146,6 +146,9 @@
   <data name="WidgetWindow_Title" xml:space="preserve">
     <value>Widget</value>
   </data>
+  <data name="WidgetWindow_RemoveTooltip" xml:space="preserve">
+    <value>Remove widget</value>
+  </data>
   <data name="WidgetWindow_DragTooltip" xml:space="preserve">
     <value>Hold to move. Drag corners to resize.</value>
   </data>

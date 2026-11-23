@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 
 using HTWind.E2ETests.Support;
 using HTWind.Model;
@@ -113,6 +114,51 @@ public sealed class AppE2ETests
             model.PinMode = WidgetPinMode.Topmost;
             manager.ApplyPinState(model);
             Assert.True(widgetWindow.Topmost);
+
+            // Removing one of several widgets backed by the same template must target only
+            // that widget instance. The first removal goes through the actual XAML button.
+            var duplicateCountBefore = manager.Widgets.Count;
+            manager.AddWidget(templatePath, isVisible: true);
+            manager.AddWidget(templatePath, isVisible: true);
+            manager.AddWidget(templatePath, isVisible: true);
+            await StaAppSession.WaitForAsync(
+                () => manager.Widgets.Count == duplicateCountBefore + 3
+                    && manager.Widgets.TakeLast(3).All(m => app.Windows.OfType<WidgetWindow>().Any(w => w.Model.Id == m.Id)),
+                "three visible widgets using the same template",
+                TimeSpan.FromSeconds(30));
+            var duplicateModels = manager.Widgets.TakeLast(3).ToArray();
+            var duplicateWindows = duplicateModels
+                .Select(m => app.Windows.OfType<WidgetWindow>().Single(w => w.Model.Id == m.Id))
+                .ToArray();
+
+            duplicateModels[0].IsLocked = true;
+            Assert.Equal(Visibility.Collapsed, ((Button)duplicateWindows[0].FindName("RemoveWidgetButton")!).Visibility);
+            duplicateModels[0].IsLocked = false;
+            var removeButton = (Button)duplicateWindows[0].FindName("RemoveWidgetButton")!;
+            removeButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent, removeButton));
+            await StaAppSession.WaitForAsync(
+                () => !manager.Widgets.Any(m => m.Id == duplicateModels[0].Id)
+                    && app.Windows.OfType<WidgetWindow>().All(w => w.Model.Id != duplicateModels[0].Id),
+                "the clicked duplicate widget to be removed",
+                TimeSpan.FromSeconds(15));
+            Assert.Contains(manager.Widgets, m => m.Id == duplicateModels[1].Id);
+            Assert.Contains(manager.Widgets, m => m.Id == duplicateModels[2].Id);
+            Assert.Contains(app.Windows.OfType<WidgetWindow>(), w => w.Model.Id == duplicateModels[1].Id);
+            Assert.Contains(app.Windows.OfType<WidgetWindow>(), w => w.Model.Id == duplicateModels[2].Id);
+
+            manager.RemoveWidget(duplicateModels[1]);
+            await StaAppSession.WaitForAsync(
+                () => !manager.Widgets.Any(m => m.Id == duplicateModels[1].Id)
+                    && app.Windows.OfType<WidgetWindow>().All(w => w.Model.Id != duplicateModels[1].Id),
+                "the second duplicate widget to be removed individually",
+                TimeSpan.FromSeconds(15));
+            Assert.Contains(manager.Widgets, m => m.Id == duplicateModels[2].Id);
+            manager.RemoveWidget(duplicateModels[2]);
+            await StaAppSession.WaitForAsync(
+                () => !manager.Widgets.Any(m => m.Id == duplicateModels[2].Id)
+                    && app.Windows.OfType<WidgetWindow>().All(w => w.Model.Id != duplicateModels[2].Id),
+                "the final duplicate widget to be removed",
+                TimeSpan.FromSeconds(15));
 
             // Workspace profile capture → mutate → restore.
             manager.CaptureWorkspaceProfile("e2e-profile");

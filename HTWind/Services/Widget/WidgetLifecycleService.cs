@@ -171,13 +171,25 @@ public sealed class WidgetLifecycleService : IWidgetLifecycleService
         ArgumentNullException.ThrowIfNull(closeEditor);
         ArgumentNullException.ThrowIfNull(untrackWindow);
 
+        if (!Widgets.Contains(model))
+        {
+            return;
+        }
+
+        UnregisterModelChangeHandler(model);
+        // Prevent an already queued creation from bringing this instance back.
+        model.IsVisible = false;
         closeEditor(model.Id);
         untrackWindow(model.Id);
 
-        UnregisterModelChangeHandler(model);
-        _importService.DeleteManagedWidgetFile(model.FilePath);
-
         Widgets.Remove(model);
+        // Imports of an existing managed file can share the same content. Keep it until
+        // the last instance is removed, so removing a duplicate leaves its sibling usable.
+        if (!Widgets.Any(widget => string.Equals(
+                widget.FilePath, model.FilePath, StringComparison.OrdinalIgnoreCase)))
+        {
+            _importService.DeleteManagedWidgetFile(model.FilePath);
+        }
     }
 
     public void RegisterModelChangeHandler(WidgetModel model, Action<WidgetModel, string> onPropertyChanged)

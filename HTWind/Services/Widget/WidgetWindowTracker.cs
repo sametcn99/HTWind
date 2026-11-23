@@ -143,9 +143,7 @@ public sealed class WidgetWindowTracker : IWidgetWindowTracker
             while (_visibleWindowCreateQueue.Count > 0)
             {
                 var (model, hasPersistedGeometry, windowFactory) = _visibleWindowCreateQueue.Dequeue();
-                _queuedVisibleWindowIds.Remove(model.Id);
-
-                if (!model.IsVisible)
+                if (!_queuedVisibleWindowIds.Remove(model.Id) || !model.IsVisible)
                 {
                     continue;
                 }

@@ -10,6 +10,9 @@
     <ApplicationIcon>..\assets\favicon.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>HTWind</AssemblyName>
+    <!-- PowerShell resolves its built-in modules relative to the on-disk SMA assembly.
+         Extract the complete payload when packaging a single-file executable. -->
+    <IncludeAllContentForSelfExtract Condition="'$(PublishSingleFile)' == 'true'">true</IncludeAllContentForSelfExtract>
     <RepositoryUrl>https://github.com/sametcn99/HTWind</RepositoryUrl>
     <PackageProjectUrl>https://github.com/sametcn99/HTWind</PackageProjectUrl>
   </PropertyGroup>
@@ -25,7 +28,7 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3800.47" />
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="11.0.0" />
-    <PackageReference Include="System.Management.Automation" Version="7.6.9" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.6.9" />
     <PackageReference Include="WPF-UI" Version="4.2.0" />
   </ItemGroup>
 

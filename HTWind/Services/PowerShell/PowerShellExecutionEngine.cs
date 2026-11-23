@@ -7,6 +7,7 @@ using System.Text;
 
 using System.Management.Automation;
 using System.Management.Automation.Host;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 
 namespace HTWind.Services.PowerShellExecution;
@@ -38,8 +39,7 @@ public sealed class PowerShellExecutionEngine : IDisposable
         "Where-",
         "Write-",
         "ConvertTo-",
-        "ConvertFrom-",
-        "Trace-"
+        "ConvertFrom-"
     ];
 
     private static readonly string[] ReadOnlyCommandNames =
@@ -81,6 +81,28 @@ public sealed class PowerShellExecutionEngine : IDisposable
 
         var timeoutMilliseconds = Math.Clamp(request.TimeoutMilliseconds, 500, 120000);
         var workingDirectory = ResolveWorkingDirectory(request.WorkingDirectory);
+        if (request.Mode == PowerShellExecutionMode.ReadOnly)
+        {
+            // Parser imports bypass command lookup. Assemblies can execute module
+            // initializers even under constrained language, so reject both import forms.
+            var ast = Parser.ParseInput(request.Script, out _, out _);
+            if (ast.FindAll(
+                    node => node is UsingStatementAst
+                    {
+                        UsingStatementKind: UsingStatementKind.Module or UsingStatementKind.Assembly
+                    },
+                    searchNestedScriptBlocks: true).Any())
+            {
+                return new PowerShellExecutionOutput
+                {
+                    ExitCode = -1,
+                    Error = "Module imports and assembly imports are not allowed in read-only mode.",
+                    Shell = "inproc-readonly",
+                    WorkingDirectory = workingDirectory
+                };
+            }
+        }
+
         var initialSessionState = GetSessionState(request.Mode);
 
         // One transient runspace per call. This keeps per-call session isolation (matching the
@@ -92,15 +114,26 @@ public sealed class PowerShellExecutionEngine : IDisposable
 
         try
         {
-            using var powerShell = PowerShell.Create();
-            powerShell.Runspace = runspace;
-
             if (request.Mode == PowerShellExecutionMode.ReadOnly)
             {
-                // Belt-and-braces: module auto-loading could pull in commands the sandbox ISS
-                // filter removed; disable it for the read-only session.
-                powerShell.AddStatement().AddScript("$PSModuleAutoLoadingPreference = 'None'");
+                // Enforce the deployed command set on every lookup, including computed
+                // names and nested scriptblocks. External scripts are not validated by
+                // the request AST guard and must never be invoked by the sandbox.
+                var allowedNames = initialSessionState.Commands
+                    .Select(entry => entry.Name)
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+                runspace.SessionStateProxy.InvokeCommand.PreCommandLookupAction = (_, lookup) =>
+                {
+                    if (!allowedNames.Contains(lookup.CommandName))
+                    {
+                        lookup.StopSearch = true;
+                        lookup.Command = null;
+                    }
+                };
             }
+
+            using var powerShell = PowerShell.Create();
+            powerShell.Runspace = runspace;
 
             if (!string.IsNullOrWhiteSpace(request.WorkingDirectory))
             {
@@ -275,12 +308,18 @@ public sealed class PowerShellExecutionEngine : IDisposable
 
     private static InitialSessionState BuildFullTrustSessionState()
     {
-        var initialSessionState = InitialSessionState.CreateDefault2();
+        // Register the bundled built-ins directly. CreateDefault2 exposes only Core and
+        // relies on module discovery, which can select Windows PowerShell manifests or
+        // miss the SDK's module layout in a published single-file application.
+        var initialSessionState = InitialSessionState.CreateDefault();
         initialSessionState.ApartmentState = ApartmentState.MTA;
 
         try
         {
-            initialSessionState.ExecutionPolicy = Microsoft.PowerShell.ExecutionPolicy.Bypass;
+            if (OperatingSystem.IsWindows())
+            {
+                initialSessionState.ExecutionPolicy = Microsoft.PowerShell.ExecutionPolicy.Bypass;
+            }
         }
         catch
         {
@@ -292,13 +331,25 @@ public sealed class PowerShellExecutionEngine : IDisposable
 
     private InitialSessionState BuildReadOnlySessionState()
     {
-        var initialSessionState = InitialSessionState.CreateDefault2();
+        // Copy allowed Core commands into an empty state rather than retaining Core
+        // snap-in metadata, which can resurrect a module-qualified Import-Module.
+        var initialSessionState = InitialSessionState.Create();
+        foreach (var entry in InitialSessionState.CreateDefault2().Commands)
+        {
+            if (entry.CommandType == CommandTypes.Cmdlet && IsReadOnlyCommand(entry.Name))
+            {
+                initialSessionState.Commands.Add(entry);
+            }
+        }
         initialSessionState.ApartmentState = ApartmentState.MTA;
         initialSessionState.LanguageMode = PSLanguageMode.ConstrainedLanguage;
 
         try
         {
-            initialSessionState.ExecutionPolicy = Microsoft.PowerShell.ExecutionPolicy.Bypass;
+            if (OperatingSystem.IsWindows())
+            {
+                initialSessionState.ExecutionPolicy = Microsoft.PowerShell.ExecutionPolicy.Bypass;
+            }
         }
         catch
         {
@@ -311,27 +362,8 @@ public sealed class PowerShellExecutionEngine : IDisposable
         initialSessionState.Variables.Add(new SessionStateVariableEntry(
             "PSModuleAutoLoadingPreference",
             PSModuleAutoLoadingPreference.None,
-            "Disables module auto-loading inside the HTWind read-only sandbox."));
-
-        // Strip every command that is not on the read-only allowlist: non-read cmdlets,
-        // functions, aliases and scripts are all removed so the sandbox only exposes queries.
-        foreach (var entry in initialSessionState.Commands.ToArray())
-        {
-            var isAllowedReadCmdlet =
-                entry.CommandType == CommandTypes.Cmdlet && IsReadOnlyCommand(entry.Name);
-
-            if (!isAllowedReadCmdlet)
-            {
-                try
-                {
-                    initialSessionState.Commands.Remove(entry.Name, entry.CommandType);
-                }
-                catch
-                {
-                    // Duplicate-name removal races are harmless; the entry stays out of scope.
-                }
-            }
-        }
+            "Disables module auto-loading inside the HTWind read-only sandbox.",
+            ScopedItemOptions.Constant | ScopedItemOptions.AllScope));
 
         // With module auto-loading disabled, commands that live in the built-in modules never
         // resolve on their own: InitialSessionState only pre-populates Core commands, and the

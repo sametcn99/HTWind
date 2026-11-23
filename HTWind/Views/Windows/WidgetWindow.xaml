@@ -30,7 +30,7 @@
     <Border
       Name="DragOverlay"
       Height="20"
-      Margin="8,6,8,0"
+      Margin="8,6,60,0"
       VerticalAlignment="Top"
       Background="#70000000"
       CornerRadius="6"
@@ -46,6 +46,39 @@
         VerticalAlignment="Center"
         IsHitTestVisible="False"/>
     </Border>
+
+    <Button
+      x:Name="RemoveWidgetButton"
+      Width="24"
+      Height="20"
+      Margin="0,6,28,0"
+      HorizontalAlignment="Right"
+      VerticalAlignment="Top"
+      Panel.ZIndex="10"
+      Content="&#x00D7;"
+      Foreground="White"
+      Background="#70000000"
+      FontSize="16"
+      ToolTip="{loc:Loc WidgetWindow_RemoveTooltip}"
+      AutomationProperties.Name="{loc:Loc WidgetWindow_RemoveTooltip}"
+      Click="RemoveWidgetButton_Click">
+      <Button.Template>
+        <ControlTemplate TargetType="Button">
+          <Border x:Name="ButtonBorder" Background="{TemplateBinding Background}" CornerRadius="4">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="ButtonBorder" Property="Background" Value="#B0B42318"/>
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+              <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="White"/>
+              <Setter TargetName="ButtonBorder" Property="BorderThickness" Value="1"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Button.Template>
+    </Button>
 
     <Grid Name="ResizeHandles"
         IsHitTestVisible="True"
